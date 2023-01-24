@@ -7,6 +7,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        
         type: Sequelize.INTEGER
       },
       role_name: {
