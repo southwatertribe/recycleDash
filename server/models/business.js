@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Business extends Model {
     /**
@@ -11,10 +12,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // this.hasMany(models.User)    
+      // Business.hasMany(models.User)  
     }
   }
   Business.init({
-    name: DataTypes.STRING
+    biz_id: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.STRING,
+    },
+    biz_name: DataTypes.STRING  
   }, {
     sequelize,
     modelName: 'Business',
