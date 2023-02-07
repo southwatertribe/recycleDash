@@ -2,8 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-const { sequelize } = require('./models');
-const User = require('./models').User;
+const pool = require('./db/dbconnection')
 
 
 var crypto = require('crypto');
@@ -11,14 +10,14 @@ var crypto = require('crypto');
 
 const startServer = async () => {
 
-    //THIS IF FOR DEV ONLY
-    sequelize.sync({ force: true }).then(() => {
+    // //THIS IF FOR DEV ONLY
+    // sequelize.sync({ force: true }).then(() => {
 
         
     
-    }).catch((err) => {
+    // }).catch((err) => {
       
-    });
+    // });
     const server = express()
     
     //Use middleware
@@ -30,11 +29,16 @@ const startServer = async () => {
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);
+    
+    
 
     server.listen(process.env.PORT, () => {
         console.log(`Spun up on ${process.env.PORT}`);
         console.log(`running in ${process.env.NODE_ENV} mode`);
     });
+
+
+    
 
     // User.create(
     //     {
