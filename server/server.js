@@ -4,6 +4,8 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const pool = require('./db/dbconnection')
 
+//Routers
+const users = require('./routes/users')
 
 var crypto = require('crypto');
 
@@ -26,6 +28,7 @@ const startServer = async () => {
     server.use(cookieParser()) 
 
     //Routes
+    server.use('/users', users)
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);
@@ -39,7 +42,6 @@ const startServer = async () => {
 
 
     
-
     // User.create(
     //     {
     //         user_id: crypto.randomUUID(),
