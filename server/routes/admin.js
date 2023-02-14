@@ -53,13 +53,11 @@ router.post("/create-admin", async function (req,res) {
 
 
 
-router.get('/:admin/addLocation', async function (req,res) {
+router.post('/addLocation', async function (req,res) {
 
-    //Admin will be a ID
-    const adminID = req.query.admin
-
-    //Business will be an ID
+    //Get vars
     const bizID = req.query.bizID
+
 
     //Location info
     const locationID = crypto.randomUUID()
@@ -71,9 +69,11 @@ router.get('/:admin/addLocation', async function (req,res) {
 
     
     
-    res.json(`${req.params.admin}: added a business`)
-    sqlst = "INSERT INTO locations VALUES('"+locationName+"')"
+    
+    sqlst = `INSERT INTO locations VALUES('${locationID}','${locationName}','${bizID}')`
     pool.query(sqlst)
+    pool.commit()
+    res.json(`Added location ${locationName} with ID of ${locationID}`)
 })
 
 
