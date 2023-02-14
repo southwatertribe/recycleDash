@@ -5,7 +5,8 @@ require('dotenv').config();
 const pool = require('./db/dbconnection')
 
 //Routers
-const users = require('./routes/users')
+const admin = require('./routes/admin')
+const auth = require('./routes/auth')
 
 var crypto = require('crypto');
 
@@ -28,7 +29,8 @@ const startServer = async () => {
     server.use(cookieParser()) 
 
     //Routes
-    server.use('/users', users)
+    server.use('/admin', admin)
+    server.use('/login', auth)
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);
@@ -38,6 +40,7 @@ const startServer = async () => {
     server.listen(process.env.PORT, () => {
         console.log(`Spun up on ${process.env.PORT}`);
         console.log(`running in ${process.env.NODE_ENV} mode`);
+        console.log("Let's get recycling ♻️")
     });
 
 
