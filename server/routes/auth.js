@@ -10,14 +10,22 @@ router.post("/", async function(req,res) {
 
     const getAuth = `SELECT * FROM users WHERE email='${email}';`
 
-    await pool.query(getAuth).then((result) => {
-        console.log(result)
+    //Return hashed password from db
+    const response = await pool.query(getAuth).then((result) => {
+        return result[0][0].password
     }).catch((err) => {
         console.log(err)
     });
 
+    //Compare passwords to login 
+    const match = await bcrypt.compare(pwd, response)
 
-    res.json("Gucki")
+    //More logic later
+    if (match) {
+        res.json("Logged in, send token etc")        
+    } else {
+        res.json("Incorrect username or password")
+    }
 
 
 })
