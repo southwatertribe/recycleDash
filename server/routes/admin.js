@@ -4,6 +4,13 @@ const pool = require('../db/dbconnection')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 
+
+router.get("/tester", async function(req, res) {
+    const getter = `SELECT * FROM materials`
+    const [getMats] = await pool.query(getter)
+    res.json(getMats[1].mat_id)
+})
+
 router.post("/create-admin", async function (req,res) {
     // Admin Vars
     const userID = crypto.randomUUID()
@@ -59,20 +66,33 @@ router.post('/addLocation', async function (req,res) {
     const bizID = req.query.bizID
 
 
-    //Location info
-    const locationID = crypto.randomUUID()
-    const locationName = req.query.locationName
-
-
     //Begin trasnsaction to add admin
     await pool.beginTransaction();
 
     
     
-    
-    sqlst = `INSERT INTO locations VALUES('${locationID}','${locationName}','${bizID}')`
+    //Insert location
+    //Location info
+    const locationID = crypto.randomUUID()
+    const locationName = req.query.locationName
+    sqlst = `INSERT INTO locations(location_id, location_name, business_id) VALUES('${locationID}','${locationName}','${bizID}')`
     pool.query(sqlst)
+
+    //Insert default mats (will be in 4 loop)
+    //Location Mats Info 
+    //Get all material possibilities
+    const getter = `SELECT * FROM materials`
+    const [getMats] = await pool.query(getter) 
+    
+    for (let i = 0; i < getMats.length; i++) {
+        const locationmatsID = crypto.randomUUID()
+        const currMatID = getMats[i].mat_id
+        sqlst = `INSERT INTO locationmats(location_mats_id, location, material) VALUES('${locationmatsID}','${locationID}','${currMatID}');`
+        pool.query(sqlst)
+    }
+
     pool.commit()
+
     res.json(`Added location ${locationName} with ID of ${locationID}`)
 })
 
