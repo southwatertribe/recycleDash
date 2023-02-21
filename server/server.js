@@ -7,8 +7,8 @@ const pool = require('./db/dbconnection')
 //Routers
 const admin = require('./routes/admin')
 const auth = require('./routes/auth')
+const tickets = require('./routes/tickets')
 
-var crypto = require('crypto');
 
 
 const startServer = async () => {
@@ -31,6 +31,7 @@ const startServer = async () => {
     //Routes
     server.use('/admin', admin)
     server.use('/login', auth)
+    server.use('/ticketCreation', tickets)
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);

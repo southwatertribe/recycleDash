@@ -3,7 +3,7 @@ const router = express.Router()
 const pool = require('../db/dbconnection')
 const bcrypt = require('bcrypt')
 
-
+//Sign in 
 router.post("/", async function(req,res) {
     const email = req.query.email
     const pwd = req.query.pwd

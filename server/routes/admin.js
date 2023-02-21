@@ -4,13 +4,14 @@ const pool = require('../db/dbconnection')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 
-
+//Testing function during dev
 router.get("/tester", async function(req, res) {
     const getter = `SELECT * FROM materials`
     const [getMats] = await pool.query(getter)
     res.json(getMats[1].mat_id)
 })
 
+//Create a new admin and bussiness
 router.post("/create-admin", async function (req,res) {
     // Admin Vars
     const userID = crypto.randomUUID()
@@ -58,9 +59,8 @@ router.post("/create-admin", async function (req,res) {
 
 })
 
-
-
-router.post('/addLocation', async function (req,res) {
+//Admin creates new location
+router.post('/:adminID/addLocation', async function (req,res) {
 
     //Get vars
     const bizID = req.query.bizID
@@ -94,6 +94,15 @@ router.post('/addLocation', async function (req,res) {
     pool.commit()
 
     res.json(`Added location ${locationName} with ID of ${locationID}`)
+})
+
+//Admin create employee
+router.post('/:adminID/createEmployee', async function() {
+
+})
+//Admin edit location material price
+router.put('/:adminID/update/:locationMatID', async function(){
+    console.log("TODO, locationmat update")
 })
 
 
