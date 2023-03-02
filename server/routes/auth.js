@@ -2,6 +2,8 @@ const express = require("express")
 const router = express.Router()
 const pool = require('../db/dbconnection')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 //Sign in 
 router.post("/", async function(req,res) {
@@ -22,7 +24,19 @@ router.post("/", async function(req,res) {
 
     //More logic later
     if (match) {
-        res.json("Logged in, send token etc")        
+        //Create token
+        const accessToken = jwt.sign(
+            {"email": email},
+            process.env.AT_SECRET,
+            {expiresIn: '30s'}
+        );
+        const refreshToken = jwt.sign(
+            {"email": email},
+            process.env.RT_SECRET,
+            {expiresIn: '90s'}
+        );
+        res.json("Logged in, send token etc")  
+
     } else {
         res.json("Incorrect username or password")
     }

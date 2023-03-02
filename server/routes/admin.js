@@ -97,11 +97,11 @@ router.post('/:adminID/addLocation', async function (req,res) {
 })
 
 //Admin create employee
-router.post('/:adminID/createEmployee', async function() {
+router.post('/:adminID/createEmployee', async function(req, res) {
 
 })
 //Admin edit location material price
-router.put('/:adminID/update/:locationMatID', async function(){
+router.put('/:adminID/update/:locationMatID', async function(req, res){
     console.log("TODO, locationmat update")
 })
 

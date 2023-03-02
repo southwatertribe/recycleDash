@@ -30,7 +30,6 @@ router.post("/", async function(req,res) {
     //TODO: Will need to adjust given how you want the form
     let total = 0
     for (let index = 0; index < entries; index++) {
-        
         const currentDet = payload.entries[index]
         const material = currentDet.material
         const weight = currentDet.weight
