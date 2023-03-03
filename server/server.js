@@ -7,7 +7,11 @@ const pool = require('./db/dbconnection')
 //Routers
 const admin = require('./routes/admin')
 const auth = require('./routes/auth')
-const tickets = require('./routes/tickets')
+const tickets = require('./routes/tickets');
+const getters = require('./routes/getters')
+const credentials = require('./middleware/credentials');
+const corsOptions = require('./config/cors_options');
+const { verifyJWT } = require('./middleware/verifyJWT');
 
 
 
@@ -24,13 +28,22 @@ const startServer = async () => {
     const server = express()
     
     //Use middleware
-    server.use(cors())
+    server.use(
+        cors({
+          origin: 'http://localhost:3000',
+          preflightContinue: true,
+          methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+          credentials: true,
+        })
+    );
     server.use(express.json())
     server.use(cookieParser()) 
 
     //Routes
+    // server.use(verifyJWT)
     server.use('/admin', admin)
     server.use('/login', auth)
+    server.use('/get', getters)
     server.use('/ticketCreation', tickets)
 
     //Start

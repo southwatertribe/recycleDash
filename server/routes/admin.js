@@ -92,7 +92,6 @@ router.post('/:adminID/addLocation', async function (req,res) {
     }
 
     pool.commit()
-
     res.json(`Added location ${locationName} with ID of ${locationID}`)
 })
 
@@ -100,6 +99,7 @@ router.post('/:adminID/addLocation', async function (req,res) {
 router.post('/:adminID/createEmployee', async function(req, res) {
 
 })
+
 //Admin edit location material price
 router.put('/:adminID/update/:locationMatID', async function(req, res){
     console.log("TODO, locationmat update")

@@ -7,34 +7,44 @@ require('dotenv').config()
 
 //Sign in 
 router.post("/", async function(req,res) {
-    const email = req.query.email
-    const pwd = req.query.pwd
-
+    const email = req.body.email
+    const pwd = req.body.password
+    console.log(`pass is ${pwd}`)
     const getAuth = `SELECT * FROM users WHERE email='${email}';`
+
+    
 
     //Return hashed password from db
     const response = await pool.query(getAuth).then((result) => {
-        return result[0][0].password
+        console.log(result[0][0].password)
+        return result[0][0]
     }).catch((err) => {
         console.log(err)
     });
 
     //Compare passwords to login 
-    const match = await bcrypt.compare(pwd, response)
+    const match = await bcrypt.compare(pwd, response.password)
 
     //More logic later
     if (match) {
-        //Create token
+        //Create token and store the userID in it
+        const userID = response.user_id
         const accessToken = jwt.sign(
-            {"email": email},
+            {"user_id": userID},
             process.env.AT_SECRET,
             {expiresIn: '30s'}
         );
         const refreshToken = jwt.sign(
-            {"email": email},
+            {"user_id": userID},
             process.env.RT_SECRET,
-            {expiresIn: '90s'}
+            {expiresIn: '1d'}
         );
+        
+        const RFToken = `UPDATE users SET refresh_token='${refreshToken}' WHERE user_id='${response.user_id}'`
+        
+        //Store refresh token into users database 
+        pool.query(RFToken)
+        res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000})
         res.json("Logged in, send token etc")  
 
     } else {
