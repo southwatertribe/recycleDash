@@ -1,14 +1,15 @@
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-const pool = require('./db/dbconnection')
+const pool = require('./db/dbconnection');
 
 //Routers
-const admin = require('./routes/admin')
-const auth = require('./routes/auth')
+const register = require('./routes/accounts')
+const admin = require('./routes/admin');
+const auth = require('./routes/auth');
 const tickets = require('./routes/tickets');
-const getters = require('./routes/getters')
+const getters = require('./routes/getters');
 const credentials = require('./middleware/credentials');
 const corsOptions = require('./config/cors_options');
 const { verifyJWT } = require('./middleware/verifyJWT');
@@ -40,7 +41,8 @@ const startServer = async () => {
     server.use(cookieParser()) 
 
     //Routes
-    // server.use(verifyJWT)
+    server.use('/register', register)
+    server.use(verifyJWT)
     server.use('/admin', admin)
     server.use('/login', auth)
     server.use('/get', getters)
