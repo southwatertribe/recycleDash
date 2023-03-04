@@ -42,9 +42,10 @@ const startServer = async () => {
 
     //Routes
     server.use('/register', register)
+    server.use('/login', auth)
     server.use(verifyJWT)
     server.use('/admin', admin)
-    server.use('/login', auth)
+    
     server.use('/get', getters)
     server.use('/ticketCreation', tickets)
 
