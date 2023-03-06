@@ -41,7 +41,6 @@ const LoginPage = () => {
         );
         console.log(JSON.stringify(response))
         const at = response?.data;
-        console.log(at)
         setAuth({email, pwd, at})
         setEmail('');
         setPWD('');

@@ -7,12 +7,11 @@ require('dotenv').config()
 
 //Sign in 
 router.post("/", async function(req,res) {
+    console.log(req.body.email)
     const email = req.body.email
     const pwd = req.body.password
     console.log(`pass is ${pwd}`)
     const getAuth = `SELECT * FROM users WHERE email='${email}';`
-
-    
 
     //Return hashed password from db
     const response = await pool.query(getAuth).then((result) => {
@@ -47,7 +46,7 @@ router.post("/", async function(req,res) {
         res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000})
         res.json({
             "user_id": userID,
-            "username": email
+            "access_token": accessToken
         })  
 
     } else {

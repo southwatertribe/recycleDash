@@ -10,6 +10,7 @@ const admin = require('./routes/admin');
 const auth = require('./routes/auth');
 const tickets = require('./routes/tickets');
 const getters = require('./routes/getters');
+const refresh = require('./routes/refresh');
 const credentials = require('./middleware/credentials');
 const corsOptions = require('./config/cors_options');
 const { verifyJWT } = require('./middleware/verifyJWT');
@@ -43,6 +44,7 @@ const startServer = async () => {
     //Routes
     server.use('/register', register)
     server.use('/login', auth)
+    server.use('/refresh', refresh)
     server.use(verifyJWT)
     server.use('/admin', admin)
     server.use('/get', getters)
