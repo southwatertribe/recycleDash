@@ -45,7 +45,6 @@ const startServer = async () => {
     server.use('/login', auth)
     server.use(verifyJWT)
     server.use('/admin', admin)
-    
     server.use('/get', getters)
     server.use('/ticketCreation', tickets)
 

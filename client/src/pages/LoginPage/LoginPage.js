@@ -1,12 +1,21 @@
-import { useRef, useState, useEffect, useContext } from 'react';
+import { useRef, useState, useEffect} from 'react';
 import axios from '../../utils/axios';
-import AuthContext from '../../contextTemp';
+import useAuth from '../../hooks/useAuth';
 
+//Utils
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 //Backend
 const LOGIN_URL = "/login"
 
+
+
+
 const LoginPage = () => {
-  const {setAuth} = useContext(AuthContext)
+  const {setAuth} = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/"
   const emailRef = useRef();
   //Make err ref
 
@@ -31,11 +40,13 @@ const LoginPage = () => {
             }
         );
         console.log(JSON.stringify(response))
-        const at = response?.data?.accessToken;
+        const at = response?.data;
         console.log(at)
         setAuth({email, pwd, at})
         setEmail('');
-        setPWD('');        
+        setPWD('');
+        //Nav
+        navigate(from, { replace: true});        
     } catch (error) {
         
     }

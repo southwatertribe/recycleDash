@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const verifyJWT = require('../middleware/verifyJWT')
 
-
+//Create admin, employee creation will be given to admin
 router.post("/admin", async function(req, res) {
     // Admin Vars
     const userID = crypto.randomUUID()
@@ -52,8 +52,6 @@ router.post("/admin", async function(req, res) {
     // // //Completed
     res.json("Success")
 })
-
-
 
 
 module.exports = router

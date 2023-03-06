@@ -45,7 +45,10 @@ router.post("/", async function(req,res) {
         //Store refresh token into users database 
         pool.query(RFToken)
         res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000})
-        res.json("Logged in, send token etc")  
+        res.json({
+            "user_id": userID,
+            "username": email
+        })  
 
     } else {
         res.json("Incorrect username or password")
