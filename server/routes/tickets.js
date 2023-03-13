@@ -24,7 +24,7 @@ router.post("/", async function(req,res) {
     
         //Create mother ticket 
     //TODO: Look into generating the total 
-    const sqlst = `INSERT INTO tickets(ticket_id, customer, location, maker) VALUES('${tickID}', '${customer}', '${location}', '${maker}');`
+    sqlst = `INSERT INTO tickets(ticket_id, customer, location, maker) VALUES('${tickID}', '${customer}', '${location}', '${maker}');`
     pool.query(sqlst)
     //Loop and create tickdets
     //TODO: Will need to adjust given how you want the form
@@ -39,8 +39,8 @@ router.post("/", async function(req,res) {
         await pool.query(sqlst)
     }
 
-    
-    
+    sqlst = `UPDATE  tickets SET total='${total}' WHERE ticket_id='${tickID}'`
+    await pool.query(sqlst)
     //Commit transaction
     await pool.commit()
     

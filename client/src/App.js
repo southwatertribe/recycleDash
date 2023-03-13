@@ -1,7 +1,7 @@
 import './App.css';
 //Pages
 import LoginPage from './pages/LoginPage/LoginPage';
-import { AdminDash } from './pages/AdminDash.js/AdminDash';
+import { Dash } from './pages/Dash.js/Dash';
 import { Layout } from './pages/Layout';
 import { Routes, Route } from "react-router-dom"; 
 import RequireAuth from './utils/RequireAuth';
@@ -12,11 +12,11 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout/>}>
         {/* Pubic routes */}
-        <Route path="login" element={<LoginPage/>}/>
+        <Route path="/" element={<LoginPage/>}/>
 
         {/* Protected */}
         <Route element={<RequireAuth/>}>
-          <Route path="admin" element={<AdminDash/>}/>
+          <Route path="dash" element={<Dash/>}/>
         </Route>
       </Route>
     </Routes>

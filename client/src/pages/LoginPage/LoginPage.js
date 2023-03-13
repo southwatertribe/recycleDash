@@ -15,7 +15,7 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/"
+  const from = location.state?.from?.pathname || "/dash"
   const emailRef = useRef();
   //Make err ref
 
@@ -39,15 +39,17 @@ const LoginPage = () => {
                 withCredentials: true,
             }
         );
-        console.log(JSON.stringify(response))
-        const at = response?.data;
-        setAuth({email, pwd, at})
+
+        const at = response?.data.access_token
+        const role = response?.data.role
+        console.log(at)
+        setAuth({email, pwd, role, at})
         setEmail('');
         setPWD('');
         //Nav
         navigate(from, { replace: true});        
     } catch (error) {
-        
+      console.log(error)        
     }
     
   }

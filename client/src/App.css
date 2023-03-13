@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  
+}
+
+body {
+  background-image: radial-gradient(circle, rgb(0, 1, 6) 30%, rgb(41, 56, 82) 500%);
 }
 
 .App-logo {

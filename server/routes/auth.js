@@ -7,15 +7,14 @@ require('dotenv').config()
 
 //Sign in 
 router.post("/", async function(req,res) {
-    console.log(req.body.email)
     const email = req.body.email
     const pwd = req.body.password
-    console.log(`pass is ${pwd}`)
     const getAuth = `SELECT * FROM users WHERE email='${email}';`
-
+    console.log(email)
     //Return hashed password from db
     const response = await pool.query(getAuth).then((result) => {
-        console.log(result[0][0].password)
+        console.log("this")
+        console.log(result[0][0])
         return result[0][0]
     }).catch((err) => {
         console.log(err)
@@ -23,7 +22,6 @@ router.post("/", async function(req,res) {
 
     //Compare passwords to login 
     const match = await bcrypt.compare(pwd, response.password)
-
     //More logic later
     if (match) {
         //Create token and store the userID in it
@@ -31,7 +29,7 @@ router.post("/", async function(req,res) {
         const accessToken = jwt.sign(
             {"user_id": userID},
             process.env.AT_SECRET,
-            {expiresIn: '30s'}
+            {expiresIn: '40s'}
         );
         const refreshToken = jwt.sign(
             {"user_id": userID},
@@ -43,9 +41,13 @@ router.post("/", async function(req,res) {
         
         //Store refresh token into users database 
         pool.query(RFToken)
-        res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000})
+        const rolest = `SELECT * FROM user_roles WHERE user_id='${userID}'`;
+        const [role] = await pool.query(rolest)
+
+        res.cookie('jwt', refreshToken, {httpOnly: true, maxAge: 24 * 60 * 60 * 1000, sameSite: "none", secure: true})
         res.json({
             "user_id": userID,
+            "role": role[0].role_id, //This will determine which dash to render
             "access_token": accessToken
         })  
 
