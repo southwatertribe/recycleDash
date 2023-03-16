@@ -1,0 +1,67 @@
+.welcome {
+    color: aliceblue;
+}
+
+.wrapper {
+    margin: 50px;
+    
+    
+}
+
+/* .react-tabs {
+  -webkit-tap-highlight-color: transparent;
+} */
+ 
+.react-tabs__tab-list {
+  width: 60%;
+  margin: 0 auto 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #39A2DB;
+  border-radius: 2rem;
+  padding-left: 0px;
+}
+ 
+.react-tabs__tab {
+  width: 50%;
+  padding: 1rem;
+  list-style: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.7s;
+  color: white;
+}
+ 
+.react-tabs__tab--selected {
+  background: #39A2DB;
+}
+ 
+.react-tabs__tab--disabled {
+  color: GrayText;
+  cursor: default;
+}
+ 
+.react-tabs__tab:hover {
+  background: rgba(50, 224, 196, 0.15);
+}
+ 
+.react-tabs__tab:first-child {
+  border-bottom-left-radius: 2rem;
+  border-top-left-radius: 2rem;
+}
+ 
+.react-tabs__tab:last-child {
+  border-bottom-right-radius: 2rem;
+  border-top-right-radius: 2rem;
+}
+ 
+.react-tabs__tab-panel {
+  display: none;
+}
+ 
+.react-tabs__tab-panel--selected {
+  display: block;
+  font-size: 2rem;
+  text-align: center;
+}

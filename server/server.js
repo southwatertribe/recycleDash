@@ -9,7 +9,7 @@ const register = require('./routes/accounts')
 const admin = require('./routes/admin');
 const auth = require('./routes/auth');
 const tickets = require('./routes/tickets');
-const getters = require('./routes/getters');
+const locationService = require('./routes/location');
 const refresh = require('./routes/refresh');
 const credentials = require('./middleware/credentials');
 const corsOptions = require('./config/cors_options');
@@ -33,9 +33,10 @@ const startServer = async () => {
     server.use(
         cors({
           origin: 'http://localhost:3000',
-          preflightContinue: true,
-          methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+          // preflightContinue: true,
+          // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
           credentials: true,
+        //   allowedHeaders:  ['Content-Type', 'Authorization']
         })
     );
     server.use(express.json())
@@ -45,10 +46,10 @@ const startServer = async () => {
     server.use('/register', register)
     server.use('/login', auth)
     server.use('/refresh', refresh)
-    //server.use(verifyJWT)
+    server.use(verifyJWT)
     server.use('/admin', admin)
-    server.use('/get', getters)
-    server.use('/ticketCreation', tickets)
+    server.use('/location-service', locationService)
+    server.use('/tickets', tickets)
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);

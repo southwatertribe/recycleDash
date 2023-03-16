@@ -42,8 +42,9 @@ const LoginPage = () => {
 
         const at = response?.data.access_token
         const role = response?.data.role
-        console.log(at)
-        setAuth({email, pwd, role, at})
+        const business_id = response?.data.business_id
+      
+        setAuth({email, role, at, business_id})
         setEmail('');
         setPWD('');
         //Nav

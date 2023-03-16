@@ -14,7 +14,7 @@ router.get("/tester", async function(req, res) {
 
 
 //Admin creates new location
-router.post('/:adminID/addLocation', async function (req,res, next) {
+router.post('/addLocation', async function (req,res, next) {
 
     //Get vars
     const bizID = req.query.bizID
@@ -41,7 +41,9 @@ router.post('/:adminID/addLocation', async function (req,res, next) {
     for (let i = 0; i < getMats.length; i++) {
         const locationmatsID = crypto.randomUUID()
         const currMatID = getMats[i].mat_id
-        sqlst = `INSERT INTO locationmats(location_mats_id, location, material) VALUES('${locationmatsID}','${locationID}','${currMatID}');`
+        const currMatName = getMats[i].mat_name
+        
+        sqlst = `INSERT INTO locationmats(location_mats_id, location, material_id, material_name) VALUES('${locationmatsID}','${locationID}','${currMatID}', '${currMatName}');`
         pool.query(sqlst)
     }
 
@@ -52,13 +54,18 @@ router.post('/:adminID/addLocation', async function (req,res, next) {
 })
 
 //Admin create employee
-router.post('/:adminID/createEmployee', async function(req, res) {
+router.post('/createEmployee', async function(req, res) {
 
 })
 
 //Admin edit location material price
-router.put('/:adminID/update/:locationMatID', async function(req, res){
-    console.log("TODO, locationmat update")
+router.patch('/update/:locationMatID', async function(req, res){
+    const location_mats_id = req.query.location_mats_id;
+    const new_price = req.query.new_price
+    
+    const sqlst = `UPDATE locationmats SET price = ${new_price} WHERE location_mats_id='${location_mats_id}'`;
+    const [priceChange] = await pool.query(sqlst)
+    res.json(priceChange)
 })
 
 

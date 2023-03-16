@@ -6,6 +6,7 @@ import useAuth from './useAuth';
 const useRefresh = () => {
     const  { setAuth } = useAuth();//ability to reauth upon refresh
     const refresh = async () => { //Request our refresh service
+        console.log("Triggered userefresh")
         const response = await axios.get('/refresh', {
             withCredentials: true
         });

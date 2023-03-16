@@ -1,0 +1,7 @@
+.list-style {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+    gap: 1.2em;
+    
+}

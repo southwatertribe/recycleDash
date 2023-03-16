@@ -5,7 +5,7 @@ const pool = require('../db/dbconnection')
 
 
 //Create a ticket
-router.post("/", async function(req,res) {
+router.post("/ticket-creation", async function(req,res) {
 
     //TODO CHECK AUTH WITH HEADERS
     //Logic
@@ -47,6 +47,15 @@ router.post("/", async function(req,res) {
     res.json(`Success ticket total came to: ${total}`) 
     
 })
+
+// //get multiple tickets based on location
+// router.get("/getTickets", async function(req, res){
+//     const location_id = req.body.location_id
+    
+//     const sqlst = `SELECT * FROM tickets where location_id='${location_id}' and  `
+// })
+
+//get a ticket
 
 
 //Delete a ticket

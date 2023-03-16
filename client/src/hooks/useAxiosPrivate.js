@@ -12,13 +12,16 @@ const useAxiosPrivate = () => {
     useEffect(()=>{
         //Attach accesstoken before sending the request 
         const requestIntercept = axiosPrivate.interceptors.request.use(
-            config => {
+            async config => {
                 console.log("Request Intercept")
-                console.log(config)
-                if (!config.headers['authorization']) {
-                    
-                    config.headers['authorization'] = `Bearer ${auth?.at}`;
-                    console.log(config.headers['authorization'])
+                console.log(config.headers.Authorization)
+                if (!config.headers['Authorization']) {
+                    console.log("There was no auth header")
+                    const newAccessToken = await refresh();
+                    config.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                    console.log("After adding")
+                    console.log(config.headers.Authorization)
+
                 }
                 return config;
             }, (err) => Promise.reject(err)
@@ -33,9 +36,10 @@ const useAxiosPrivate = () => {
 
                 console.log(prevRequest.headers)
                 if (err?.response?.status === 403 && !prevRequest?.sent) {
+                    console.log("Made it here??????")
                     prevRequest.sent = true;
                     const newAccessToken = await refresh();
-                    prevRequest.headers['authorization'] = `Bearer ${newAccessToken}`;
+                    prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                     return axiosPrivate(prevRequest);
                 }
                 return Promise.reject(err);
@@ -44,7 +48,6 @@ const useAxiosPrivate = () => {
         return ()=> {
             axiosPrivate.interceptors.request.eject(requestIntercept);
             axiosPrivate.interceptors.response.eject(responseIntercept);
-            
         }
     }, [auth, refresh])
     return axiosPrivate;

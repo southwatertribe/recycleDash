@@ -1,5 +1,5 @@
 import React from 'react';
-import { AdminDash } from '../AdminDash.js/AdminDash/AdminDash';
+import { AdminDash } from '../AdminDash/AdminDash.js';
 import LoginPage from '../LoginPage/LoginPage';
 import useAuth from '../../hooks/useAuth';
 
