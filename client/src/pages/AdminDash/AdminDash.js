@@ -12,7 +12,6 @@ import "../../utils/DashContent.css"
 import LocationList from '../../components/LocationList/LocationList';
 import TicketTab from './TicketTab/TicketTab';
 
-
 export const AdminDash = () => {
     
   const {auth} = useAuth();   
@@ -22,7 +21,7 @@ export const AdminDash = () => {
       <div className='welcome'>
         <h1>Welcome {auth.email}</h1>
       </div>
-    
+       
         <Tabs>
           <TabList>
             <Tab>Locations</Tab>

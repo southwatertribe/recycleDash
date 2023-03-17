@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import useRefresh from "./useRefresh";
 import useAuth from "./useAuth";
 
-//This is to retry incase of expired jwts
+//This is another axios setting that uses refresh token on request
 
 const useAxiosPrivate = () => {
     const refresh = useRefresh();
