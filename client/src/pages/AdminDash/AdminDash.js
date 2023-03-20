@@ -11,6 +11,7 @@ import "./AdminDash.css"
 import "../../utils/DashContent.css"
 import LocationList from '../../components/LocationList/LocationList';
 import TicketTab from './TicketTab/TicketTab';
+import { AddLocationModal } from '../../components/cardsnwidgets/Modal/AddLocationModal';
 
 
 export const AdminDash = () => {
@@ -20,9 +21,8 @@ export const AdminDash = () => {
   return (
     <div className='wrapper'>
       <div className='welcome'>
-        <h1>Welcome {auth.email}</h1>
+        <h1>Welcome {auth.business_id}</h1>
       </div>
-    
         <Tabs>
           <TabList>
             <Tab>Locations</Tab>
@@ -32,6 +32,7 @@ export const AdminDash = () => {
               
           <TabPanel>
             <div className='dash-content'>
+              <AddLocationModal/>
               <LocationList/>
             </div>
           </TabPanel>

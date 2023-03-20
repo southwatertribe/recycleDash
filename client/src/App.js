@@ -18,7 +18,6 @@ function App() {
         {/* Protected */}
         <Route element={<RequireAuth/>}>
           <Route path="dash" element={<Dash/>}/>
-
           <Route path="location-dash/:location_id" element={<LocationDash/>}></Route>
         </Route>
       </Route>

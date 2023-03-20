@@ -9,7 +9,7 @@ export const Dash = () => {
     const {auth} = useAuth();
   return (
     auth?.role ? 
-        auth.role === 1 ? <AdminDash/> : <div>Employee</div> :
+        auth.role === 'admin' ? <AdminDash/> : <div>Employee</div> :
         <LoginPage/>
   )
 }
