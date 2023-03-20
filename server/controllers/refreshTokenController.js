@@ -10,7 +10,7 @@ const handlRefreshToken = async (req,res) => {
     console.log(cookies.jwt) //Debug log
     const refresh_token = cookies.jwt //Store refresh token
     
-    const sqlst = `SELECT * FROM users WHERE refresh_token="${refresh_token}";` //Get user based on reresh token 
+    const sqlst = `SELECT * FROM admins WHERE refresh_token="${refresh_token}";` //Get user based on reresh token 
     const [getAuth] = await pool.query(sqlst)
     console.log("Line 14")
     console.log(getAuth)
@@ -24,7 +24,7 @@ const handlRefreshToken = async (req,res) => {
         refresh_token,
         process.env.RT_SECRET,
         (err, decoded) => {
-            if (err || getAuth[0].user_id !== decoded.user_id) {
+            if (err || getAuth[0].admin_id !== decoded.admin_id) {
                 console.log(getAuth[0].user_id)
                 console.log("Decoded")
                 console.log(decoded.user_id)
@@ -33,7 +33,10 @@ const handlRefreshToken = async (req,res) => {
             }
 
             const accessToken = jwt.sign(
-                {"user_id": getAuth.user_id},
+                {
+                    "user_id": getAuth.user_id,
+                    "role": getAuth.role
+                },
                 process.env.AT_SECRET,
                 {expiresIn: '30s'}
             );

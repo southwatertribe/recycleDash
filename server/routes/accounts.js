@@ -9,11 +9,11 @@ const verifyJWT = require('../middleware/verifyJWT')
 //Create admin, employee creation will be given to admin
 router.post("/admin", async function(req, res) {
     // Admin Vars
-    const userID = crypto.randomUUID()
-    const userName = req.query.userName
+    const adminID = crypto.randomUUID()
+    const username = req.query.username
     //salt pass
     const salt = await bcrypt.genSalt(2)
-    const passWord = await bcrypt.hash(req.query.passWord, salt);
+    const password = await bcrypt.hash(req.query.password, salt);
     const email = req.query.email
     const f_name = req.query.f_name
     const l_name = req.query.l_name
@@ -24,9 +24,9 @@ router.post("/admin", async function(req, res) {
 
     
     //SQL Statements
-    const sqlBizSt = `INSERT INTO bussinesses VALUES('${bizID}','${bizName}')`
-    const sqlUserSt = `INSERT INTO users (user_id, username, password, business_id, email, f_name, l_name) VALUES('${userID}','${userName}','${passWord}','${bizID}','${email}','${f_name}','${l_name}')`
-    const sqlUser_RoleST = `INSERT INTO user_roles(role_id, user_id) VALUES('1','${userID}')`
+    const sqlBizSt = `INSERT INTO businesses VALUES('${bizID}','${bizName}')`
+    const sqlUserSt = `INSERT INTO admins(admin_id, email, password, business, f_name, l_name, username) VALUES('${adminID}','${email}','${password}','${bizID}', '${f_name}','${l_name}', '${username}')`
+    //const sqlUser_RoleST = `INSERT INTO user_roles(role_id, user_id) VALUES('1','${userID}')`
     
     
     //Begin trasnsaction to add admin
@@ -39,18 +39,19 @@ router.post("/admin", async function(req, res) {
 
     
     //Create Admin Entry 
-    console.log(`Inserting new admin: ${userName}`)
+    console.log(`Inserting new admin: ${username}`)
     const [userEntry] = await pool.query(sqlUserSt)
     
-    //Create admin user_role entry
-    console.log("Creating corresponding user_role entry")
-    const [user_RoleEntry] = await pool.query(sqlUser_RoleST)
+    
 
     //Commit transaction
     await pool.commit();
-    
+    const returnObj = {
+        'status': 200,
+        'admin_id': adminID
+    };
     // // //Completed
-    res.json("Success")
+    res.json(returnObj)
 })
 
 

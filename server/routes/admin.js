@@ -17,19 +17,15 @@ router.get("/tester", async function(req, res) {
 router.post('/addLocation', async function (req,res, next) {
 
     //Get vars
-    const bizID = req.query.bizID
-
-
+    const business_id = req.query.business_id
+    const location_rc_number = req.query.location_rc_number
+    const location_name = req.query.location_name
     //Begin trasnsaction to add admin
     await pool.beginTransaction();
-
-    
     
     //Insert location
-    //Location info
-    const locationID = crypto.randomUUID()
-    const locationName = req.query.locationName
-    sqlst = `INSERT INTO locations(location_id, location_name, business_id) VALUES('${locationID}','${locationName}','${bizID}')`
+    
+    sqlst = `INSERT INTO locations(location_rc_number, location_name, business_id) VALUES('${location_rc_number}','${location_name}','${business_id}')`
     pool.query(sqlst)
 
     //Insert default mats (will be in 4 loop)
@@ -42,20 +38,29 @@ router.post('/addLocation', async function (req,res, next) {
         const locationmatsID = crypto.randomUUID()
         const currMatID = getMats[i].mat_id
         const currMatName = getMats[i].mat_name
-        
-        sqlst = `INSERT INTO locationmats(location_mats_id, location, material_id, material_name) VALUES('${locationmatsID}','${locationID}','${currMatID}', '${currMatName}');`
+        //DEFAULT PRICE 1.25
+        sqlst = `INSERT INTO locationmats(location_mats_id, location, material_id, material_name) VALUES('${locationmatsID}','${location_rc_number}','${currMatID}', '${currMatName}');`
         pool.query(sqlst)
     }
 
     pool.commit()
-    res.json(`Added location ${locationName} with ID of ${locationID}`)
+    res.json(`Added location ${location_name} with RC of ${location_rc_number}`)
 
     
 })
 
 //Admin create employee
 router.post('/createEmployee', async function(req, res) {
-
+    const employee_id = crypto.randomUUID()
+    const user_name = req.query.user_name
+    const password = req.query.password
+    const curr_location = req.query.curr_location //Can be null
+    const business = req.query.business
+    //Role is 'emp
+    await pool.beginTransaction()
+    const sqlst = `INSERT INTO employees`
+    pool.commit()
+    res.json("Employee added, TODO:RETURN OBJ")
 })
 
 //Admin edit location material price

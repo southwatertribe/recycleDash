@@ -6,10 +6,10 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 //Sign in 
-router.post("/", async function(req,res) {
+router.post("/admin-auth", async function(req,res) {
     const email = req.body.email
     const pwd = req.body.password
-    const getAuth = `SELECT * FROM users WHERE email='${email}';`
+    const getAuth = `SELECT * FROM admins WHERE email='${email}';`
     console.log(email)
     //Return hashed password from db
     const response = await pool.query(getAuth).then((result) => {
@@ -25,32 +25,32 @@ router.post("/", async function(req,res) {
     //More logic later
     if (match) {
         //Create token and store the userID in it
-        const userID = response.user_id
-        const business_id = response.business_id
+        const admin_id = response.admin_id
+        const business_id = response.business
+        const role = response.role
         const accessToken = jwt.sign(
-            {"user_id": userID, "business_id": response.business_id},
+            {"admin_id": admin_id, "business_id": response.business_id},
             process.env.AT_SECRET,
-            {expiresIn: '10s'}
+            {expiresIn: '300s'}
         );
         const refreshToken = jwt.sign(
-            {"user_id": userID, "business_id": response.business_id},
+            {"admin_id": admin_id, "business_id": response.business_id},
             process.env.RT_SECRET,
             {expiresIn: '1d'}
         );
         
         console.log("Refresh token from auth is: ")
         console.log(refreshToken)
-        const RFToken = `UPDATE users SET refresh_token='${refreshToken}' WHERE user_id='${response.user_id}'`
+        const RFToken = `UPDATE admins SET refresh_token='${refreshToken}' WHERE admin_id='${response.admin_id}'`
         
-        //Store refresh token into users database 
+        //Store refresh token into admins database 
         pool.query(RFToken)
-        const rolest = `SELECT * FROM user_roles WHERE user_id='${userID}'`;
-        const [role] = await pool.query(rolest)
+       
 
         res.cookie('jwt', refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000})
         res.json({
-            "user_id": userID,
-            "role": role[0].role_id, //This will determine which dash to render
+            "admin_id": admin_id,
+            "role": role, //This will determine which dash to render
             "business_id": business_id,
             "access_token": accessToken
         })  
@@ -61,5 +61,7 @@ router.post("/", async function(req,res) {
 
 
 })
+router.post("/emp-auth", async function(req,res) {
 
+})
 module.exports = router

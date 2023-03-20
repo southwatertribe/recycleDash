@@ -6,11 +6,11 @@ const bcrypt = require('bcrypt')
 
 //Get all locations based on biz id
 router.get("/locations", async function(req, res) {
-    console.log("Get all locations by biz id hit")
+    console.log("Get all locations by biz id hit!!!!")
 
-    const business = req.query.biz_id
+    const business_id = req.query.business_id
 
-    const sqlst = `SELECT * FROM locations WHERE business_id='${business}';`
+    const sqlst = `SELECT * FROM locations WHERE business_id='${business_id}';`
 
     const [locations] = await pool.query(sqlst)
     

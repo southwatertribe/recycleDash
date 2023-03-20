@@ -46,7 +46,7 @@ const startServer = async () => {
     server.use('/register', register)
     server.use('/login', auth)
     server.use('/refresh', refresh)
-    server.use(verifyJWT)
+    //server.use(verifyJWT)
     server.use('/admin', admin)
     server.use('/location-service', locationService)
     server.use('/tickets', tickets)
