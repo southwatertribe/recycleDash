@@ -21,7 +21,7 @@ export const AdminDash = () => {
   return (
     <div className='wrapper'>
       <div className='welcome'>
-        <h1>Welcome {auth.business_id}</h1>
+        <h1>Welcome {auth.email}</h1>
       </div>
         <Tabs>
           <TabList>

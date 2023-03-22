@@ -24,14 +24,14 @@ const LocationList = () => {
     //Request function
     //If state empty get locations <-> and if refresh trigger clocked call again
     const fetchLocations = async () => { //Payload is business_id
-      if (rlocations.length!=0) {
+      
         try {
           const response = await axiosPrivate.get(
             "/location-service/locations",          
             {
               headers: {'Content-Type': 'application/json'},
               params: {
-                biz_id: auth.business_id
+                business_id: auth.business_id
               }
             }
           )
@@ -45,7 +45,7 @@ const LocationList = () => {
           console.log("Admin Dash Error: ")
           console.log(error)
         }
-      }
+      
       
     }
   

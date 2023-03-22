@@ -6,7 +6,7 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 //Auth
 import useAuth from '../../../hooks/useAuth';
 
-export const AddLocationForm = () => {
+export const AddLocationForm = (props) => {
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     const addLocation = async (payload) => {
@@ -31,6 +31,7 @@ export const AddLocationForm = () => {
         //Add location request 
         //Trigger a fetchh for locations
         addLocation(data)
+        props.toggleModal()
         console.log(data);
       }; // your form submit function which will invoke after successful validation
     

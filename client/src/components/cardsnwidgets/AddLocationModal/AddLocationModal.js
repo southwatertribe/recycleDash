@@ -21,7 +21,7 @@ export const AddLocationModal = () => {
             <div  className='overlay'>
                 <div className='modal-content'>
                     <h2>Location Details</h2>
-                    <AddLocationForm/>
+                    <AddLocationForm toggleModal={toggleModal}/>
                     <button className='close-modal' onClick={toggleModal}>
                         CLOSE
                     </button>
