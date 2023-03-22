@@ -4,6 +4,7 @@ const pool = require('../db/dbconnection')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const verifyJWT = require('../middleware/verifyJWT')
+const { stat } = require("fs")
 
 //Testing function during dev
 router.get("/tester", async function(req, res) {
@@ -15,18 +16,33 @@ router.get("/tester", async function(req, res) {
 
 //Admin creates new location
 router.post('/addLocation', async function (req,res, next) {
+    console.log("Add location hit")
+    const details = req.body
+    console.log(`Info is: ${details}`)
+    //Address info
+    const address_id = crypto.randomUUID()
+    const address_line_1 = details.address_line_1
+    const address_line_2 = details.address_line_2
+    const city = details.city
+    const state = details.state
+    const zipcode = details.zipcode
+    
+    
+    //Location Info
+    const business_id = details.business_id
+    console.log(`business id = ${details.business_id}`)
+    const location_rc_number = details.location_rc_number
+    const location_name = details.location_name
 
-    //Get vars
-    const business_id = req.query.business_id
-    const location_rc_number = req.query.location_rc_number
-    const location_name = req.query.location_name
     //Begin trasnsaction to add admin
-    await pool.beginTransaction();
-    
+    await pool.beginTransaction()
     //Insert location
-    
     sqlst = `INSERT INTO locations(location_rc_number, location_name, business_id) VALUES('${location_rc_number}','${location_name}','${business_id}')`
     pool.query(sqlst)
+    //Insert into location_address
+    sqlst = `INSERT INTO location_addresses(address_id, address_line_1, address_line_2, city, state, zipcode, pert_location) VALUES('${address_id}', '${address_line_1}', '${address_line_2}', '${city}', '${state}', '${zipcode}', '${location_rc_number}')` 
+    pool.query(sqlst)
+    
 
     //Insert default mats (will be in 4 loop)
     //Location Mats Info 
@@ -44,8 +60,11 @@ router.post('/addLocation', async function (req,res, next) {
     }
 
     pool.commit()
-    res.json(`Added location ${location_name} with RC of ${location_rc_number}`)
-
+    const returnOBJ = {
+        "status": 200,
+        "added": location_name
+    }
+    res.json(returnOBJ)
     
 })
 
@@ -63,8 +82,14 @@ router.post('/createEmployee', async function(req, res) {
     res.json("Employee added, TODO:RETURN OBJ")
 })
 
+//Update employee location
+router.patch('/update/emp-location', async function(req,res) {
+
+})
+
+
 //Admin edit location material price
-router.patch('/update/:locationMatID', async function(req, res){
+router.patch('/update/locationMatID', async function(req, res){
     const location_mats_id = req.query.location_mats_id;
     const new_price = req.query.new_price
     

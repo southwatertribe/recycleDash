@@ -11,7 +11,7 @@ import "./AdminDash.css"
 import "../../utils/DashContent.css"
 import LocationList from '../../components/LocationList/LocationList';
 import TicketTab from './TicketTab/TicketTab';
-import { AddLocationModal } from '../../components/cardsnwidgets/Modal/AddLocationModal';
+import { AddLocationModal } from '../../components/cardsnwidgets/AddLocationModal/AddLocationModal';
 
 
 export const AdminDash = () => {

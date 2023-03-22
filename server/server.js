@@ -3,6 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const pool = require('./db/dbconnection');
+var bodyParser = require('body-parser')
 
 //Routers
 const register = require('./routes/accounts')
@@ -41,6 +42,7 @@ const startServer = async () => {
     );
     server.use(express.json())
     server.use(cookieParser()) 
+    
 
     //Routes
     server.use('/register', register)

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { AddLocationForm } from './AddLocationForm';
 
 //Style
 import "./AddLocationModal.css"
@@ -17,9 +18,10 @@ export const AddLocationModal = () => {
         </button>
 
         {modal && <div className='modal'>
-            <div onClick={toggleModal} className='overlay'>
+            <div  className='overlay'>
                 <div className='modal-content'>
                     <h2>Location Details</h2>
+                    <AddLocationForm/>
                     <button className='close-modal' onClick={toggleModal}>
                         CLOSE
                     </button>
