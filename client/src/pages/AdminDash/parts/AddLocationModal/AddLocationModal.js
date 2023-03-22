@@ -4,6 +4,7 @@ import { AddLocationForm } from './AddLocationForm';
 //Style
 import "./AddLocationModal.css"
 
+import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
 export const AddLocationModal = () => {
     const [modal, setModal] = useState(false);
 

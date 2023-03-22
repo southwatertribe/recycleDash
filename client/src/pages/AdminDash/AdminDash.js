@@ -4,15 +4,14 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 //api
 import useAuth from '../../hooks/useAuth';
-//import axios from '../../../utils/axios';
 
 //css
-import "./AdminDash.css"
-import "../../utils/DashContent.css"
-import LocationList from '../../components/LocationList/LocationList';
-import TicketTab from './TicketTab/TicketTab';
-import { AddLocationModal } from '../../components/cardsnwidgets/AddLocationModal/AddLocationModal';
+import "./AdminDash.css";
+import "../../utils/DashContent.css";
 
+//Components
+import { AddLocationModal } from './parts/AddLocationModal/AddLocationModal';
+import LocationList from './parts/LocationList/LocationList';
 
 export const AdminDash = () => {
     
@@ -41,7 +40,7 @@ export const AdminDash = () => {
           </TabPanel>
           <TabPanel>
             <div className='dash-content'>
-              <TicketTab/>
+              <p>Tickets</p>
             </div>
           </TabPanel>
       </Tabs>

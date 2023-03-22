@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import LocationCard from '../cardsnwidgets/LocationCard/LocationCard';
+import LocationCard from '../LocationCard/LocationCard';
 //Style
 import "./LocationList.css"
 //State/Reduxs
 import { useDispatch, useSelector } from "react-redux";
-import { setrLocations } from "../../redux/locations";
+import { setrLocations } from "../../../../redux/locations";
 //Requests
 import {useQuery} from "react-query";
-import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import useAuth from '../../hooks/useAuth';
+import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+import useAuth from '../../../../hooks/useAuth';
 
 
 
@@ -48,9 +48,7 @@ const LocationList = () => {
             console.log(error)
           }
           
-        }
-      
-      
+        }      
     }
   
     
@@ -66,7 +64,7 @@ const LocationList = () => {
         {
             rlocations.currData.length>0?
                  <div className='list-style'>
-                   {rlocations.currData.map((location, i)=><LocationCard key={i} props={{lname: location.location_name, loc_id: location.location_id}}/>)}
+                   {rlocations.currData.map((location, i)=><LocationCard key={i} props={location}/>)}
                  </div>                
                 :<p>no locations</p>
         }

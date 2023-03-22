@@ -2,13 +2,52 @@ import React from 'react'
 //Forms
 import {useForm} from 'react-hook-form'
 //API
-import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
 //Auth
-import useAuth from '../../../hooks/useAuth';
+import useAuth from '../../../../hooks/useAuth';
+
+//State/Reduxs
+import { useDispatch, useSelector } from 'react-redux';
+import { setrLocations } from '../../../../redux/locations';
+
 
 export const AddLocationForm = (props) => {
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
+
+    //Redux
+    const rlocations = useSelector((state)=> state.rlocations)
+    const dispatch = useDispatch();
+    
+    //Request function
+    //If state empty get locations <-> and if refresh trigger clocked call again
+    const fetchLocations = async () => { //Payload is business_id
+        
+        
+          try {
+            const response = await axiosPrivate.get(
+              "/location-service/locations",          
+              {
+                headers: {'Content-Type': 'application/json'},
+                params: {
+                  business_id: auth.business_id
+                }
+              }
+            )
+            console.log(`Before get locations ${JSON.stringify(response.data)}`)
+            
+            
+            dispatch(setrLocations(response.data))
+                     
+            
+          } catch (error) {
+            console.log("Admin Dash Error: ")
+            console.log(error)
+          }
+          
+             
+    }
+
     const addLocation = async (payload) => {
         payload["business_id"] = auth.business_id
         const response = await axiosPrivate.post(
@@ -31,6 +70,7 @@ export const AddLocationForm = (props) => {
         //Add location request 
         //Trigger a fetchh for locations
         addLocation(data)
+        fetchLocations()
         props.toggleModal()
         console.log(data);
       }; // your form submit function which will invoke after successful validation

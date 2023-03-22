@@ -4,21 +4,21 @@ import { useNavigate, Link } from "react-router-dom"
 import "./LocationCard.css"
 export default function LocationCard({props}){
     const navigate = useNavigate();
-    const location_id = props.loc_id
+    const location_id = props.location_rc_number
 
 
     function handleClick() {
         
         navigate(`/location-dash/${location_id}`, {
             state: {
-                lname: props.lname
+                location_name: props.location_name
             }
         })
     }
     return (
         <div className="location-card" onClick={handleClick}> 
             <div className="card-content">
-                <h3>{props.lname}</h3>
+                <h3>{props.location_name}</h3>
             </div>
         </div>
     ) 

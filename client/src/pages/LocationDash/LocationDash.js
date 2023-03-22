@@ -40,7 +40,7 @@ const LocationDash = () => {
   return (
     <div>
       <h1 style={{color:"white"}}>
-        {location.state.lname}
+        {location.state.location_name}
       </h1>
       <div className='dash-content'>
         <h1>Location Materials</h1>
