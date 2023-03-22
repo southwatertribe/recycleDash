@@ -5,45 +5,49 @@ import "./LocationList.css"
 //State/Reduxs
 import { useDispatch, useSelector } from "react-redux";
 import { setrLocations } from "../../redux/locations";
-// import axios from '../../utils/axios';
-import axios from '../../utils/axios';
+//Requests
+import {useQuery} from "react-query";
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 
 
 
+
 const LocationList = () => {
 //Will use this in conjuction with redux
-    const [locations, getLocations] = useState();
+    
     const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     //Redux
-    const rlocations = useSelector((state)=> state.rlocations.currData)
+    const rlocations = useSelector((state)=> state.rlocations)
     const dispatch = useDispatch();
     
     //Request function
     //If state empty get locations <-> and if refresh trigger clocked call again
     const fetchLocations = async () => { //Payload is business_id
-      
-        try {
-          const response = await axiosPrivate.get(
-            "/location-service/locations",          
-            {
-              headers: {'Content-Type': 'application/json'},
-              params: {
-                business_id: auth.business_id
+        
+        if (rlocations.currData.length==undefined) {
+          try {
+            const response = await axiosPrivate.get(
+              "/location-service/locations",          
+              {
+                headers: {'Content-Type': 'application/json'},
+                params: {
+                  business_id: auth.business_id
+                }
               }
-            }
-          )
-          console.log(`Before get locations ${JSON.stringify(response.data)}`)
-          getLocations(response.data)
+            )
+            console.log(`Before get locations ${JSON.stringify(response.data)}`)
+            
+            
+            dispatch(setrLocations(response.data))
+                     
+            
+          } catch (error) {
+            console.log("Admin Dash Error: ")
+            console.log(error)
+          }
           
-          dispatch(setrLocations(response.data))
-                   
-          
-        } catch (error) {
-          console.log("Admin Dash Error: ")
-          console.log(error)
         }
       
       
@@ -56,13 +60,13 @@ const LocationList = () => {
       fetchLocations()
       
     }, [])
-    console.log(locations)
+    
   return (
     <>
         {
-            locations?
+            rlocations.currData.length>0?
                  <div className='list-style'>
-                   {locations.map((location, i)=><LocationCard key={i} props={{lname: location.location_name, loc_id: location.location_id}}/>)}
+                   {rlocations.currData.map((location, i)=><LocationCard key={i} props={{lname: location.location_name, loc_id: location.location_id}}/>)}
                  </div>                
                 :<p>no locations</p>
         }
