@@ -5,27 +5,27 @@ import useAuth from '../../hooks/useAuth';
 //Utils
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 //Backend
-const LOGIN_URL = "/login/admin-auth"
+const LOGIN_URL = "/login/emp-auth"
 
 
 
 
-const AdminLogin = () => {
+const EmpLogin = () => {
   const {setAuth} = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/dash"
-  const emailRef = useRef();
+  const user_nameRef = useRef();
   //Make err ref
 
-  const [email, setEmail]= useState('');
-  const [password, setPWD] = useState('');
+  const [user_name, setuser_name]= useState('');
+  const [pwd, setPWD] = useState('');
 
 
   //UseEffects
   useEffect(()=>{
-    emailRef.current.focus()
+    user_nameRef.current.focus()
   }, []);
   //Make err effect
 
@@ -34,7 +34,7 @@ const AdminLogin = () => {
    
     try {
         const response = await axios.post(LOGIN_URL, 
-            JSON.stringify({email: email, password: password}),
+            JSON.stringify({user_name: user_name, password: pwd}),
             {
                 headers: {'Content-Type': 'application/json'},
                 withCredentials: true,
@@ -44,10 +44,11 @@ const AdminLogin = () => {
         const at = response?.data.access_token
         const role = response?.data.role
         const business_id = response?.data.business_id
+        const f_name = response?.data.f_name
+        const l_name = response?.data.l_name
         const user_id = response?.data.user_id
-      
-        setAuth({email, role, at, business_id, user_id})
-        setEmail('');
+        setAuth({user_name, role, at, business_id, f_name, l_name, user_id})
+        setuser_name('');
         setPWD('');
         //Nav
         navigate(from, { replace: true});        
@@ -60,14 +61,14 @@ const AdminLogin = () => {
     <div>
         <form onSubmit={handleSubmit}>
             <h1>Sign In</h1>
-            <label htmlFor='email'>email</label>
+            <label htmlFor='user_name'>user_name</label>
             <input
                 type="text"
-                id="email"
-                ref={emailRef}
+                id="user_name"
+                ref={user_nameRef}
                 autoComplete="off"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
+                onChange={(e) => setuser_name(e.target.value)}
+                value={user_name}
                 required
             />
             <label htmlFor='pwd'>Password: </label>
@@ -76,7 +77,7 @@ const AdminLogin = () => {
                 id="pwd"
                 autoComplete="off"
                 onChange={(e) => setPWD(e.target.value)}
-                value={password}
+                value={pwd}
                 required
             />
             <button>Sign In</button>
@@ -86,4 +87,4 @@ const AdminLogin = () => {
   )
 }
 
-export default AdminLogin
+export default EmpLogin

@@ -12,7 +12,7 @@ import "../../utils/DashContent.css";
 //Components
 import { AddLocationModal } from './parts/AddLocationModal/AddLocationModal';
 import LocationList from './parts/LocationList/LocationList';
-
+import EmployeeList from './parts/EmployeeList.js/EmployeeList';
 export const AdminDash = () => {
     
   const {auth} = useAuth();   
@@ -20,7 +20,7 @@ export const AdminDash = () => {
   return (
     <div className='wrapper'>
       <div className='welcome'>
-        <h1>Welcome {auth.email}</h1>
+        <h1>Welcome {auth.user_id}</h1>
       </div>
         <Tabs>
           <TabList>
@@ -36,7 +36,9 @@ export const AdminDash = () => {
             </div>
           </TabPanel>
           <TabPanel>
-            <h1>Employees</h1>
+            <div className='dash-content'>
+              <EmployeeList/>
+            </div>
           </TabPanel>
           <TabPanel>
             <div className='dash-content'>

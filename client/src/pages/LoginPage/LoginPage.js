@@ -7,6 +7,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 //Components
 import AdminLogin from './AdminLogin';
+import EmpLogin from './EmpLogin';
 
 const LoginPage = () => {
   return (
@@ -22,7 +23,9 @@ const LoginPage = () => {
             </div>
           </TabPanel>
           <TabPanel>
-            <h1>Employee Login</h1>
+            <div className='dash-content'>
+              <EmpLogin/>
+            </div>
           </TabPanel>
           
       </Tabs>

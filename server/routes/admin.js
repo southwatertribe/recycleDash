@@ -70,26 +70,49 @@ router.post('/addLocation', async function (req,res, next) {
 
 //Admin create employee
 router.post('/createEmployee', async function(req, res) {
-    const employee_id = crypto.randomUUID()
+    const user_id = crypto.randomUUID()
     const user_name = req.query.user_name
-    const password = req.query.password
+    const salt = await bcrypt.genSalt(2)
+    const password = await bcrypt.hash(req.query.password, salt);
     const curr_location = req.query.curr_location //Can be null
     const business = req.query.business
+    const f_name = req.query.f_name
+    const l_name = req.query.l_name
     //Role is 'emp
     await pool.beginTransaction()
-    const sqlst = `INSERT INTO employees`
+    const sqlst = `INSERT INTO employees VALUES('${user_id}','${user_name}','${password}','${curr_location}','${business}','emp','','${f_name}', '${l_name}')`
+    pool.query(sqlst)
     pool.commit()
     res.json("Employee added, TODO:RETURN OBJ")
 })
 
+//Get all employees
+router.get('/getEmployees', async function(req,res){
+
+    //TODO: Only get the info you require from each employee you dont need everything 
+    const business_id = req.query.business_id
+
+    console.log(req.params.business_id)
+    const sqlst = `SELECT * FROM employees WHERE business='${business_id}'`
+    const [employees] = await pool.query(sqlst)
+  
+    const returnOBJ =  {
+        "status": 200,
+        "employee_list": employees
+    }
+    console.log(employees)
+    res.json(returnOBJ)
+})
+
+
 //Update employee location
-router.patch('/update/emp-location', async function(req,res) {
+router.patch('/update/emp-location/:user_id', async function(req,res) {
 
 })
 
 
 //Admin edit location material price
-router.patch('/update/locationMatID', async function(req, res){
+router.patch('/update/location_mats/:location_mat_id', async function(req, res){
     const location_mats_id = req.query.location_mats_id;
     const new_price = req.query.new_price
     

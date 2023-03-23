@@ -9,7 +9,7 @@ const verifyJWT = require('../middleware/verifyJWT')
 //Create admin, employee creation will be given to admin
 router.post("/admin", async function(req, res) {
     // Admin Vars
-    const adminID = crypto.randomUUID()
+    const user_id = crypto.randomUUID()
     const username = req.query.username
     //salt pass
     const salt = await bcrypt.genSalt(2)
@@ -25,7 +25,7 @@ router.post("/admin", async function(req, res) {
     
     //SQL Statements
     const sqlBizSt = `INSERT INTO businesses VALUES('${bizID}','${bizName}')`
-    const sqlUserSt = `INSERT INTO admins(admin_id, email, password, business, f_name, l_name, username) VALUES('${adminID}','${email}','${password}','${bizID}', '${f_name}','${l_name}', '${username}')`
+    const sqlUserSt = `INSERT INTO admins(user_id, email, password, business, f_name, l_name, username) VALUES('${user_id}','${email}','${password}','${bizID}', '${f_name}','${l_name}', '${username}')`
     //const sqlUser_RoleST = `INSERT INTO user_roles(role_id, user_id) VALUES('1','${userID}')`
     
     
@@ -48,7 +48,7 @@ router.post("/admin", async function(req, res) {
     await pool.commit();
     const returnObj = {
         'status': 200,
-        'admin_id': adminID
+        'user_id': user_id
     };
     // // //Completed
     res.json(returnObj)
