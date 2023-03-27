@@ -25,16 +25,16 @@ const handlRefreshToken = async (req,res) => {
         process.env.RT_SECRET,
         (err, decoded) => {
             if (err || getAuth[0].admin_id !== decoded.admin_id) {
-                console.log(getAuth[0].admin_id)
+                console.log(getAuth[0].user_id)
                 console.log("Decoded")
-                console.log(decoded.admin_id)
+                console.log(decoded.user_id)
                 console.log(err)
                 return res.sendStatus(403);
             }
 
             const accessToken = jwt.sign(
                 {
-                    "admin_id": getAuth.admin_id,
+                    "user_id": getAuth.user_id,
                     "role": getAuth.role
                 },
                 process.env.AT_SECRET,

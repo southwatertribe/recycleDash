@@ -53,7 +53,8 @@ router.post("/admin-auth", async function(req,res) {
             "user_id": user_id,
             "role": role, //This will determine which dash to render
             "business_id": business_id,
-            "access_token": accessToken
+            "access_token": accessToken,
+            "email": email
         })  
 
     } else {

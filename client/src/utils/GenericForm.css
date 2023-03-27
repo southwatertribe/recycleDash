@@ -1,0 +1,57 @@
+/* Add this to your CSS file */
+.form-container {
+    max-height: calc(100vh - 40%); /* Adjust the height based on the modal constraints */
+    overflow-y: auto; /* Enable scrolling if the content overflows */
+    padding-right: 15px; /* Add some padding to account for the scrollbar */
+    
+  }
+  
+.generic-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    overflow-y: auto;
+    max-height: 300px;
+  }
+  
+  .generic-form div {
+    margin-bottom: 15px;
+  }
+  
+  .generic-form label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .generic-form input,
+  .generic-form select,
+  .generic-form textarea {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .generic-form button[type="submit"] {
+    width: auto;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .generic-form button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  .generic-form p {
+    color: red;
+  }
+  

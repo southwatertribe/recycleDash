@@ -25,27 +25,21 @@ const EmployeeList = () => {
     
     //Request function
     //If state empty get locations <-> and if refresh trigger clocked call again
-    const fetchEmployees = async () => { //Payload is business_id
-        
-        
-          
-            await axiosPrivate.get(
-              `/admin/getEmployees`,          
-              {
-                headers: {'Content-Type': 'application/json'},
-                params: {
-                  business_id: auth.business_id
-                }
-              }
-            ).then(response=>{
-                console.log(response)
-                dispatch(setremployees(response.data.employee_list))
-            })
-            // console.log(`Before get employees ${JSON.stringify(response.data)}`)
-            
-            
-            // 
-                       
+    const fetchEmployees = async () => { 
+  
+        await axiosPrivate.get(
+          "/admin/getEmployees",          
+          {
+            headers: {'Content-Type': 'application/json'},
+            params: {
+              business_id: auth.business_id
+            }
+          }
+        ).then(response=>{
+            console.log(response)
+            dispatch(setremployees(response.data.employee_list))
+        })
+                                
     }
   
     

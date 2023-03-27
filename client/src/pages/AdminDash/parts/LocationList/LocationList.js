@@ -10,6 +10,8 @@ import {useQuery} from "react-query";
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
 import useAuth from '../../../../hooks/useAuth';
 
+//Api Functions 
+import { getAllLocations } from '../../../../utils/apiCalls';
 
 
 
@@ -37,6 +39,7 @@ const LocationList = () => {
                 }
               }
             )
+            
             console.log(`Before get locations ${JSON.stringify(response.data)}`)
             
             

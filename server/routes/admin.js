@@ -71,13 +71,13 @@ router.post('/addLocation', async function (req,res, next) {
 //Admin create employee
 router.post('/createEmployee', async function(req, res) {
     const user_id = crypto.randomUUID()
-    const user_name = req.query.user_name
+    const user_name = req.body.user_name
     const salt = await bcrypt.genSalt(2)
-    const password = await bcrypt.hash(req.query.password, salt);
-    const curr_location = req.query.curr_location //Can be null
-    const business = req.query.business
-    const f_name = req.query.f_name
-    const l_name = req.query.l_name
+    const password = await bcrypt.hash(req.body.password, salt);
+    const curr_location = req.body.curr_location //Can be null
+    const business = req.body.business
+    const f_name = req.body.f_name
+    const l_name = req.body.l_name
     //Role is 'emp
     await pool.beginTransaction()
     const sqlst = `INSERT INTO employees VALUES('${user_id}','${user_name}','${password}','${curr_location}','${business}','emp','','${f_name}', '${l_name}')`
