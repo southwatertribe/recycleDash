@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
+
 //Style 
 import "./GenericForm.css"
 
@@ -8,7 +9,7 @@ export const GenericForm = ({
   fields,
   onSubmit,
   submitText,
-
+  onLocationChange
 }) => {
   const { register, handleSubmit, errors } = useForm();
   const renderInput = (field) => {
@@ -23,7 +24,11 @@ export const GenericForm = ({
       );
     } else if (field.component === 'select') {
       return (
-        <select name={field.name} {...(register && field.validation && register(field.name, field.validation))} >
+        <select 
+          name={field.name} 
+          {...(register && field.validation && register(field.name, field.validation))}
+          onChange={field.name === 'curr_location' ? onLocationChange : null} 
+        >
           
           {field.options.map((option, index) => (
             <option key={index} value={option.value}>

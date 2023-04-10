@@ -1,3 +1,4 @@
+//Panel switch For the dash 
 import React from 'react';
 //tabs
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";

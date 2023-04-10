@@ -15,7 +15,7 @@ const AddEmployeeModal = () => {
         {modal && <div className='modal'>
             <div  className='overlay'>
                 <div className='modal-content'>
-                    <h3>Location Details</h3>
+                    <h3>Employee Details</h3>
                     <AddEmployeeForm toggleModal={toggleModal}/>
                     <button className='close-modal' onClick={toggleModal}>
                         CLOSE

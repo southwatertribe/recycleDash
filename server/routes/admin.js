@@ -27,6 +27,9 @@ router.post('/addLocation', async function (req,res, next) {
     const state = details.state
     const zipcode = details.zipcode
     
+    //Cash Drawer Info
+    const cash_drawer_id = crypto.randomUUID()
+
     
     //Location Info
     const business_id = details.business_id
@@ -41,6 +44,9 @@ router.post('/addLocation', async function (req,res, next) {
     pool.query(sqlst)
     //Insert into location_address
     sqlst = `INSERT INTO location_addresses(address_id, address_line_1, address_line_2, city, state, zipcode, pert_location) VALUES('${address_id}', '${address_line_1}', '${address_line_2}', '${city}', '${state}', '${zipcode}', '${location_rc_number}')` 
+    pool.query(sqlst)
+    //Insert into cash Drawer
+    sqlst = `INSERT INTO cash_drawers(id, total, location) VALUES('${cash_drawer_id}', 0, '${location_rc_number}')`
     pool.query(sqlst)
     
 

@@ -11,8 +11,8 @@ router.post("/admin-auth", async function(req,res) {
     const email = req.body.email
     const password = req.body.password
     const getAuth = `SELECT * FROM admins WHERE email='${email}';`
-    console.log(email)
-    //Return hashed password from db
+
+    //Return user with hashed password
     const response = await pool.query(getAuth).then((result) => {
         console.log("this")
         console.log(result[0][0])
@@ -20,51 +20,61 @@ router.post("/admin-auth", async function(req,res) {
     }).catch((err) => {
         console.log(err)
     });
+    console.log(`Response: ${response}`)
+    
 
-    //Compare passwords to login 
-    const match = await bcrypt.compare(password, response.password)
-    //More logic later
-    if (match) {
-        //Create token and store the userID in it
-        const user_id = response.user_id
-        const business_id = response.business
-        const role = response.role
-        const accessToken = jwt.sign(
-            {"user_id": user_id, "business_id": response.business_id},
-            process.env.AT_SECRET,
-            {expiresIn: '300s'}
-        );
-        const refreshToken = jwt.sign(
-            {"user_id": user_id, "business_id": response.business_id},
-            process.env.RT_SECRET,
-            {expiresIn: '1d'}
-        );
+    if (response != undefined) {
+
+            //Compare passwords to login 
+        const match = await bcrypt.compare(password, response.password).catch((err)=>{
+            console.log("Incorrect user name or password")
+        })
+        //More logic later
+        if (match) {
+            //Create token and store the userID in it
+            const user_id = response.user_id
+            const business_id = response.business
+            const role = response.role
+            const accessToken = jwt.sign(
+                {"user_id": user_id, "business_id": response.business_id},
+                process.env.AT_SECRET,
+                {expiresIn: '300s'}
+            );
+            const refreshToken = jwt.sign(
+                {"user_id": user_id, "business_id": response.business_id},
+                process.env.RT_SECRET,
+                {expiresIn: '1d'}
+            );
+            
+            console.log("Refresh token from auth is: ")
+            console.log(refreshToken)
+            const RFToken = `UPDATE admins SET refresh_token='${refreshToken}' WHERE user_id='${user_id}'`
+            
+            //Store refresh token into admins database 
+            pool.query(RFToken)
         
-        console.log("Refresh token from auth is: ")
-        console.log(refreshToken)
-        const RFToken = `UPDATE admins SET refresh_token='${refreshToken}' WHERE user_id='${user_id}'`
+
+            res.cookie('jwt', refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000})
+            res.json({
+                "user_id": user_id,
+                "role": role, //This will determine which dash to render
+                "business_id": business_id,
+                "access_token": accessToken,
+                "email": email
+            })  
+
+        } else {
+            res.json("Incorrect username or password")
+        }
         
-        //Store refresh token into admins database 
-        pool.query(RFToken)
-       
-
-        res.cookie('jwt', refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000})
-        res.json({
-            "user_id": user_id,
-            "role": role, //This will determine which dash to render
-            "business_id": business_id,
-            "access_token": accessToken,
-            "email": email
-        })  
-
     } else {
-        res.json("Incorrect username or password")
+        res.json("User not found")
     }
 
 
 })
 
-
+//Login for employee
 router.post("/emp-auth", async function(req,res) {
     const user_name = req.body.user_name
     const password = req.body.password

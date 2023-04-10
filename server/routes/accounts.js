@@ -18,6 +18,7 @@ router.post("/admin", async function(req, res) {
     const f_name = req.query.f_name
     const l_name = req.query.l_name
 
+
     //Business Vars
     const bizName = req.query.bizName
     const bizID = crypto.randomUUID()   
