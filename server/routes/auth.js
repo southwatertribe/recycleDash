@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 //Sign in 
-//Importan, both employee and admin id will be converted to user id
+//Important, both employee and admin id will be converted to user id
 router.post("/admin-auth", async function(req,res) {
     const email = req.body.email
     const password = req.body.password
@@ -36,10 +36,11 @@ router.post("/admin-auth", async function(req,res) {
             const business_id = response.business
             const role = response.role
             const accessToken = jwt.sign(
-                {"user_id": user_id, "business_id": response.business_id},
+                {"user_id": user_id, "business_id": response.business_id, 'test': 123213},
                 process.env.AT_SECRET,
                 {expiresIn: '300s'}
             );
+            console.log(`ACESS TOKEN LOG: ${accessToken}`)
             const refreshToken = jwt.sign(
                 {"user_id": user_id, "business_id": response.business_id},
                 process.env.RT_SECRET,
@@ -64,7 +65,7 @@ router.post("/admin-auth", async function(req,res) {
             })  
 
         } else {
-            res.json("Incorrect username or password")
+            res.json("User Not Found")
         }
         
     } else {

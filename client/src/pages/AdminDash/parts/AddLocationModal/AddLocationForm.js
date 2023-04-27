@@ -78,7 +78,7 @@ export const AddLocationForm = (props) => {
     const fetchLocations = async () => { //Payload is business_id        
           
             const response = await axiosPrivate.get(
-              "/location-service/locations",          
+              `/location-service/locations/${auth.business_id}`,          
               {
                 headers: {'Content-Type': 'application/json'},
                 params: {
@@ -95,12 +95,17 @@ export const AddLocationForm = (props) => {
 
     const addLocation = async (payload) => {
         payload["business_id"] = auth.business_id
-        const response = await axiosPrivate.post(
-            "/admin/addLocation", 
+        let rc_number = payload["location_rc_number"]
+        
+        const response = await axiosPrivate.put(
+            `/location-service/location/${rc_number}`, 
             JSON.stringify(payload),         
             {
               headers: {'Content-Type': 'application/json'},
               withCredentials: true,
+              params: {
+                "rc_number": rc_number
+              }
             }
           )
     }

@@ -55,5 +55,10 @@ router.post("/admin", async function(req, res) {
     res.json(returnObj)
 })
 
+//Create employee, must be admin to do so
+router.put("accounts/:emp_id", async function(req,res) {
+
+})
+
 
 module.exports = router

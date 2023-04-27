@@ -29,7 +29,7 @@ const EmployeeList = () => {
     const fetchEmployees = async () => { 
   
         await axiosPrivate.get(
-          "/admin/getEmployees",          
+          `/admin/employees/:${auth.business_id}`,          
           {
             headers: {'Content-Type': 'application/json'},
             params: {
@@ -58,7 +58,7 @@ const EmployeeList = () => {
                  <div className='list-style'>
                    {remployees.currData.map((employee, i)=><EmpCard key={i} props={employee}/>)}
                  </div>                
-                :<p>no locations</p>
+                :<p>No Employees Yet</p>
         }
     </>
    

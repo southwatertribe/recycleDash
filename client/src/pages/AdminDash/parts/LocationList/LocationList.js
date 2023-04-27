@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import LocationCard from '../LocationCard/LocationCard';
 //Style
 import "./LocationList.css"
@@ -6,12 +6,12 @@ import "./LocationList.css"
 import { useDispatch, useSelector } from "react-redux";
 import { setrLocations } from "../../../../redux/locations";
 //Requests
-import {useQuery} from "react-query";
+// import {useQuery} from "react-query";
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
 import useAuth from '../../../../hooks/useAuth';
 
 //Api Functions 
-import { getAllLocations } from '../../../../utils/apiCalls';
+// import { getAllLocations } from '../../../../utils/apiCalls';
 
 
 
@@ -28,10 +28,10 @@ const LocationList = () => {
     //If state empty get locations <-> and if refresh trigger clocked call again
     const fetchLocations = async () => { //Payload is business_id
         
-        if (rlocations.currData.length==undefined) {
+        if (rlocations.currData.length===undefined) {
           try {
             const response = await axiosPrivate.get(
-              "/location-service/locations",          
+              `/location-service/locations/${auth.business_id}`,          
               {
                 headers: {'Content-Type': 'application/json'},
                 params: {

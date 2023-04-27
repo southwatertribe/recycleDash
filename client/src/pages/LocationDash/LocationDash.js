@@ -10,12 +10,13 @@ const LocationDash = () => {
   let { location_id } = useParams();
   const axiosPrivate = useAxiosPrivate();
   const [locationMats, getLocationMats] = useState();
+  const [total, getCashDrawerTotal] = useState();
   const location = useLocation();
 
-  const fetchLocationMats = async (payload) => { //Payload is business_id
+  const fetchLocationMats = async () => { //Payload is business_id
     try {
       const response = await axiosPrivate.get(
-        "/location-service/location-mats",          
+        `/location-service/${location_id}/location_mats/`,          
         {
           headers: {'Content-Type': 'application/json'},
           params: {
@@ -24,7 +25,6 @@ const LocationDash = () => {
         }
       )
       console.log("Location Mats")
-      console.log(response.data)
       getLocationMats(response.data)
       console.log(JSON.stringify(response.data))
       
@@ -34,16 +34,40 @@ const LocationDash = () => {
     }
   }
 
+  const fetchCashDrawerTotal = async() => {
+    try {
+      const response = await axiosPrivate.get(
+        `/location-service/${location_id}/cash_drawer/total`,
+        {
+          headers: {'Content-Type': 'application/json'},
+        }
+      )
+      console.log(`cash: ${JSON.stringify(response.data)}`)
+      getCashDrawerTotal(response.data.total)
+
+    } catch (error) {
+      console.log(error)      
+    }
+  }
+
   useEffect(()=> {
+    fetchCashDrawerTotal()
     fetchLocationMats()
   }, [])
+
   return (
     <div>
       <h1 style={{color:"white"}}>
         {location.state.location_name}
       </h1>
       <div className='dash-content'>
-        <h1>Location Materials</h1>
+        <div className='location-cards'>
+          <div>
+            <h1>Cash Drawer Balance</h1>
+            <p> {total} </p>
+          </div>
+        </div>
+        {/* <h1>Location Materials</h1>
         <>
           {
             locationMats?
@@ -52,7 +76,7 @@ const LocationDash = () => {
               </div>
               : <p>Materials failed to load</p>
           }
-        </>
+        </> */}
       </div>
     </div>
   )

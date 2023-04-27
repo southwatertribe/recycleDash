@@ -31,7 +31,7 @@ export default function EmpCard({props}){
         <div className="location-card" onClick={handleClick}> 
             <div className="card-content">
                 <h3>{props.user_name}</h3> {props.curr_location=='undefined'?<p>No Assigned location</p> : 
-                    <p>{locationObj.location_name}</p>}
+                    <p>Assigned Location: {locationObj.location_name}</p>}
             </div>
         </div>
     ) 

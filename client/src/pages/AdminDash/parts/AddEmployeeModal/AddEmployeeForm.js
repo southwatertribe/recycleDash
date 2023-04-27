@@ -74,7 +74,7 @@ const AddEmployeeForm = (props) => {
   const fetchEmployees = async () => {
     
       await axiosPrivate.get(
-        "/admin/getEmployees",
+        `/admin/employees/${auth.business_id}`,
         {
           headers: {'Content-Type': 'application/json'},
                 params: {
@@ -92,10 +92,13 @@ const AddEmployeeForm = (props) => {
   const addEmployee = async(payload) => {
     payload["business"] = auth.business_id
     await axiosPrivate.post(
-      "/admin/createEmployee",
+      `/admin/employees/${auth.business_id}`,
       JSON.stringify(payload),
       {
         headers: {'Content-Type': 'application/json'},
+        params: {
+          business_id: auth.business_id
+        },
         withCredentials: true,
       }
     )
