@@ -31,7 +31,7 @@ const LocationList = () => {
         if (rlocations.currData.length===undefined) {
           try {
             const response = await axiosPrivate.get(
-              `/location-service/locations/${auth.business_id}`,          
+              `/location-service/${auth.business_id}/locations/`,          
               {
                 headers: {'Content-Type': 'application/json'},
                 params: {

@@ -5,11 +5,11 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 
 //Get all locations based on biz id used by all
-router.get("/locations/:biz_id", async function(req, res) {
-
+router.get("/:business_id/locations/", async function(req, res) {
+    console.log("HIT")
     //Business ID
-    const business_id = req.params.biz_id
-
+    const business_id = req.params.business_id 
+    console.log(business_id)
     //Gets all info
     const sqlst = `SELECT l.*, c.cash_drawer_id 
                    FROM locations l 
@@ -24,10 +24,9 @@ router.get("/locations/:biz_id", async function(req, res) {
 
 
 
-
 //Add a location, should only be allowed for admins
 //Admin creates new location query post RC Number
-router.put('/location/:rc_number', async function (req,res, next) {
+router.put('/:business_id/locations/:rc_number', async function (req,res, next) {
     console.log("Add location hit")
     //All details
     const details = req.body
@@ -60,7 +59,7 @@ router.put('/location/:rc_number', async function (req,res, next) {
     sqlst = `INSERT INTO location_addresses(address_id, address_line_1, address_line_2, city, state, zipcode, pert_location) VALUES('${address_id}', '${address_line_1}', '${address_line_2}', '${city}', '${state}', '${zipcode}', '${location_rc_number}')` 
     pool.query(sqlst)
     //Insert into cash Drawer
-    sqlst = `INSERT INTO cash_drawers(id, total, location) VALUES('${cash_drawer_id}', 0, '${location_rc_number}')`
+    sqlst = `INSERT INTO cash_drawers(cash_drawer_id, total, location) VALUES('${cash_drawer_id}', 0, '${location_rc_number}')`
     pool.query(sqlst)
     
 
@@ -90,13 +89,14 @@ router.put('/location/:rc_number', async function (req,res, next) {
 
 
 //Get Location Mats by Location ID used by all
-router.get("/:location_id/location_mats/", async function(req,res) {
-    const location_id = req.params.location_id
-    console.log(location_id)
-    const sqlst = `SELECT * FROM locationmats WHERE location='${location_id}';`
+router.get("/:rc_number/location_mats/", async function(req,res) {
+    const rc_number = req.params.rc_number
+    console.log(rc_number)
+    const sqlst = `SELECT * FROM locationmats WHERE location='${rc_number}';`
 
     const [location] = await pool.query(sqlst)
 
+    
     res.json(location)
 })
 
@@ -112,8 +112,24 @@ router.get("/:location_id/cash_drawer/total", async function(req,res){
 })
 
 
-//Update cash drawer details and cash drawer total
-router.put("/:location_id/cash_drawer/cash_drawer_transactions", async function(req,res) {
+//Update cash drawer details and cash drawer total no ticket
+router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function(req,res) {
+
+    //Location should change to rc number
+    const location_id = req.params.location_id
+    //Transaction type
+    const transaction_type = req.body.transaction_type
+    //Cash Drawer
+    const cash_drawer = req.params.cash_drawer
+    //Amount
+    const amount = req.body.amount
+    //Transaction_id
+    const trasnsaction_id = crypto.randomUUID()
+
+    //Begin transaction 
+    await pool.beginTransaction()
+    const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer,transaction_type,amount) VALUES('${trasnsaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}');`
+
 
 })
 

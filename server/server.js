@@ -51,7 +51,7 @@ const startServer = async () => {
     // server.use(verifyJWT)
     server.use('/admin', admin)
     server.use('/location-service', locationService)
-    server.use('/tickets', tickets)
+    server.use('/ticket-service', tickets)
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);

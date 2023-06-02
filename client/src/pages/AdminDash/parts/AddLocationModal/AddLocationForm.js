@@ -76,21 +76,20 @@ export const AddLocationForm = (props) => {
     //Request function
     //If state empty get locations <-> and if refresh trigger clocked call again
     const fetchLocations = async () => { //Payload is business_id        
-          
-            const response = await axiosPrivate.get(
-              `/location-service/locations/${auth.business_id}`,          
-              {
-                headers: {'Content-Type': 'application/json'},
-                params: {
-                  business_id: auth.business_id
-                }
-              }
-            ).then((response)=>{
-              console.log(`Before get locations ${JSON.stringify(response.data)}`)
-            
-            
-            dispatch(setrLocations(response.data))
-            })    
+      const response = await axiosPrivate.get(
+        `/location-service/${auth.business_id}/locations/`,          
+        {
+          headers: {'Content-Type': 'application/json'},
+          params: {
+            business_id: auth.business_id
+          }
+        }
+      ).then((response)=>{
+        console.log(`Before get locations ${JSON.stringify(response.data)}`)
+      
+      
+      dispatch(setrLocations(response.data))
+      })    
     }
 
     const addLocation = async (payload) => {
@@ -98,7 +97,7 @@ export const AddLocationForm = (props) => {
         let rc_number = payload["location_rc_number"]
         
         const response = await axiosPrivate.put(
-            `/location-service/location/${rc_number}`, 
+            `/location-service/${auth.business_id}/locations/${rc_number}`, 
             JSON.stringify(payload),         
             {
               headers: {'Content-Type': 'application/json'},
@@ -138,3 +137,6 @@ export const AddLocationForm = (props) => {
         
       );
 }
+
+
+
