@@ -29,6 +29,7 @@ export const EmpDash = () => {
     <div className='wrapper'>
       <div className='welcome'>
         <div>Welcome {auth.f_name}</div>
+        <div>Your current location is: {auth.curr_location}</div>
         <ContentDisplay selectedOption={selectedOption}/>
        <GenericDropdown options={dropdownOptions} onOptionSelect={handleOptionSelect}/>
       </div>

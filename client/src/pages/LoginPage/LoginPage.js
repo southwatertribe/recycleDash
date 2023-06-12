@@ -6,8 +6,8 @@ import React from 'react'
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 //Components
-import AdminLogin from './AdminLogin';
-import EmpLogin from './EmpLogin';
+import AdminLogin from '../../parts/logins/AdminLogin';
+import EmpLogin from '../../parts/logins/EmpLogin';
 
 const LoginPage = () => {
   return (

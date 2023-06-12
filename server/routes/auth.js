@@ -100,14 +100,16 @@ router.post("/emp-auth", async function(req,res) {
         const business = response.business
         const role = response.role
         const curr_location = response.curr_location
+        const f_name = response.f_name
+        const l_name = response.l_name
         const accessToken = jwt.sign(
             {
                 "user_id": user_id, 
-                "business": response.business, 
-                "assigned_location": response.curr_location,
-                "username": response.user_name,
-                "f_name": response.f_name,
-                "l_name": response.l_name
+                "business": business, 
+                "curr_location": curr_location,
+                "username": user_name,
+                "f_name": f_name,
+                "l_name": l_name
             },
             process.env.AT_SECRET,
             {expiresIn: '300s'}
@@ -115,11 +117,11 @@ router.post("/emp-auth", async function(req,res) {
         const refreshToken = jwt.sign(
             {
                 "user_id": user_id, 
-                "business": response.business, 
-                "assigned_location": response.curr_location,
-                "username": response.user_name,
-                "f_name": response.f_name,
-                "l_name": response.l_name
+                "business": business, 
+                "curr_location": curr_location,
+                "username": user_name,
+                "f_name": f_name,
+                "l_name": l_name
             },
             process.env.RT_SECRET,
             {expiresIn: '1d'}
@@ -140,8 +142,8 @@ router.post("/emp-auth", async function(req,res) {
             "business": business,
             "curr_location": curr_location,
             "username": user_name,
-            "f_name": response.f_name,
-            "l_name": response.l_name,
+            "f_name": f_name,
+            "l_name": l_name,
             "access_token": accessToken
         })  
 

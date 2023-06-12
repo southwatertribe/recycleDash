@@ -47,7 +47,8 @@ const EmpLogin = () => {
         const f_name = response?.data.f_name
         const l_name = response?.data.l_name
         const user_id = response?.data.user_id
-        setAuth({user_name, role, at, business_id, f_name, l_name, user_id})
+        const curr_location = response?.data.curr_location
+        setAuth({user_name, role, at, business_id, f_name, l_name, user_id, curr_location})
         setuser_name('');
         setPWD('');
         //Nav
