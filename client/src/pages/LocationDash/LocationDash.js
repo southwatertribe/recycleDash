@@ -58,15 +58,15 @@ const LocationDash = () => {
   return (
     <div>
       <h1 style={{color:"white"}}>
-        {location.state.location_name}
+        {location.state.location_name} Id: {location.state.location_id}
       </h1>
       <div className='dash-content'>
-        <div className='location-cards'>
-          <div>
-            <h1>Cash Drawer Balance</h1>
-            <p> {total} </p>
+        
+          <div className='location-dash-card'>
+            <h1 className='location-dash-card-title'>Cash Drawer Balance</h1>
+            <p> ${total} </p>
           </div>
-        </div>
+        
         {/* <h1>Location Materials</h1>
         <>
           {

@@ -1,7 +1,7 @@
 import React from 'react'
 
 //Style
-import "./LocationMatCard.css"
+import "./locationdash.css"
 const LocationMatCard = (props) => {
     const handleClick = async () => {
         console.log("CLICKED" + props.material_name)

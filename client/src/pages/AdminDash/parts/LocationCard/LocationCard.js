@@ -11,7 +11,8 @@ export default function LocationCard({props}){
         
         navigate(`/location-dash/${location_id}`, {
             state: {
-                location_name: props.location_name
+                location_name: props.location_name,
+                location_id: location_id
             }
         })
     }

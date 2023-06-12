@@ -104,6 +104,7 @@ router.post("/emp-auth", async function(req,res) {
             {
                 "user_id": user_id, 
                 "business": response.business, 
+                "assigned_location": response.curr_location,
                 "username": response.user_name,
                 "f_name": response.f_name,
                 "l_name": response.l_name
@@ -115,6 +116,7 @@ router.post("/emp-auth", async function(req,res) {
             {
                 "user_id": user_id, 
                 "business": response.business, 
+                "assigned_location": response.curr_location,
                 "username": response.user_name,
                 "f_name": response.f_name,
                 "l_name": response.l_name
