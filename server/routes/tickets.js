@@ -12,32 +12,32 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
     //Logic
     //Create the TicketID
     const tickID = crypto.randomUUID()
-    //Create the trasnaction id
+    // //Create the trasnaction id
     const transaction_id = crypto.randomUUID()
-    //List of all materials in this ticket
-    const payload = req.body.dets
-    //Cash Drawer ID 
-    const cash_drawer_id = payload.cash_drawer_id
-    //Mother Ticket details
+    // //List of all materials in this ticket
+    const payload = req.body
+    // //Cash Drawer ID 
+    // // const cash_drawer_id = payload.cash_drawer_id
+    // //Mother Ticket details
     const customer = payload.customer
     const location = req.params.location_rc_number
     const maker = payload.maker
-    //Need to calculate the ticket details length
-    const entries = Object.keys(payload.entries).length
+    // //Need to calculate the ticket details length
+    const entries = Object.keys(payload.ticketDetails).length
     //Start transaction
     await pool.beginTransaction();
     //Create mother ticket, then attach all details to her
     //TODO: Look into generating the total 
     sqlst = `INSERT INTO tickets(ticket_id, customer, location, maker) VALUES('${tickID}', '${customer}', '${location}', '${maker}');`
     pool.query(sqlst)
-    //Loop and create tickdets
-    //TODO: Will need to adjust given how you want the form
-    //TODO: Handle the whole weight/sg wt formula here :)
+    // //Loop and create tickdets
+    // //TODO: Will need to adjust given how you want the form
+    // //TODO: Handle the whole weight/sg wt formula here :)
     let total = 0
     for (let index = 0; index < entries; index++) {
 
-        const currentDet = payload.entries[index]
-        const take_in_option = currentDet.take_in_option //Single or weight
+        const currentDet = payload.ticketDetails[index]
+        const take_in_option = currentDet.intakeType //Single or weight
         const material = currentDet.material //Location material 
         //Will be int or float depending on take in
         //Amount will be stored despite tke in, price will only be stored calculated off weight
@@ -66,19 +66,19 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
         await pool.query(sqlst)
     }
 
-    //Set total for mother ticket
-    sqlst = `UPDATE  tickets SET total='${total}' WHERE ticket_id='${tickID}'`
-    await pool.query(sqlst)
+    // //Set total for mother ticket
+    // sqlst = `UPDATE  tickets SET total='${total}' WHERE ticket_id='${tickID}'`
+    // await pool.query(sqlst)
     
-    //Cash_Drawer_transaction
-    sqlst = `INSERT INTO cash_drawer_transactions(transaction_id,cash_drawer,transaction_type,amount) VALUES('${transaction_id}', '${cash_drawer_id}', 'ticket','${total}');`
-    await pool.query(sqlst)
-    //Commit transaction
-    await pool.commit()
-    
+    // // //Cash_Drawer_transaction
+    // // sqlst = `INSERT INTO cash_drawer_transactions(transaction_id,cash_drawer,transaction_type,amount) VALUES('${transaction_id}', '${cash_drawer_id}', 'ticket','${total}');`
+    // // await pool.query(sqlst)
+    // //Commit transaction
+    // await pool.commit()
+    console.log(req.body)
     const obj = {
         'status': 200,
-        'total': {total}
+        'total': "{total}"
     }
     //TODO: Return an object
     res.json(obj) 

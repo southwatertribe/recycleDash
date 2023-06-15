@@ -32,7 +32,7 @@ export const ContentDisplay = ({ selectedOption }) => {
     
     switch (selectedOption) {
       case 'createTicket':
-        return  <TicketForm creator={auth.f_name} location={auth.curr_location}/>;
+        return  <TicketForm maker={auth.f_name} location={auth.curr_location}/>;
       case 'lookCashDrawer':
         return <div>Look at cash drawer</div>;
       default:

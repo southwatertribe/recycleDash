@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 
-const TicketForm = ({ location, creator }) => {
+import axios from './axios';
+
+const TicketForm = ({ location, maker, location_mats }) => {
   const [ticketDetails, setTicketDetails] = useState([]);
+  const [customer, setCustomer] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState([]);
 
   const handleInputChange = (event, index) => {
@@ -10,31 +13,55 @@ const TicketForm = ({ location, creator }) => {
       const newDetails = [...prevDetails];
       newDetails[index] = {
         ...newDetails[index],
-        [name]: value
+        [name]: value,
       };
       return newDetails;
     });
+  
+    if (name === 'material') {
+      setSelectedMaterials((prevMaterials) => {
+        const newMaterials = [...prevMaterials];
+        newMaterials[index] = value;
+        return newMaterials;
+      });
+    }
   };
+  
 
   const handleAddDetail = () => {
     const newDetail = {
+      id: ticketDetails.length + 1,
       material: '',
       intakeType: '',
       amount: '',
     };
     setTicketDetails((prevDetails) => [...prevDetails, newDetail]);
   };
+  
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const ticket = {
       location,
-      creator,
+      maker,
+      customer,
       ticketDetails,
     };
     console.log(ticket);
+    
+    setCustomer('')
     setTicketDetails([]);
+  
+    try {
+      const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
+      console.log(response.data); // Log the response from the API
+      setTicketDetails([]);
+      setSelectedMaterials([]); // Reset selected materials
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
 
   const handleMaterialChange = (event, index) => {
     const { value } = event.target;
@@ -45,6 +72,21 @@ const TicketForm = ({ location, creator }) => {
     });
   };
 
+  const handleDeleteDetail = (index) => {
+    setTicketDetails((prevDetails) => {
+      const newDetails = [...prevDetails];
+      newDetails.splice(index, 1);
+      return newDetails;
+    });
+  
+    setSelectedMaterials((prevMaterials) => {
+      const newMaterials = [...prevMaterials];
+      newMaterials.splice(index, 1);
+      return newMaterials;
+    });
+  };
+
+  
   return (
     <form onSubmit={handleSubmit}>
       <h2>Create a Ticket</h2>
@@ -53,13 +95,25 @@ const TicketForm = ({ location, creator }) => {
         <input type="text" name="location" value={location} disabled />
       </div>
       <div>
-        <label>Creator: </label>
-        <input type="text" name="creator" value={creator} disabled />
+        <label>Maker: </label>
+        <input type="text" name="maker" value={maker} disabled />
+      </div>
+      <div>
+        <label>Customer: </label>
+        <input
+          type="text"
+          name="customer"
+          value={customer}
+          onChange={(e) => setCustomer(e.target.value)}
+        />
       </div>
 
       {ticketDetails.map((detail, index) => (
         <div key={index} className="ticket-detail">
           <h3>Ticket Detail {index + 1}</h3>
+          <button type="button" onClick={() => handleDeleteDetail(index)}>
+            Delete Detail
+          </button>
           <div>
             <label>Material: </label>
             <select
@@ -89,14 +143,15 @@ const TicketForm = ({ location, creator }) => {
               value={detail.intakeType}
               onChange={(e) => handleInputChange(e, index)}
             >
-              <option value="SC">SC</option>
+              <option value="">Select Intake</option>
               <option value="SEG WT">SEG WT</option>
+              <option value="SC">SC</option>
             </select>
           </div>
           <div>
             <label>Amount: </label>
             <input
-              type="text"
+              type="number"
               name="amount"
               value={detail.amount}
               onChange={(e) => handleInputChange(e, index)}
