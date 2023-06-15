@@ -1,7 +1,13 @@
 import React from 'react';
-import TicketForm from './sandbox'
+import TicketForm from './TicketForm'
+
+//State/Redux
+import useAuth from '../hooks/useAuth';
+
 
 export const GenericDropdown = ({ options, onOptionSelect }) => {
+
+  
   const handleChange = (event) => {
     const selectedOption = event.target.value;
     onOptionSelect(selectedOption);
@@ -20,10 +26,13 @@ export const GenericDropdown = ({ options, onOptionSelect }) => {
 };
 
 export const ContentDisplay = ({ selectedOption }) => {
+  const {auth} = useAuth()
+  
   const getContent = () => {
+    
     switch (selectedOption) {
       case 'createTicket':
-        return  <TicketForm/>;
+        return  <TicketForm creator={auth.f_name} location={auth.curr_location}/>;
       case 'lookCashDrawer':
         return <div>Look at cash drawer</div>;
       default:
