@@ -17,6 +17,14 @@ const TicketForm = ({ location, maker, location_mats }) => {
         ...newDetails[index],
         [name]: value,
       };
+      if (name === 'material') {
+        const selectedMaterial = location_mats.find(material => material.location_mats_id === value);
+        if (selectedMaterial) {
+          newDetails[index].mat_price = selectedMaterial.price;
+        } else {
+          newDetails[index].mat_price = '';
+        }
+      }
       return newDetails;
     });
   
@@ -36,7 +44,10 @@ const TicketForm = ({ location, maker, location_mats }) => {
       material: '',
       intakeType: '',
       amount: '',
+      mat_price: ''
     };
+
+    
     setTicketDetails((prevDetails) => [...prevDetails, newDetail]);
   };
   
@@ -51,14 +62,15 @@ const TicketForm = ({ location, maker, location_mats }) => {
     };
     console.log(ticket);
     
+    
     setCustomer('')
     setTicketDetails([]);
+    setSelectedMaterials([]); // Reset selected materials
   
     try {
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
       console.log(response.data); // Log the response from the API
-      setTicketDetails([]);
-      setSelectedMaterials([]); // Reset selected materials
+      
     } catch (error) {
       console.error(error);
     }
