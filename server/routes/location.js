@@ -73,9 +73,19 @@ router.put('/:business_id/locations/:rc_number', async function (req,res, next) 
         const locationmatsID = crypto.randomUUID()
         const currMatID = getMats[i].mat_id
         const currMatName = getMats[i].mat_name
+        const is_scrap = getMats[i].is_scrap
         //DEFAULT PRICE 1.25
-        sqlst = `INSERT INTO locationmats(location_mats_id, location, material_id, material_name) VALUES('${locationmatsID}','${location_rc_number}','${currMatID}', '${currMatName}');`
-        pool.query(sqlst)
+        //0 if is_scrap === 0
+
+        if (is_scrap === 0) {
+            //Price mus be 0
+            sqlst = `INSERT INTO locationmats(location_mats_id, location, price, material_id, material_name, price_per_unit) VALUES('${locationmatsID}','${location_rc_number}', '${0}', '${currMatID}', '${currMatName}','${0}');`
+            pool.query(sqlst)
+        } else {
+            sqlst = `INSERT INTO locationmats(location_mats_id, location, material_id, material_name) VALUES('${locationmatsID}','${location_rc_number}','${currMatID}', '${currMatName}');`
+            pool.query(sqlst)
+        }
+        
     }
 
     pool.commit()
