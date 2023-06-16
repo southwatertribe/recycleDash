@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import axios from './axios';
 
+
+
 const TicketForm = ({ location, maker, location_mats }) => {
   const [ticketDetails, setTicketDetails] = useState([]);
   const [customer, setCustomer] = useState('');
@@ -125,15 +127,15 @@ const TicketForm = ({ location, maker, location_mats }) => {
               }}
             >
               <option value="">Select material</option>
-              <option value="Glass" disabled={selectedMaterials.includes('Glass')}>
-                Glass
-              </option>
-              <option value="Plastic" disabled={selectedMaterials.includes('Plastic')}>
-                Plastic
-              </option>
-              <option value="Metal" disabled={selectedMaterials.includes('Metal')}>
-                Metal
-              </option>
+              {location_mats.map((material) => (
+                <option
+                  value={material.location_mats_id}
+                  key={material.location_mats_id}
+                  disabled={selectedMaterials.includes(material.location_mats_id)}
+                >
+                  {material.material_name}
+                </option>
+              ))}
             </select>
           </div>
           <div>
