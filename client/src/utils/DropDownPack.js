@@ -30,7 +30,7 @@ export const GenericDropdown = ({ options, onOptionSelect }) => {
 
 export const ContentDisplay = ({ selectedOption }) => {
   const {auth} = useAuth()
-  const { locationMats, fetchLocationMats} = useLocationData(auth.curr_location);
+  const { locationMats} = useLocationData(auth.curr_location);
   
   const getContent = () => {
     
@@ -43,6 +43,9 @@ export const ContentDisplay = ({ selectedOption }) => {
         return <div>Please select an option</div>;
     }
   };
+
+
+  
 
   return <div>{getContent()}</div>;
 };
