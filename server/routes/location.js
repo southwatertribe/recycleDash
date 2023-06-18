@@ -61,7 +61,9 @@ router.put('/:business_id/locations/:rc_number', async function (req,res, next) 
     //Insert into cash Drawer
     sqlst = `INSERT INTO cash_drawers(cash_drawer_id, total, location) VALUES('${cash_drawer_id}', 0, '${location_rc_number}')`
     pool.query(sqlst)
-    
+    //Begin ticket sequence
+    sqlst = `INSERT INTO curr_ticket_sequence(location, sequence) VALUES('${location_rc_number}', 0)`
+    pool.query(sqlst)
 
     //Insert default mats (will be in 4 loop)
     //Location Mats Info 

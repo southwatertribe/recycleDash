@@ -2,89 +2,105 @@ const express = require("express")
 const router = express.Router()
 const crypto = require('crypto')
 const pool = require('../db/dbconnection')
+const { parse } = require("path")
 
 
 //Create a ticket, should also create a cash drawer transaction, checks to consider are the weight limits and types of in takes
 //Returns ticket total in an object and this is turned into a cash drawer transsaction
 router.post("/:location_rc_number/new_ticket", async function(req,res) {
 
-    //TODO CHECK AUTH WITH HEADERS
-    //Logic
-    //Create the TicketID
-    const tickID = crypto.randomUUID()
-    // // //Create the trasnaction id
-    const transaction_id = crypto.randomUUID()
-    // // //List of all materials in this ticket
-    const payload = req.body
-    // // //Cash Drawer ID 
-    // const cash_drawer_id = payload.cash_drawer_id
-    // // //Mother Ticket details
-    const customer = payload.customer
-    const location = req.params.location_rc_number
-    const maker = payload.maker
-    // // //Need to calculate the ticket details length
-    const entries = Object.keys(payload.ticketDetails).length
-    // //Start transaction
-    await pool.beginTransaction();
-    // //Create mother ticket, then attach all details to her
-    // //TODO: Look into generating the total 
-    sqlst = `INSERT INTO tickets(ticket_id, customer, location, maker) VALUES('${tickID}', '${customer}', '${location}', '${maker}');`
-    pool.query(sqlst)
-    // // //Loop and create tickdets
-    // // //TODO: Will need to adjust given how you want the form
-    // // //TODO: Handle the whole weight/sg wt formula here :)
-    let total = 0
-    for (let index = 0; index < entries; index++) {
-
-        const currentDet = payload.ticketDetails[index]
-        const take_in_option = currentDet.intakeType //Single or weight
-        const material = currentDet.material //Location material 
-        //Will be int or float depending on take in
-        //Amount will be stored despite tke in, price will only be stored calculated off weight
-        //This will be used to calculate weight price
-        const amount = currentDet.amount
-        //This will be the material price per pound
-        //This is recieved from front end based on selected location mat
-        //We have prce per unit saved in database, but this will be for ease of update, keep it at 0.05 currently 
-        const mat_price = currentDet.mat_price
-
-        //Adjust amount if tke in is by unit
-        //Then calculate price 
-        if (take_in_option === 'SC') { //This was given by unit calculate the weights 
-            //Conversion
-            //(SC * 0.05)/CRV RATE (CRV rate will be per pound price)
-            //This will calculate the weight, then multiply by per pound
-            amount = (amount * 0.05) / mat_price
-            price = amount * mat_price
-            
-        } else {
-            price = amount * mat_price
-            console.log(`MAT PRICE: ${mat_price}`)
-            console.log(`PRICE: ${price}`)
-        }
-        
-        total = total + price   //Add to total for mother ticket                                       //in weight 
-        const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${price}', '${take_in_option}')`;
+    try {
+        //TODO CHECK AUTH WITH HEADERS
+        //Logic
+        //Create the TicketID
+        const tickID = crypto.randomUUID()
+        // // //Create the trasnaction id
+        const transaction_id = crypto.randomUUID()
+        // // //List of all materials in this ticket
+        const payload = req.body
+        // // //Mother Ticket details
+        const customer = payload.customer
+        const location = req.params.location_rc_number
+        const maker = payload.maker
+        // // //Need to calculate the ticket details length
+        const entries = Object.keys(payload.ticketDetails).length
+        // //Start transaction
+        await pool.beginTransaction();
+        //Increment Sequence
+        sqlst = `UPDATE curr_ticket_sequence
+        SET sequence = sequence + 1
+        WHERE location = '${location}';`
         await pool.query(sqlst)
-    }
+        //Get sequence first
+        sqlst = `SELECT sequence
+        FROM curr_ticket_sequence
+        WHERE location = '${location}';`
+        const seq_response = await pool.query(sqlst)
+        const sequence = seq_response[0][0].sequence
 
-    // //Set total for mother ticket
-    sqlst = `UPDATE  tickets SET total='${total}' WHERE ticket_id='${tickID}'`
-    await pool.query(sqlst)
-    
-    // // //Cash_Drawer_transaction
-    // sqlst = `INSERT INTO cash_drawer_transactions(transaction_id,cash_drawer,transaction_type,amount) VALUES('${transaction_id}', '${cash_drawer_id}', 'ticket','${total}');`
-    // await pool.query(sqlst)
-    //Commit transaction
-    // await pool.commit()
-    await pool.commit()
-    console.log(req.body)
-    const obj = {
-        'status': 200,
-        'total': {total}
+        // //Create mother ticket, then attach all details to her
+        // //TODO: Look into generating the total 
+        sqlst = `INSERT INTO tickets(ticket_id, customer, location, maker, sequence_num) VALUES('${tickID}', '${customer}', '${location}', '${maker}', '${sequence}');`
+        pool.query(sqlst)
+        // // //Loop and create tickdets
+        // // //TODO: Will need to adjust given how you want the form
+        // // //TODO: Handle the whole weight/sg wt formula here :)
+        let total = 0
+        for (let index = 0; index < entries; index++) {
+
+            const currentDet = payload.ticketDetails[index]
+            const take_in_option = currentDet.intakeType //Single or weight
+            const material = currentDet.material //Location material 
+            //Will be int or float depending on take in
+            //Amount will be stored despite tke in, price will only be stored calculated off weight
+            //This will be used to calculate weight price
+            let amount = currentDet.amount
+            //This will be the material price per pound
+            //This is recieved from front end based on selected location mat
+            //We have prce per unit saved in database, but this will be for ease of update, keep it at 0.05 currently 
+            const mat_price = parseFloat(currentDet.mat_price)//Must parse float for calclations
+
+            //Adjust amount if tke in is by unit
+            //Then calculate price 
+            if (take_in_option === 'SC') {
+                // This was given by unit calculate the weights
+                // Conversion
+                // (SC * 0.05)/CRV RATE (CRV rate will be per pound price)
+                // This will calculate the weight, then multiply by per pound
+                if (mat_price === 0.00) {
+                    console.log(amount)
+                    price = 0;
+                } else {
+                    amount = (amount * 0.05) / mat_price;
+                    price = amount * mat_price;
+                }
+                } else {
+                price = amount * mat_price;
+                }
+            
+            total = total + price   //Add to total for mother ticket                                       //in weight 
+            const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${price}', '${take_in_option}')`;
+            await pool.query(sqlst)
+        }
+
+        // //Set total for mother ticket
+        sqlst = `UPDATE  tickets SET total='${total}' WHERE ticket_id='${tickID}'`
+        await pool.query(sqlst)
+
+
+        //Commit transaction
+        await pool.commit()
+        console.log(req.body)
+        const obj = {
+            'status': 200,
+            'total': {total}
+        }
+        //TODO: Return an object
+        res.json(obj) 
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred' });        
     }
-    //TODO: Return an object
-    res.json(obj) 
     
 })
 

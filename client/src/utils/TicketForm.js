@@ -47,7 +47,6 @@ const TicketForm = ({ location, maker, location_mats }) => {
       mat_price: ''
     };
 
-    
     setTicketDetails((prevDetails) => [...prevDetails, newDetail]);
   };
   
@@ -62,18 +61,19 @@ const TicketForm = ({ location, maker, location_mats }) => {
     };
     console.log(ticket);
     
-    
+    //Reset State Variables
     setCustomer('')
     setTicketDetails([]);
-    setSelectedMaterials([]); // Reset selected materials
+    setSelectedMaterials([]); 
   
     try {
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
-      console.log(response.data); // Log the response from the API
-      
+      const total = response.data.total
     } catch (error) {
       console.error(error);
     }
+
+    
   };
   
 
