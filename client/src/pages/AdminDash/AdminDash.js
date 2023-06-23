@@ -28,7 +28,7 @@ export const AdminDash = () => {
           <TabList>
             <Tab>Locations</Tab>
             <Tab>Employees</Tab>
-            <Tab>Tickets</Tab>
+            {/* <Tab>Tickets</Tab> */}
           </TabList>
               
           <TabPanel>
@@ -43,11 +43,7 @@ export const AdminDash = () => {
               <EmployeeList/>
             </div>
           </TabPanel>
-          <TabPanel>
-            <div className='dash-content'>
-              <p>Tickets</p>
-            </div>
-          </TabPanel>
+          
       </Tabs>
     </div>
   )

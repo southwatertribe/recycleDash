@@ -1,3 +1,18 @@
+
+.location-dash-row1 {
+    display: flex;
+    justify-content: space-around;
+}
+
+.card {
+    width: 250px;
+    height: 180px;
+    background-color: lightgray;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
 .location-mat-card {
     display: flex;
     flex-direction: column;

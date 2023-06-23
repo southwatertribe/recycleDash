@@ -2,7 +2,6 @@ const express = require("express")
 const router = express.Router()
 const crypto = require('crypto')
 const pool = require('../db/dbconnection')
-const { parse } = require("path")
 
 
 //Create a ticket, should also create a cash drawer transaction, checks to consider are the weight limits and types of in takes
@@ -75,7 +74,7 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
                     price = amount * mat_price;
                 }
                 } else {
-                price = amount * mat_price;
+                    price = amount * mat_price;
                 }
             
             total = total + price   //Add to total for mother ticket                                       //in weight 
@@ -104,12 +103,33 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
     
 })
 
-// //get multiple tickets based on location
-// router.get("/getTickets", async function(req, res){
-//     const location_id = req.body.location_id
+
+//get multiple tickets based on location and time
+router.get("/:location_rc_number/get-tickets/", async function(req, res){
+
+    //Get location rc number
+    const location = req.params.location_rc_number
+    console.log(location)
+    //Get from
+    const start = req.query.start
+    console.log(`START: ${start}`)
+    //Get To
+    const end = req.query.end
+
     
-//     const sqlst = `SELECT * FROM tickets where location_id='${location_id}' and  `
-// })
+    const sqlst = `
+        SELECT ticket_id, timestamp, location, sequence_num, total
+        FROM tickets
+        WHERE location = '${location}' AND DATE(timestamp) BETWEEN '${start}' AND '${end}';
+    `
+
+    const [tickets] = await pool.query(sqlst)
+
+    console.log(tickets)
+    res.json(
+        {tickets}
+    )
+})
 
 //get a ticket
 
