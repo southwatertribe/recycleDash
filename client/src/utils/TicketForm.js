@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-
 import axios from './axios';
-
-
 
 const TicketForm = ({ location, maker, location_mats }) => {
   const [ticketDetails, setTicketDetails] = useState([]);
@@ -17,8 +14,9 @@ const TicketForm = ({ location, maker, location_mats }) => {
         ...newDetails[index],
         [name]: value,
       };
+      // console.log(`MATERIAL IS: ${JSON.stringify(newDetails[0].material)}`)
       if (name === 'material') {
-        const selectedMaterial = location_mats.find(material => material.location_mats_id === value);
+        const selectedMaterial = location_mats.find((material) => material.location_mats_id === value);
         if (selectedMaterial) {
           newDetails[index].mat_price = selectedMaterial.price;
         } else {
@@ -27,29 +25,20 @@ const TicketForm = ({ location, maker, location_mats }) => {
       }
       return newDetails;
     });
-  
-    if (name === 'material') {
-      setSelectedMaterials((prevMaterials) => {
-        const newMaterials = [...prevMaterials];
-        newMaterials[index] = value;
-        return newMaterials;
-      });
-    }
   };
-  
 
-  const handleAddDetail = () => {
+  const handleAddDetail = (materialId) => {
     const newDetail = {
       id: ticketDetails.length + 1,
-      material: '',
+      material: materialId,
       intakeType: '',
       amount: '',
-      mat_price: ''
+      mat_price: '',
     };
-
+    
     setTicketDetails((prevDetails) => [...prevDetails, newDetail]);
+    setSelectedMaterials((prevMaterials) => [...prevMaterials, materialId]);
   };
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -59,48 +48,68 @@ const TicketForm = ({ location, maker, location_mats }) => {
       customer,
       ticketDetails,
     };
-    console.log(ticket);
-    
-    //Reset State Variables
-    setCustomer('')
+
+    // Reset State Variables
+    setCustomer('');
     setTicketDetails([]);
-    setSelectedMaterials([]); 
-  
+    setSelectedMaterials([]);
+
     try {
+      console.log(ticket)
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
-      const total = response.data.total
+      const total = response.data.total;
     } catch (error) {
       console.error(error);
     }
-
-    
   };
-  
 
   const handleMaterialChange = (event, index) => {
     const { value } = event.target;
-    setSelectedMaterials((prevMaterials) => {
-      const newMaterials = [...prevMaterials];
-      newMaterials[index] = value;
-      return newMaterials;
+    setTicketDetails((prevDetails) => {
+      const newDetails = [...prevDetails];
+      newDetails[index] = {
+        ...newDetails[index],
+        material: value,
+      };
+      return newDetails;
     });
   };
 
-  const handleDeleteDetail = (index) => {
+  const handleDeleteDetail = (index, materialId) => {
     setTicketDetails((prevDetails) => {
       const newDetails = [...prevDetails];
       newDetails.splice(index, 1);
       return newDetails;
     });
-  
+
     setSelectedMaterials((prevMaterials) => {
       const newMaterials = [...prevMaterials];
-      newMaterials.splice(index, 1);
+      const materialIndex = newMaterials.indexOf(materialId);
+      if (materialIndex !== -1) {
+        newMaterials.splice(materialIndex, 1);
+      }
       return newMaterials;
     });
   };
 
+  const handleMaterialClick = (materialId) => {
+    const selectedMaterial = location_mats.find((material) => material.location_mats_id === materialId);
+    if (selectedMaterial) {
+      const newDetail = {
+        id: ticketDetails.length + 1,
+        material: selectedMaterial.location_mats_id,
+        intakeType: selectedMaterial.intakeType,
+        amount: '',
+        mat_price: selectedMaterial.price,
+      };
   
+      setTicketDetails((prevDetails) => [...prevDetails, newDetail]);
+  
+      setSelectedMaterials((prevMaterials) => [...prevMaterials, selectedMaterial.location_mats_id]);
+    }
+  };
+  
+
   return (
     <form onSubmit={handleSubmit}>
       <h2>Create a Ticket</h2>
@@ -122,10 +131,22 @@ const TicketForm = ({ location, maker, location_mats }) => {
         />
       </div>
 
+      <div className="material-grid">
+        {location_mats.map((material) => (
+          <div
+            key={material.location_mats_id}
+            className={`material-item ${selectedMaterials.includes(material.location_mats_id) ? 'disabled' : ''}`}
+            onClick={() => handleMaterialClick(material.location_mats_id)}
+          >
+            {material.material_name}
+          </div>
+        ))}
+      </div>
+
       {ticketDetails.map((detail, index) => (
         <div key={index} className="ticket-detail">
           <h3>Ticket Detail {index + 1}</h3>
-          <button type="button" onClick={() => handleDeleteDetail(index)}>
+          <button type="button" onClick={() => handleDeleteDetail(index, detail.material)}>
             Delete Detail
           </button>
           <div>
@@ -133,10 +154,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
             <select
               name="material"
               value={detail.material}
-              onChange={(e) => {
-                handleInputChange(e, index);
-                handleMaterialChange(e, index);
-              }}
+              onChange={(e) => handleMaterialChange(e, index)}
+              disabled={selectedMaterials.includes(detail.material)}
             >
               <option value="">Select material</option>
               {location_mats.map((material) => (
@@ -174,23 +193,9 @@ const TicketForm = ({ location, maker, location_mats }) => {
         </div>
       ))}
 
-      <button type="button" onClick={handleAddDetail}>
-        Add Detail
-      </button>
-
       <button type="submit">Submit</button>
     </form>
   );
 };
 
 export default TicketForm;
-
-
-
-
-
-
-
-
-
-
