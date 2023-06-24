@@ -3,7 +3,7 @@ import React from 'react'
 
 //style
 import "./EmpDash.css"
-import "../../utils/DashContent.css"
+import "../../styles/DashContent.css"
 //State/Redux
 import useAuth from '../../hooks/useAuth'
 //Parts

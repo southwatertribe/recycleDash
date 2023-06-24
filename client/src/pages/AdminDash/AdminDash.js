@@ -4,11 +4,11 @@ import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 //api
-import useAuth from '../../hooks/useAuth';
+import useAuth from "../../hooks/useAuth";
 
 //css
 import "./AdminDash.css";
-import "../../utils/DashContent.css";
+import "../../styles/DashContent.css"
 
 //Components
 import { AddLocationModal } from './parts/AddLocationModal/AddLocationModal';

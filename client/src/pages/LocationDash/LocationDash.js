@@ -4,7 +4,7 @@ import { useParams, useLocation, Link } from 'react-router-dom'
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 
 //Style 
-import "../../utils/DashContent.css"
+import "../../styles/DashContent.css"
 
 //Parts
 import LocationMatCard from './LocationMatCard'
