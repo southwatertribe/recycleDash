@@ -1,0 +1,56 @@
+.materialGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+  }
+  
+  .materialGridItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    width: 120px; /* Adjust the width of each grid item */
+    background-color: #303030;
+    color: #ffffff;
+    cursor: pointer;
+    margin: 5px; /* Add margin around each grid item */
+    font-size: 14px; /* Adjust the font size as needed */
+    text-align: center; /* Center-align the material name */
+  }
+  
+  .materialGridItem:hover {
+    background-color: #505050;
+  }
+  
+  .materialGridItem.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .ticketDetail {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .ticketDetail h3 {
+    margin: 0;
+    margin-right: 10px;
+  }
+  
+  .ticketDetail button {
+    margin-left: auto;
+    margin-right: 10px;
+  }
+  
+  .ticketDetail label {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  .ticketDetail input[type="number"] {
+    width: 100px;
+  }
+  

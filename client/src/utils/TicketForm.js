@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axios from './axios';
 
+import grid from '../styles/Grids.module.css';
+import container from '../styles/Layouts.module.css';
+
 const TicketForm = ({ location, maker, location_mats }) => {
   const [ticketDetails, setTicketDetails] = useState([]);
   const [customer, setCustomer] = useState('');
@@ -55,7 +58,6 @@ const TicketForm = ({ location, maker, location_mats }) => {
     setSelectedMaterials([]);
 
     try {
-      console.log(ticket)
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
       const total = response.data.total;
     } catch (error) {
@@ -93,6 +95,10 @@ const TicketForm = ({ location, maker, location_mats }) => {
   };
 
   const handleMaterialClick = (materialId) => {
+    if (selectedMaterials.includes(materialId)) {
+      return; // Material already selected, do nothing
+    }
+
     const selectedMaterial = location_mats.find((material) => material.location_mats_id === materialId);
     if (selectedMaterial) {
       const newDetail = {
@@ -102,26 +108,25 @@ const TicketForm = ({ location, maker, location_mats }) => {
         amount: '',
         mat_price: selectedMaterial.price,
       };
-  
+
       setTicketDetails((prevDetails) => [...prevDetails, newDetail]);
-  
+
       setSelectedMaterials((prevMaterials) => [...prevMaterials, selectedMaterial.location_mats_id]);
     }
   };
-  
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} >
       <h2>Create a Ticket</h2>
-      <div>
+      <div className={container.formGroup}>
         <label>Location: </label>
         <input type="text" name="location" value={location} disabled />
       </div>
-      <div>
+      <div className={container.formGroup}>
         <label>Maker: </label>
         <input type="text" name="maker" value={maker} disabled />
       </div>
-      <div>
+      <div className={container.formGroup}>
         <label>Customer: </label>
         <input
           type="text"
@@ -131,69 +136,76 @@ const TicketForm = ({ location, maker, location_mats }) => {
         />
       </div>
 
-      <div className="material-grid">
-        {location_mats.map((material) => (
-          <div
-            key={material.location_mats_id}
-            className={`material-item ${selectedMaterials.includes(material.location_mats_id) ? 'disabled' : ''}`}
-            onClick={() => handleMaterialClick(material.location_mats_id)}
-          >
-            {material.material_name}
-          </div>
-        ))}
+     <div className={container.pageContainer}>
+      <div className={container.materialsContainer}>
+        <div className={grid.materialGrid}>
+            {location_mats.map((material) => (
+              <div
+                key={material.location_mats_id}
+                className={`${grid.materialGridItem} ${selectedMaterials.includes(material.location_mats_id) ? grid.disabled : ''}`}
+                onClick={() => handleMaterialClick(material.location_mats_id)}
+              >
+                {material.material_name}
+              </div>
+            ))}
+        </div >
       </div>
 
-      {ticketDetails.map((detail, index) => (
-        <div key={index} className="ticket-detail">
-          <h3>Ticket Detail {index + 1}</h3>
-          <button type="button" onClick={() => handleDeleteDetail(index, detail.material)}>
-            Delete Detail
-          </button>
-          <div>
-            <label>Material: </label>
-            <select
-              name="material"
-              value={detail.material}
-              onChange={(e) => handleMaterialChange(e, index)}
-              disabled={selectedMaterials.includes(detail.material)}
-            >
-              <option value="">Select material</option>
-              {location_mats.map((material) => (
-                <option
-                  value={material.location_mats_id}
-                  key={material.location_mats_id}
-                  disabled={selectedMaterials.includes(material.location_mats_id)}
-                >
-                  {material.material_name}
-                </option>
-              ))}
-            </select>
+      <div className={container.ticketDetailsContainer}>
+        {ticketDetails.map((detail, index) => (
+          <div key={index} className={grid.ticketDetail}>
+            <h3>Ticket Detail {index + 1}</h3>
+            <button type="button" onClick={() => handleDeleteDetail(index, detail.material)}>
+              Delete Detail
+            </button>
+            <div className={container.formGroup}>
+              <label>Material: </label>
+              <select
+                name="material"
+                value={detail.material}
+                onChange={(e) => handleMaterialChange(e, index)}
+                disabled={selectedMaterials.includes(detail.material)}
+              >
+                <option value="">Select material</option>
+                {location_mats.map((material) => (
+                  <option
+                    value={material.location_mats_id}
+                    key={material.location_mats_id}
+                    disabled={selectedMaterials.includes(material.location_mats_id)}
+                  >
+                    {material.material_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={container.formGroup}>
+              <label>Intake Type: </label>
+              <select
+                name="intakeType"
+                value={detail.intakeType}
+                onChange={(e) => handleInputChange(e, index)}
+              >
+                <option value="">Select Intake</option>
+                <option value="SEG WT">SEG WT</option>
+                <option value="SC">SC</option>
+              </select>
+            </div>
+            <div className={container.formGroup}>
+              <label>Amount: </label>
+              <input
+                type="number"
+                name="amount"
+                value={detail.amount}
+                onChange={(e) => handleInputChange(e, index)}
+              />
+            </div>
           </div>
-          <div>
-            <label>Intake Type: </label>
-            <select
-              name="intakeType"
-              value={detail.intakeType}
-              onChange={(e) => handleInputChange(e, index)}
-            >
-              <option value="">Select Intake</option>
-              <option value="SEG WT">SEG WT</option>
-              <option value="SC">SC</option>
-            </select>
-          </div>
-          <div>
-            <label>Amount: </label>
-            <input
-              type="number"
-              name="amount"
-              value={detail.amount}
-              onChange={(e) => handleInputChange(e, index)}
-            />
-          </div>
-        </div>
-      ))}
+        ))}
 
-      <button type="submit">Submit</button>
+        <button type="submit">Submit</button>        
+      </div>    
+      
+     </div>
     </form>
   );
 };

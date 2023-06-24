@@ -1,0 +1,58 @@
+/* styles.module.css */
+
+.pageContainer {
+    display: flex;
+  }
+  
+  .materialsContainer {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .materialGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+  }
+  
+  .materialGridItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .ticketDetailsContainer {
+    flex: 3;
+    padding: 20px;
+  }
+  
+  .ticketDetail {
+    margin-bottom: 20px;
+  }
+  
+  .ticketDetail h3 {
+    margin-top: 0;
+  }
+  
+  .ticketDetail button {
+    margin-bottom: 10px;
+  }
+  
+  .ticketDetail label {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  .ticketDetail input[type="number"] {
+    width: 100px;
+  }
+  
