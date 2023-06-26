@@ -141,7 +141,19 @@ router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function
     //Begin transaction 
     await pool.beginTransaction()
     const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer,transaction_type,amount) VALUES('${trasnsaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}');`
+    await pool.commit()
 
+    //Response if succcessfull
+    const response = {
+        "status": 200,
+        "details": {
+            "total": amount,
+            "type": transaction_type,
+            "id": trasnsaction_id
+        }
+    }
+
+    res.json(response)
 
 })
 

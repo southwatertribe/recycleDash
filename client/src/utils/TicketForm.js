@@ -60,6 +60,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
     try {
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
       const total = response.data.total;
+      console.log(`Total: ${JSON.stringify(total)}`)
     } catch (error) {
       console.error(error);
     }

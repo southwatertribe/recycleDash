@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 
 
 //Style 
-import "./GenericForm.css"
+import '../styles/GenericForm.css';
 
 export const GenericForm = ({
   fields,
