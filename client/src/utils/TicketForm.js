@@ -30,18 +30,14 @@ const TicketForm = ({ location, maker, location_mats }) => {
     });
   };
 
-  const handleAddDetail = (materialId) => {
-    const newDetail = {
-      id: ticketDetails.length + 1,
-      material: materialId,
-      intakeType: '',
-      amount: '',
-      mat_price: '',
-    };
-    
-    setTicketDetails((prevDetails) => [...prevDetails, newDetail]);
-    setSelectedMaterials((prevMaterials) => [...prevMaterials, materialId]);
-  };
+  const ticketCDTransaction = async (total) => {
+    try {
+      const response = await axios.post(`/${location}/:cash_drawer/cash_drawer_transactions`);
+      
+    } catch (error) {
+      console.log(error)      
+    }
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -61,6 +57,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
       const total = response.data.total;
       console.log(`Total: ${JSON.stringify(total)}`)
+      ticketCDTransaction(total)
     } catch (error) {
       console.error(error);
     }
