@@ -1,13 +1,33 @@
 import React, { useState } from 'react';
-import axios from './axios';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 import grid from '../styles/Grids.module.css';
 import container from '../styles/Layouts.module.css';
+import axios from './axios';
 
 const TicketForm = ({ location, maker, location_mats }) => {
   const [ticketDetails, setTicketDetails] = useState([]);
   const [customer, setCustomer] = useState('');
+  const [cashDrawerID, setCashDrawerID] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState([]);
+
+  const axiosPrivate = useAxiosPrivate();
+
+  const fetchCashDrawer = async() => {
+    try {
+      const response = await axios.get(
+        `/location-service/${location}/cash-drawer/`,
+        {
+          headers: {'Content-Type': 'application/json'},
+        }
+      )
+      console.log(`cash: ${JSON.stringify(response.data)}`)
+      setCashDrawerID(response.data.cash_drawer_id)
+
+    } catch (error) {
+      console.log(error)      
+    }
+  }
 
   const handleInputChange = (event, index) => {
     const { name, value } = event.target;
@@ -30,9 +50,15 @@ const TicketForm = ({ location, maker, location_mats }) => {
     });
   };
 
-  const ticketCDTransaction = async (total) => {
+  const ticketCDTransaction = async (total, cash_drawer) => {
+    const payload = {
+      "transaction_type": 'deposit',
+      "amount": total
+    }
+
     try {
-      const response = await axios.post(`/${location}/:cash_drawer/cash_drawer_transactions`);
+      const response = await axios.put(`/location-service/${location}/${cash_drawer}/cash_drawer_transactions`, payload);
+      console.log(response)
       
     } catch (error) {
       console.log(error)      
@@ -52,12 +78,21 @@ const TicketForm = ({ location, maker, location_mats }) => {
     setCustomer('');
     setTicketDetails([]);
     setSelectedMaterials([]);
+    
+    if (cashDrawerID === '') {
+      console.log("Blanked out")
+      fetchCashDrawer()
+    }
+
+    console.log(`ID: ${cashDrawerID}`)
 
     try {
+      //Creating ticket
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
-      const total = response.data.total;
-      console.log(`Total: ${JSON.stringify(total)}`)
-      ticketCDTransaction(total)
+      //Retrieving Total parsing to Float
+      const total = parseFloat(JSON.stringify(response.data.total.total)).toFixed(2);
+      //Creating a cash drawer Transaction
+      ticketCDTransaction(total, cashDrawerID)
     } catch (error) {
       console.error(error);
     }

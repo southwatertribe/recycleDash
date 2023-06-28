@@ -1,6 +1,5 @@
 import React from 'react'
-
-
+import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 //style
 import "./EmpDash.css"
 import "../../styles/DashContent.css"
@@ -14,8 +13,7 @@ import {GenericDropdown, ContentDisplay} from '../../utils/DropDownPack'
 
 export const EmpDash = () => {
   const {auth} = useAuth()
-  
-
+  const axiosPrivate = useAxiosPrivate();
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleOptionSelect = (option) => {

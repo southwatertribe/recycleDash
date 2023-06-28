@@ -112,6 +112,18 @@ router.get("/:rc_number/location_mats/", async function(req,res) {
     res.json(location)
 })
 
+//Get cash drawer information
+router.get("/:location_id/cash-drawer/", async function(req, res) {
+    const location_id = req.params.location_id
+    const sqlst = `SELECT cash_drawer_id FROM cash_drawers WHERE location='${location_id}'`
+    const [cash_drawer] = await pool.query(sqlst)
+    
+    res.json({
+        "status": 200,
+        "cash_drawer_id": cash_drawer[0].cash_drawer_id
+    })
+})
+
 //Get cash drawer total of location
 router.get("/:location_id/cash_drawer/total", async function(req,res){
     const location_id = req.params.location_id
@@ -141,6 +153,7 @@ router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function
     //Begin transaction 
     await pool.beginTransaction()
     const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer,transaction_type,amount) VALUES('${trasnsaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}');`
+    await pool.query(sqlst)
     await pool.commit()
 
     //Response if succcessfull
