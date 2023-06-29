@@ -3,6 +3,9 @@ import { useParams, useLocation, Link } from 'react-router-dom'
 //Api
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 
+import axios from '../../utils/axios'
+import Modal from 'react-modal';
+
 //Style 
 import "../../styles/DashContent.css"
 
@@ -79,38 +82,51 @@ const LocationDash = () => {
     }
   }
 
-  const TicketList = ({ tickets, onTicketSelect }) => {
-    if (tickets.length === 0) {
-      return <div>No current tickets</div>;
-    }
-
-    const handleTicketSelect = (ticketId) => {
-      // Perform any desired action when a ticket is selected
-      console.log(`Selected ticket ID: ${ticketId}`);
-      // You can replace the console.log statement with your desired functionality
+  
+  const TicketList = ({ tickets }) => {
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+  
+    const handleTicketSelect = (ticket) => {
+      setSelectedTicket(ticket);
+      setModalIsOpen(true);
     };
   
+    const handleGeneratePDF = async (ticket) => {
+      try {
+        const response = await axios.post(
+          'http://localhost:3001/generate-pdf/',
+          { ticket },
+          { responseType: 'blob' }
+        );
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        window.open(url);
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+      }
+    };
   
     return (
       <div>
         {tickets.map((ticket) => (
           <div
             key={ticket.ticket_id}
-            onClick={() => handleTicketSelect(ticket.ticket_id)}
+            onClick={() => handleTicketSelect(ticket)}
             onTouchStart={(e) => {
-              e.target.style.background = "#555";
+              e.target.style.background = '#555';
             }}
             onTouchEnd={(e) => {
-              e.target.style.background = "#333";
+              e.target.style.background = '#333';
             }}
             style={{
-              background: "#333",
-              color: "#fff",
-              padding: "10px",
-              marginBottom: "10px",
-              borderRadius: "5px",
-              cursor: "pointer",
-              transition: "background 0.3s",
+              background: '#333',
+              color: '#fff',
+              padding: '10px',
+              marginBottom: '10px',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              transition: 'background 0.3s',
             }}
           >
             <h3>Ticket Number: {ticket.sequence_num}</h3>
@@ -118,6 +134,22 @@ const LocationDash = () => {
             <p>Ticket Total: ${ticket.total}</p>
           </div>
         ))}
+  
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={() => setModalIsOpen(false)}
+          contentLabel="Ticket Details"
+        >
+          <h2>Ticket Details</h2>
+          {selectedTicket && (
+            <div>
+              <h3>Ticket Number: {selectedTicket.sequence_num}</h3>
+              <p>Date: {selectedTicket.timestamp}</p>
+              <p>Ticket Total: ${selectedTicket.total}</p>
+              <button onClick={() => handleGeneratePDF(selectedTicket)}>Generate PDF</button>
+            </div>
+          )}
+        </Modal>
       </div>
     );
   };
