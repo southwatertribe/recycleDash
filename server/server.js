@@ -13,7 +13,7 @@ const tickets = require('./routes/tickets');
 const locationService = require('./routes/location');
 const refresh = require('./routes/refresh');
 const credentials = require('./middleware/credentials');
-const corsOptions = require('./config/cors_options');
+const pdfService = require('./routes/pdf')
 const { verifyJWT } = require('./middleware/verifyJWT');
 
 
@@ -52,6 +52,7 @@ const startServer = async () => {
     server.use('/admin', admin)
     server.use('/location-service', locationService)
     server.use('/ticket-service', tickets)
+    server.use('/pdf-service', pdfService)
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);

@@ -82,20 +82,37 @@ const LocationDash = () => {
     }
   }
 
+  const fetchTicketDetails = async (ticket_id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/ticket-service/${ticket_id}/details`
+      )      
+      return response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
   
   const TicketList = ({ tickets }) => {
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
   
-    const handleTicketSelect = (ticket) => {
+    const handleTicketSelect = async (ticket) => {
+            
       setSelectedTicket(ticket);
+      //Get details of selected ticket
+      const details = await fetchTicketDetails(ticket.ticket_id)
+      ticket["details"] = details
+      handleGeneratePDF(ticket);
       setModalIsOpen(true);
+
     };
   
     const handleGeneratePDF = async (ticket) => {
+      console.log("Generated")
       try {
         const response = await axios.post(
-          'http://localhost:3001/generate-pdf/',
+          'http://localhost:3001/pdf-service/generate-ticket',
           { ticket },
           { responseType: 'blob' }
         );
@@ -146,16 +163,13 @@ const LocationDash = () => {
               <h3>Ticket Number: {selectedTicket.sequence_num}</h3>
               <p>Date: {selectedTicket.timestamp}</p>
               <p>Ticket Total: ${selectedTicket.total}</p>
-              <button onClick={() => handleGeneratePDF(selectedTicket)}>Generate PDF</button>
+              {/* <button onClick={() => handleGeneratePDF(selectedTicket)}>Generate PDF</button> */}
             </div>
           )}
         </Modal>
       </div>
     );
   };
-  
-  
-  
   
 
   useEffect(()=> {

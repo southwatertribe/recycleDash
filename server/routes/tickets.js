@@ -131,6 +131,17 @@ router.get("/:location_rc_number/get-tickets/", async function(req, res){
     )
 })
 
+//Get all ticket details from ticket id
+router.get("/:ticket_id/details", async function(req,res){
+    const ticket_id = req.params.ticket_id
+
+    const sqslt = `SELECT * FROM ticket_dets WHERE ticket='${ticket_id}';`
+    const [response] = await pool.query(sqslt)
+    
+    res.json(response)
+
+})
+
 //get a ticket
 
 
