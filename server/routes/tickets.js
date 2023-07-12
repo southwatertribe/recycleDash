@@ -58,7 +58,7 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
             //This is recieved from front end based on selected location mat
             //We have prce per unit saved in database, but this will be for ease of update, keep it at 0.05 currently 
             const mat_price = parseFloat(currentDet.mat_price)//Must parse float for calclations
-
+            const mat_name = currentDet.materialName
             //Adjust amount if tke in is by unit
             //Then calculate price 
             if (take_in_option === 'SC') {
@@ -78,7 +78,7 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
                 }
             
             total = total + price   //Add to total for mother ticket                                       //in weight 
-            const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${price}', '${take_in_option}')`;
+            const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${price}', '${take_in_option}', '${mat_name}')`;
             await pool.query(sqlst)
         }
 
@@ -118,7 +118,7 @@ router.get("/:location_rc_number/get-tickets/", async function(req, res){
 
     
     const sqlst = `
-        SELECT ticket_id, timestamp, location, sequence_num, total
+        SELECT *
         FROM tickets
         WHERE location = '${location}' AND DATE(timestamp) BETWEEN '${start}' AND '${end}';
     `

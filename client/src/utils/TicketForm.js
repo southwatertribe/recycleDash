@@ -21,7 +21,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
           headers: {'Content-Type': 'application/json'},
         }
       )
-      console.log(`cash: ${JSON.stringify(response.data)}`)
+      
+      
       setCashDrawerID(response.data.cash_drawer_id)
 
     } catch (error) {
@@ -37,7 +38,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
         ...newDetails[index],
         [name]: value,
       };
-      // console.log(`MATERIAL IS: ${JSON.stringify(newDetails[0].material)}`)
+      
       if (name === 'material') {
         const selectedMaterial = location_mats.find((material) => material.location_mats_id === value);
         if (selectedMaterial) {
@@ -52,7 +53,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
 
   const ticketCDTransaction = async (total, cash_drawer) => {
     const payload = {
-      "transaction_type": 'deposit',
+      "transaction_type": 'ticket',
       "amount": total
     }
 
@@ -80,12 +81,9 @@ const TicketForm = ({ location, maker, location_mats }) => {
     setSelectedMaterials([]);
     
     if (cashDrawerID === '') {
-      console.log("Blanked out")
+      
       fetchCashDrawer()
     }
-
-    console.log(`ID: ${cashDrawerID}`)
-
     try {
       //Creating ticket
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
@@ -127,7 +125,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
     });
   };
 
-  const handleMaterialClick = (materialId) => {
+  const handleMaterialClick = (materialId, materialName) => {
     if (selectedMaterials.includes(materialId)) {
       return; // Material already selected, do nothing
     }
@@ -137,6 +135,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
       const newDetail = {
         id: ticketDetails.length + 1,
         material: selectedMaterial.location_mats_id,
+        materialName: materialName,
         intakeType: selectedMaterial.intakeType,
         amount: '',
         mat_price: selectedMaterial.price,
@@ -176,7 +175,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
               <div
                 key={material.location_mats_id}
                 className={`${grid.materialGridItem} ${selectedMaterials.includes(material.location_mats_id) ? grid.disabled : ''}`}
-                onClick={() => handleMaterialClick(material.location_mats_id)}
+                onClick={() => handleMaterialClick(material.location_mats_id, material.material_name)}
               >
                 {material.material_name}
               </div>
@@ -218,7 +217,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
                 value={detail.intakeType}
                 onChange={(e) => handleInputChange(e, index)}
               >
-                <option value="">Select Intake</option>
+                
                 <option value="SEG WT">SEG WT</option>
                 <option value="SC">SC</option>
               </select>

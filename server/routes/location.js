@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 
 //Get all locations based on biz id used by all
 router.get("/:business_id/locations/", async function(req, res) {
-    console.log("HIT")
+    
     //Business ID
     const business_id = req.params.business_id 
     console.log(business_id)
@@ -136,7 +136,7 @@ router.get("/:location_id/cash_drawer/total", async function(req,res){
 })
 
 
-//Update cash drawer details and cash drawer total no ticket
+//Add cash drawer transaction
 router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function(req,res) {
 
     //Location should change to rc number
@@ -150,17 +150,16 @@ router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function
     //Transaction_id
     const trasnsaction_id = crypto.randomUUID()
 
-    //Begin transaction 
-    await pool.beginTransaction()
+    
     const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer,transaction_type,amount) VALUES('${trasnsaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}');`
     await pool.query(sqlst)
-    await pool.commit()
+    
 
     //Response if succcessfull
     const response = {
         "status": 200,
         "details": {
-            "total": amount,
+            "amount": amount,
             "type": transaction_type,
             "id": trasnsaction_id
         }

@@ -95,7 +95,7 @@ const LocationDash = () => {
   
   const TicketList = ({ tickets }) => {
     const [selectedTicket, setSelectedTicket] = useState(null);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+    // const [modalIsOpen, setModalIsOpen] = useState(false);
   
     const handleTicketSelect = async (ticket) => {
             
@@ -104,7 +104,7 @@ const LocationDash = () => {
       const details = await fetchTicketDetails(ticket.ticket_id)
       ticket["details"] = details
       handleGeneratePDF(ticket);
-      setModalIsOpen(true);
+      // setModalIsOpen(true);
 
     };
   
@@ -112,7 +112,7 @@ const LocationDash = () => {
       console.log("Generated")
       try {
         const response = await axios.post(
-          'http://localhost:3001/pdf-service/generate-ticket',
+          'http://localhost:3001/pdf-service/generate-ticket/web-view',
           { ticket },
           { responseType: 'blob' }
         );
@@ -152,21 +152,7 @@ const LocationDash = () => {
           </div>
         ))}
   
-        <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={() => setModalIsOpen(false)}
-          contentLabel="Ticket Details"
-        >
-          <h2>Ticket Details</h2>
-          {selectedTicket && (
-            <div>
-              <h3>Ticket Number: {selectedTicket.sequence_num}</h3>
-              <p>Date: {selectedTicket.timestamp}</p>
-              <p>Ticket Total: ${selectedTicket.total}</p>
-              {/* <button onClick={() => handleGeneratePDF(selectedTicket)}>Generate PDF</button> */}
-            </div>
-          )}
-        </Modal>
+       
       </div>
     );
   };
@@ -183,7 +169,7 @@ const LocationDash = () => {
         {location.state.location_name} Id: {location.state.location_id}
       </h1>
       <div className='dash-content'>
-        <div className='location-dash-row1'>
+        {/* <div className='location-dash-row1'>
           <div className='card'>
             Card
           </div>
@@ -193,7 +179,7 @@ const LocationDash = () => {
           <div className='card'>
             Card
           </div>
-        </div>
+        </div> */}
         <h1>Select a Ticket</h1>
         <DateRangeSelector onTicketsQuery={handleTicketsQuery} location_id={location.state.location_id}/>
         <TicketList tickets={tickets}/>
@@ -222,3 +208,7 @@ export default LocationDash
 
 
 {/* <LocationMatCard key={i} props={{material_name: locationMat.material_name}}/> */}
+
+
+
+
