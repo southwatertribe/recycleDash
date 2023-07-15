@@ -81,7 +81,6 @@ const TicketForm = ({ location, maker, location_mats }) => {
     setSelectedMaterials([]);
     
     if (cashDrawerID === '') {
-      
       fetchCashDrawer()
     }
     try {
