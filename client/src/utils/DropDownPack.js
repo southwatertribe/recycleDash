@@ -36,7 +36,8 @@ export const ContentDisplay = ({ selectedOption }) => {
     
     switch (selectedOption) {
       case 'createTicket':
-        return  <TicketForm maker={auth.f_name} location={auth.curr_location} location_mats={locationMats}/>;
+        return <TicketForm maker={auth.f_name} location={auth.curr_location} location_mats={locationMats}/>
+          
       case 'lookCashDrawer':
         return <div>Look at cash drawer</div>;
       default:

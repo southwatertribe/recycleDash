@@ -13,6 +13,18 @@ const TicketForm = ({ location, maker, location_mats }) => {
 
   const axiosPrivate = useAxiosPrivate();
 
+  //Generate Shipping report function
+  const genShippingReport = async(material)=>{
+
+    try {
+      const response = await axios.post(
+        `report-service/${location}/${material}/generate_shipping_report`
+      )      
+    } catch (error) {
+      console.log(error)      
+    }
+
+  }
   const fetchCashDrawer = async() => {
     try {
       const response = await axios.get(
@@ -43,6 +55,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
         const selectedMaterial = location_mats.find((material) => material.location_mats_id === value);
         if (selectedMaterial) {
           newDetails[index].mat_price = selectedMaterial.price;
+          
+          
         } else {
           newDetails[index].mat_price = '';
         }
@@ -74,7 +88,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
       customer,
       ticketDetails,
     };
-
+    console.log(ticket)
     // Reset State Variables
     setCustomer('');
     setTicketDetails([]);
@@ -135,7 +149,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
         id: ticketDetails.length + 1,
         material: selectedMaterial.location_mats_id,
         materialName: materialName,
-        intakeType: selectedMaterial.intakeType,
+        intakeType: "SEG WT",
         amount: '',
         mat_price: selectedMaterial.price,
       };
@@ -147,7 +161,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} >
+    <div>
+      <form onSubmit={handleSubmit} >
       <h2>Create a Ticket</h2>
       <div className={container.formGroup}>
         <label>Location: </label>
@@ -237,7 +252,12 @@ const TicketForm = ({ location, maker, location_mats }) => {
       </div>    
       
      </div>
+     
     </form>
+      <button onClick={()=>genShippingReport("Glass")}>
+      Report</button>
+    </div>
+    
   );
 };
 

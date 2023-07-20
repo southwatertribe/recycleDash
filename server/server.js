@@ -15,6 +15,7 @@ const refresh = require('./routes/refresh');
 const credentials = require('./middleware/credentials');
 const pdfService = require('./routes/pdf')
 const { verifyJWT } = require('./middleware/verifyJWT');
+const reports = require('./routes/reports')
 
 
 
@@ -53,6 +54,7 @@ const startServer = async () => {
     server.use('/location-service', locationService)
     server.use('/ticket-service', tickets)
     server.use('/pdf-service', pdfService)
+    server.use('/report-service', reports)
 
     //Start
     console.log(`NODE_ENV=${process.env.NODE_ENV}`);

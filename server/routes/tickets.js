@@ -49,6 +49,7 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
 
             const currentDet = payload.ticketDetails[index]
             const take_in_option = currentDet.intakeType //Single or weight
+            console.log(`TAKE IN: ${take_in_option}`)
             const material = currentDet.material //Location material 
             //Will be int or float depending on take in
             //Amount will be stored despite tke in, price will only be stored calculated off weight
@@ -73,9 +74,10 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
                     amount = (amount * 0.05) / mat_price;
                     price = amount * mat_price;
                 }
-                } else {
+            } 
+            else {
                     price = amount * mat_price;
-                }
+            }
             
             total = total + price   //Add to total for mother ticket                                       //in weight 
             const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${price}', '${take_in_option}', '${mat_name}')`;
