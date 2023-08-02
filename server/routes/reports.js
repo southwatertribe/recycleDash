@@ -22,17 +22,48 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
     //Get date (Should be NOW)
     const date = new Date()
 
+    console.log(date)
+
     //Check for the latest shipping report with material and location
-    const sqlst = `SELECT * FROM shipping_reports WHERE location_rc = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
+    let sqlst = `SELECT * FROM shipping_reports WHERE location_rc = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
 
     //Store latest date
     const [latest] = await pool.query(sqlst)
-    console.log(latest)
+    
 
     if (latest.length === 0) {
-        console.log("First Shipping Report")        
+         
+        //Find all tickets in a given location
+        let sqlst = `SELECT ticket_id FROM tickets WHERE location='${location_rc}'`
+        const [ticket_ids] = await pool.query(sqlst)
+
+        //Initialize list of ticket details
+        let ticket_details = []
+        
+        //Find all ticket details
+        for (let index = 0; index < ticket_ids.length; index++) {
+            let curr_ticket_id = ticket_ids[index].ticket_id
+            let sqlst = `SELECT * FROM ticket_dets WHERE ticket='${curr_ticket_id}' AND material_name LIKE '${material}%'`
+            let [curr_load] = await pool.query(sqlst)
+
+            //Track if there is a load of details
+            if (curr_load.length != 0) {
+                //Loop through and add dets to all details
+                for (let index = 0; index < curr_load.length; index++) {
+                    const det = curr_load[index];
+                    //Push to ticket detail list to generate with
+                    ticket_details.push(det)
+                }              
+
+            }            
+        }
+
+        console.log(ticket_details)
+        
+        
     } else {
         console.log("Previous Shipping Report Found")
+        
     }
 
 

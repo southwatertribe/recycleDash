@@ -54,7 +54,8 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
             //Will be int or float depending on take in
             //Amount will be stored despite tke in, price will only be stored calculated off weight
             //This will be used to calculate weight price
-            let amount = currentDet.amount
+            const amount = currentDet.amount
+            let adj_weight = amount
             //This will be the material price per pound
             //This is recieved from front end based on selected location mat
             //We have prce per unit saved in database, but this will be for ease of update, keep it at 0.05 currently 
@@ -71,8 +72,8 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
                     console.log(amount)
                     price = 0;
                 } else {
-                    amount = (amount * 0.05) / mat_price;
-                    price = amount * mat_price;
+                    let adj_weight = (amount * 0.05) / mat_price;
+                    price = adj_weight * mat_price;
                 }
             } 
             else {
@@ -80,7 +81,7 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
             }
             
             total = total + price   //Add to total for mother ticket                                       //in weight 
-            const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${price}', '${take_in_option}', '${mat_name}')`;
+            const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${adj_weight}', '${price}', '${take_in_option}', '${mat_name}')`;
             await pool.query(sqlst)
         }
 
