@@ -17,10 +17,12 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
         const transaction_id = crypto.randomUUID()
         // // //List of all materials in this ticket
         const payload = req.body
+        console.log(payload)
         // // //Mother Ticket details
         const customer = payload.customer
         const location = req.params.location_rc_number
         const maker = payload.maker
+        
         // // //Need to calculate the ticket details length
         const entries = Object.keys(payload.ticketDetails).length
         // //Start transaction
@@ -55,12 +57,13 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
             //Amount will be stored despite tke in, price will only be stored calculated off weight
             //This will be used to calculate weight price
             const amount = currentDet.amount
-            let adj_weight = amount
+            let adj_weight = 0
             //This will be the material price per pound
             //This is recieved from front end based on selected location mat
             //We have prce per unit saved in database, but this will be for ease of update, keep it at 0.05 currently 
             const mat_price = parseFloat(currentDet.mat_price)//Must parse float for calclations
             const mat_name = currentDet.materialName
+            const is_scrap = currentDet.is_scrap
             //Adjust amount if tke in is by unit
             //Then calculate price 
             if (take_in_option === 'SC') {
@@ -68,20 +71,22 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
                 // Conversion
                 // (SC * 0.05)/CRV RATE (CRV rate will be per pound price)
                 // This will calculate the weight, then multiply by per pound
-                if (mat_price === 0.00) {
+                if (is_scrap === 0) {
+                    adj_weight = null
                     console.log(amount)
                     price = 0;
                 } else {
-                    let adj_weight = (amount * 0.05) / mat_price;
+                    adj_weight = (amount * 0.05) / mat_price;
                     price = adj_weight * mat_price;
                 }
             } 
             else {
+                    adj_weight = amount
                     price = amount * mat_price;
             }
             
             total = total + price   //Add to total for mother ticket                                       //in weight 
-            const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${adj_weight}', '${price}', '${take_in_option}', '${mat_name}')`;
+            const sqlst = `INSERT INTO ticket_dets VALUES('${tickID}', '${material}', '${amount}', '${adj_weight}', '${price}', '${take_in_option}', '${mat_name}', '${is_scrap}')`;
             await pool.query(sqlst)
         }
 

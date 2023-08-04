@@ -54,9 +54,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
       if (name === 'material') {
         const selectedMaterial = location_mats.find((material) => material.location_mats_id === value);
         if (selectedMaterial) {
-          newDetails[index].mat_price = selectedMaterial.price;
-          
-          
+          newDetails[index].mat_price = selectedMaterial.price;        
         } else {
           newDetails[index].mat_price = '';
         }
@@ -152,6 +150,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
         intakeType: "SEG WT",
         amount: '',
         mat_price: selectedMaterial.price,
+        is_scrap: selectedMaterial.is_scrap
       };
 
       setTicketDetails((prevDetails) => [...prevDetails, newDetail]);

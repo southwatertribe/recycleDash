@@ -64,6 +64,10 @@ router.put('/:business_id/locations/:rc_number', async function (req,res, next) 
     //Begin ticket sequence
     sqlst = `INSERT INTO curr_ticket_sequence(location, sequence) VALUES('${location_rc_number}', 0)`
     pool.query(sqlst)
+    //Begin shipping report sequence
+    sqlst = `INSERT INTO curr_shipping_report_sequence(location, sequence) VALUES('${location_rc_number}', 0)`
+    pool.query(sqlst)
+    
 
     //Insert default mats (will be in 4 loop)
     //Location Mats Info 
@@ -80,11 +84,11 @@ router.put('/:business_id/locations/:rc_number', async function (req,res, next) 
         //0 if is_scrap === 0
 
         if (is_scrap === 0) {
-            //Price mus be 0
-            sqlst = `INSERT INTO locationmats(location_mats_id, location, price, material_id, material_name, price_per_unit) VALUES('${locationmatsID}','${location_rc_number}', '${0}', '${currMatID}', '${currMatName}','${0}');`
+            //Price must be 0
+            sqlst = `INSERT INTO locationmats(location_mats_id, location, price, material_id, material_name, price_per_unit, is_scrap) VALUES('${locationmatsID}','${location_rc_number}', '${0}', '${currMatID}', '${currMatName}','${0}', '${0}');`
             pool.query(sqlst)
         } else {
-            sqlst = `INSERT INTO locationmats(location_mats_id, location, material_id, material_name) VALUES('${locationmatsID}','${location_rc_number}','${currMatID}', '${currMatName}');`
+            sqlst = `INSERT INTO locationmats(location_mats_id, location, material_id, material_name, is_scrap) VALUES('${locationmatsID}','${location_rc_number}','${currMatID}', '${currMatName}', '${1}');`
             pool.query(sqlst)
         }
         

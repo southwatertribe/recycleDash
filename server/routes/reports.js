@@ -58,6 +58,9 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
             }            
         }
 
+        //Calculate the weights
+        
+
         console.log(ticket_details)
         
         
