@@ -72,7 +72,8 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
                 // (SC * 0.05)/CRV RATE (CRV rate will be per pound price)
                 // This will calculate the weight, then multiply by per pound
                 if (is_scrap === 0) {
-                    adj_weight = null
+                    //This usually doesnt happen so we are going to use a arbitrary mat price
+                    adj_weight = (amount * 0.05) / 1.25;
                     console.log(amount)
                     price = 0;
                 } else {
@@ -150,11 +151,6 @@ router.get("/:ticket_id/details", async function(req,res){
 
 })
 
-//get a ticket
-
-
-//Delete a ticket
-
-//Update a ticket
+//Change Ticket Details
 
 module.exports = router

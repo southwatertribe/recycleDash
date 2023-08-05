@@ -10,25 +10,42 @@ const { timeStamp } = require("console")
 // router.get()
 
 
-//This will create the report
+//Generate shipping report this is to be put into the database
 router.post("/:location_rc/:material/generate_shipping_report", async function(req,res){
 
-    //Get material and location
+    //Get material and location from params
     const material = req.params.material
     const location_rc = req.params.location_rc
-
+    //Shipping Report ID
+    const id = crypto.randomUUID()
     console.log(material)
 
     //Get date (Should be NOW)
     const date = new Date()
 
-    console.log(date)
+    await pool.beginTransaction();
 
+    //Update and get current sequence
+    let sqlst = `UPDATE curr_shipping_report_sequence 
+    SET sequence = sequence + 1
+    WHERE location = '${location_rc}';`
+
+    await pool.query(sqlst)
+
+    sqlst =`SELECT sequence 
+    FROM curr_shipping_report_sequence
+    WHERE location = '${location_rc}'`
+
+    const seq_response = await pool.query(sqlst)
+    const sequence = seq_response[0][0].sequence
+    
     //Check for the latest shipping report with material and location
-    let sqlst = `SELECT * FROM shipping_reports WHERE location_rc = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
+    sqlst = `SELECT * FROM shipping_reports WHERE location_rc = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
 
     //Store latest date
     const [latest] = await pool.query(sqlst)
+
+
     
 
     if (latest.length === 0) {
@@ -58,17 +75,62 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
             }            
         }
 
-        //Calculate the weights
-        
-
         console.log(ticket_details)
+
+        //Initiaize then calculate the weights
+        let seg_wt = 0
+        let scrap = 0
+        let total_wt = 0
+        let red_wt = 0
+        let refund_val = 0
+
+
         
+        for (let index = 0; index < ticket_details.length; index++) {
+            
+            //Calculate scrap or red weight
+            if (ticket_details[index].is_scap === 0) {
+                scrap += parseFloat(ticket_details[index].adj_weight)
+            } else {
+                seg_wt += parseFloat(ticket_details[index].adj_weight )
+            }
+
+            //Add price
+            refund_val += parseFloat(ticket_details[index].price)
+            //Total weight is 
+            total_wt = parseFloat(scrap) + parseFloat(seg_wt)
+            //Red_wt
+            red_wt =  parseFloat(seg_wt)
+            
+        }
         
+        //Add Shipping Report
+        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location_rc, sequence_num)
+        VALUES('${id}', '${refund_val}', '${scrap}', '${seg_wt}', '${red_wt}', '${material}', '${location_rc}', '${sequence}');`
+        await pool.query(sqlst)
+
+        //Create return object 
+        const shipping_details = {
+            seg_wt: seg_wt,
+            scrap: scrap,
+            total_wt: total_wt,
+            red_wt: red_wt,
+            refund_val: refund_val,
+        }
+        
+        console.log(shipping_details)
     } else {
+        //Find all shipping reports after latest with the right material and
         console.log("Previous Shipping Report Found")
+        //Find all tickets in a given location
+        let sqlst = `SELECT ticket_id FROM tickets WHERE location='${location_rc} AND TIMESTAMP > '${latest.timeStamp}''`
+        const [ticket_ids] = await pool.query(sqlst)
+
+
         
     }
 
+    await pool.commit()
 
 
 })
