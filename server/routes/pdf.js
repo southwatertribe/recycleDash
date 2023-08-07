@@ -3,7 +3,7 @@ const doc = require("pdfkit");
 const router = express.Router()
 const PDFDocument = require('pdfkit')
 
-
+//generate a ticket for the web to view
 router.post('/generate-ticket/web-view', async function(req, res){
     //Ticket content
     const  content = req.body.ticket;
@@ -27,7 +27,7 @@ router.post('/generate-ticket/web-view', async function(req, res){
     doc.fontSize(12).text(`Location RC Number: ${content['location']}`, 50, 50);
 
     // Add Ticket Number
-    doc.fontSize(14).text(`Ticket #: ${content['sequence_num']}`, 300, 50, { align: 'right' });
+    doc.fontSize(14).text(`Ticket # ${content['sequence_num']}`, 300, 50, { align: 'right' });
 
     // Add Date and Customer
     doc.fontSize(12).text('Date:', 50, 110);

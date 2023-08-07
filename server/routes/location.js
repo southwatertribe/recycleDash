@@ -116,7 +116,13 @@ router.get("/:rc_number/location_mats/", async function(req,res) {
     res.json(location)
 })
 
-//Get cash drawer information
+//Edit location mat price
+router.put("/:rc_number/:location_mat/change_price", async function(req,res) {
+    const rc_number = req.params.rc_number
+    const location_mat = req.params.location_mat
+})
+
+//Get cash drawer ID
 router.get("/:location_id/cash-drawer/", async function(req, res) {
     const location_id = req.params.location_id
     const sqlst = `SELECT cash_drawer_id FROM cash_drawers WHERE location='${location_id}'`
@@ -128,7 +134,7 @@ router.get("/:location_id/cash-drawer/", async function(req, res) {
     })
 })
 
-//Get cash drawer total of location
+//Get cash drawer total 
 router.get("/:location_id/cash_drawer/total", async function(req,res){
     const location_id = req.params.location_id
     const sqlst = `SELECT total FROM cash_drawers WHERE location='${location_id}'`

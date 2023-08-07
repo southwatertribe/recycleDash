@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 import grid from '../styles/Grids.module.css';
 import container from '../styles/Layouts.module.css';
 import axios from './axios';
-
+//TODO OPTIMIZE FETCHING TOTALS
+//TODO IMPROVE THE CASHDRAWER RENDER, SO YOU CAN USE IT ELSE WHERE
+//To use the ticket form you need the location, a maker, and the location mats. 
 const TicketForm = ({ location, maker, location_mats }) => {
   const [ticketDetails, setTicketDetails] = useState([]);
   const [customer, setCustomer] = useState('');
   const [cashDrawerID, setCashDrawerID] = useState('');
+  const [cashDrawerTotal, setCashDrawerTotal] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState([]);
 
   const axiosPrivate = useAxiosPrivate();
+
 
   //Generate Shipping report function
   const genShippingReport = async(material)=>{
@@ -26,19 +30,38 @@ const TicketForm = ({ location, maker, location_mats }) => {
 
   }
   const fetchCashDrawer = async() => {
-    try {
-      const response = await axios.get(
-        `/location-service/${location}/cash-drawer/`,
-        {
-          headers: {'Content-Type': 'application/json'},
-        }
-      )
-      
-      
-      setCashDrawerID(response.data.cash_drawer_id)
 
+    //TODO: Optimize to not constantly pull this data in a better way
+    if (cashDrawerID === '') {
+      try {
+        const response = await axios.get(
+          `/location-service/${location}/cash-drawer/`,
+          {
+            headers: {'Content-Type': 'application/json'},
+          }
+        )
+        
+        setCashDrawerID(response.data.cash_drawer_id)
+  
+      } catch (error) {
+        console.log(error)      
+      }      
+    }
+  }
+
+  
+  const fetchCashDrawerTotal = async()=>{        
+    try {
+      
+      const response = await axios.get(
+        `/location-service/${location}/cash_drawer/total`
+      )
+      const newTotal = response.data.total
+      console.log("Total fetched")
+      setCashDrawerTotal(newTotal)
+      console.log(cashDrawerTotal)
     } catch (error) {
-      console.log(error)      
+      console.log(error)
     }
   }
 
@@ -91,17 +114,16 @@ const TicketForm = ({ location, maker, location_mats }) => {
     setCustomer('');
     setTicketDetails([]);
     setSelectedMaterials([]);
-    
-    if (cashDrawerID === '') {
-      fetchCashDrawer()
-    }
+
     try {
       //Creating ticket
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
-      //Retrieving Total parsing to Float
+      //Retrieving Total of ticketparsing to Float
       const total = parseFloat(JSON.stringify(response.data.total.total)).toFixed(2);
       //Creating a cash drawer Transaction
       ticketCDTransaction(total, cashDrawerID)
+      //Getting and setting new total
+      fetchCashDrawerTotal()
     } catch (error) {
       console.error(error);
     }
@@ -159,26 +181,40 @@ const TicketForm = ({ location, maker, location_mats }) => {
     }
   };
 
+  useEffect(()=>{
+    fetchCashDrawer()
+    fetchCashDrawerTotal()
+    console.log("Updated Cash Drawer Total:", cashDrawerTotal);
+  }, [])
+
   return (
     <div>
       <form onSubmit={handleSubmit} >
-      <h2>Create a Ticket</h2>
-      <div className={container.formGroup}>
-        <label>Location: </label>
-        <input type="text" name="location" value={location} disabled />
-      </div>
-      <div className={container.formGroup}>
-        <label>Maker: </label>
-        <input type="text" name="maker" value={maker} disabled />
-      </div>
-      <div className={container.formGroup}>
-        <label>Customer: </label>
-        <input
-          type="text"
-          name="customer"
-          value={customer}
-          onChange={(e) => setCustomer(e.target.value)}
-        />
+      <div style={{ display: 'flex', justifyContent: 'center'}}>
+        <div style={{marginRight: '200px'}}>
+          <h2>Cash</h2>
+          {cashDrawerTotal < 0 ? <div style={{color: 'red'}}>{cashDrawerTotal}</div> : <div style={{color: 'green'}}>{cashDrawerTotal}</div>}
+        </div>
+        <div className='create-ticket-title'>
+          <h2>Create a Ticket</h2>
+          <div className={container.formGroup}>
+            <label>Location: </label>
+            <input type="text" name="location" value={location} disabled />
+          </div>
+          <div className={container.formGroup}>
+            <label>Maker: </label>
+            <input type="text" name="maker" value={maker} disabled />
+          </div>
+          <div className={container.formGroup}>
+            <label>Customer: </label>
+            <input
+              type="text"
+              name="customer"
+              value={customer}
+              onChange={(e) => setCustomer(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
      <div className={container.pageContainer}>

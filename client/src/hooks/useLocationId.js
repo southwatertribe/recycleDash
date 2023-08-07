@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import useAxiosPrivate from './useAxiosPrivate';
 
-const useLocationData = (locationId) => {
+const useLocationMats = (locationId) => {
   const axiosPrivate = useAxiosPrivate();
   const [locationMats, setLocationMats] = useState();
 
@@ -32,4 +32,4 @@ const useLocationData = (locationId) => {
   return { locationMats, fetchLocationMats };
 };
 
-export default useLocationData;
+export default useLocationMats;

@@ -5,7 +5,7 @@ import TicketForm from './TicketForm'
 import useAuth from '../hooks/useAuth';
 
 //Hook
-import useLocationData from '../hooks/useLocationId';
+import useLocationMats from '../hooks/useLocationId';
 
 
 export const GenericDropdown = ({ options, onOptionSelect }) => {
@@ -30,15 +30,14 @@ export const GenericDropdown = ({ options, onOptionSelect }) => {
 
 export const ContentDisplay = ({ selectedOption }) => {
   const {auth} = useAuth()
-  const { locationMats} = useLocationData(auth.curr_location);
+  const { locationMats} = useLocationMats(auth.curr_location);
   
   const getContent = () => {
     
     switch (selectedOption) {
       case 'createTicket':
         return <TicketForm maker={auth.f_name} location={auth.curr_location} location_mats={locationMats}/>
-          
-      case 'lookCashDrawer':
+      case 'Cash Drawer':
         return <div>Look at cash drawer</div>;
       default:
         return <div>Please select an option</div>;

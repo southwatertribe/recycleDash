@@ -3,7 +3,7 @@ const router = express.Router()
 const pool = require('../db/dbconnection')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
-const { timeStamp } = require("console")
+const { timeStamp, time } = require("console")
 
 
 // This will get a reports info
@@ -40,10 +40,12 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
     const sequence = seq_response[0][0].sequence
     
     //Check for the latest shipping report with material and location
-    sqlst = `SELECT * FROM shipping_reports WHERE location_rc = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
+    sqlst = `SELECT timestamp FROM shipping_reports WHERE location_rc = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
 
     //Store latest date
     const [latest] = await pool.query(sqlst)
+
+    console.log()
 
 
     
@@ -117,22 +119,87 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
             red_wt: red_wt,
             refund_val: refund_val,
         }
+
+        await pool.commit()
         
         console.log(shipping_details)
     } else {
-        //Find all shipping reports after latest with the right material and
-        console.log("Previous Shipping Report Found")
-        //Find all tickets in a given location
-        let sqlst = `SELECT ticket_id FROM tickets WHERE location='${location_rc} AND TIMESTAMP > '${latest.timeStamp}''`
+        //Find all shipping reports after latest with the right material and location
+        //Find all tickets in a given location from last shipping report time
+        let sqlst = `SELECT ticket_id FROM tickets WHERE location='${location_rc} AND TIMESTAMP > '${JSON.stringify(latest[0].timestamp)}''`
         const [ticket_ids] = await pool.query(sqlst)
 
-
+        //Initialize list of ticket details
+        let ticket_details = []
         
+        //Find all ticket details
+        for (let index = 0; index < ticket_ids.length; index++) {
+            let curr_ticket_id = ticket_ids[index].ticket_id
+            let sqlst = `SELECT * FROM ticket_dets WHERE ticket='${curr_ticket_id}' AND material_name LIKE '${material}%'`
+            let [curr_load] = await pool.query(sqlst)
+
+            //Track if there is a load of details
+            if (curr_load.length != 0) {
+                //Loop through and add dets to all details
+                for (let index = 0; index < curr_load.length; index++) {
+                    const det = curr_load[index];
+                    //Push to ticket detail list to generate with
+                    ticket_details.push(det)
+                }              
+
+            }            
+        }
+
+        //Initiaize then calculate the weights
+        let seg_wt = 0
+        let scrap = 0
+        let total_wt = 0
+        let red_wt = 0
+        let refund_val = 0
+
+        for (let index = 0; index < ticket_details.length; index++) {
+            
+            //Calculate scrap or red weight
+            if (ticket_details[index].is_scap === 0) {
+                scrap += parseFloat(ticket_details[index].adj_weight)
+            } else {
+                seg_wt += parseFloat(ticket_details[index].adj_weight )
+            }
+
+            //Add price
+            refund_val += parseFloat(ticket_details[index].price)
+            //Total weight is 
+            total_wt = parseFloat(scrap) + parseFloat(seg_wt)
+            //Red_wt
+            red_wt =  parseFloat(seg_wt)
+            
+        }
+
+        //Add Shipping Report
+        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location_rc, sequence_num)
+        VALUES('${id}', '${refund_val}', '${scrap}', '${seg_wt}', '${red_wt}', '${material}', '${location_rc}', '${sequence}');`
+        await pool.query(sqlst)
+
+        //Create return object 
+        const shipping_details = {
+            seg_wt: seg_wt,
+            scrap: scrap,
+            total_wt: total_wt,
+            red_wt: red_wt,
+            refund_val: refund_val,
+        }
+        
+        await pool.commit()
+        console.log(shipping_details)
+
     }
 
-    await pool.commit()
+    
 
 
 })
+
+//Generate daily summary
+
 
 module.exports = router
