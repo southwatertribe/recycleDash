@@ -16,6 +16,18 @@ const TicketForm = ({ location, maker, location_mats }) => {
 
   const axiosPrivate = useAxiosPrivate();
 
+  useEffect(()=>{
+    
+    if (cashDrawerID === '') {
+      fetchCashDrawer()      
+    }
+    fetchCashDrawerTotal()
+    .then(()=>{
+      console.log("Updated Cash Drawer Total:", cashDrawerTotal);
+    })
+    
+  }, [])
+
 
   //Generate Shipping report function
   const genShippingReport = async(material)=>{
@@ -32,7 +44,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
   const fetchCashDrawer = async() => {
 
     //TODO: Optimize to not constantly pull this data in a better way
-    if (cashDrawerID === '') {
+
       try {
         const response = await axios.get(
           `/location-service/${location}/cash-drawer/`,
@@ -46,13 +58,12 @@ const TicketForm = ({ location, maker, location_mats }) => {
       } catch (error) {
         console.log(error)      
       }      
-    }
+    
   }
 
   
   const fetchCashDrawerTotal = async()=>{        
     try {
-      
       const response = await axios.get(
         `/location-service/${location}/cash_drawer/total`
       )
@@ -91,11 +102,9 @@ const TicketForm = ({ location, maker, location_mats }) => {
       "transaction_type": 'ticket',
       "amount": total
     }
-
     try {
       const response = await axios.put(`/location-service/${location}/${cash_drawer}/cash_drawer_transactions`, payload);
       console.log(response)
-      
     } catch (error) {
       console.log(error)      
     }
@@ -121,9 +130,9 @@ const TicketForm = ({ location, maker, location_mats }) => {
       //Retrieving Total of ticketparsing to Float
       const total = parseFloat(JSON.stringify(response.data.total.total)).toFixed(2);
       //Creating a cash drawer Transaction
-      ticketCDTransaction(total, cashDrawerID)
+      await ticketCDTransaction(total, cashDrawerID)
       //Getting and setting new total
-      fetchCashDrawerTotal()
+      await fetchCashDrawerTotal()
     } catch (error) {
       console.error(error);
     }
@@ -181,11 +190,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
     }
   };
 
-  useEffect(()=>{
-    fetchCashDrawer()
-    fetchCashDrawerTotal()
-    console.log("Updated Cash Drawer Total:", cashDrawerTotal);
-  }, [])
+
 
   return (
     <div>
@@ -193,7 +198,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
       <div style={{ display: 'flex', justifyContent: 'center'}}>
         <div style={{marginRight: '200px'}}>
           <h2>Cash</h2>
-          {cashDrawerTotal < 0 ? <div style={{color: 'red'}}>{cashDrawerTotal}</div> : <div style={{color: 'green'}}>{cashDrawerTotal}</div>}
+          {`$ ${cashDrawerTotal}` < 0 ? <div style={{color: 'red'}}>{cashDrawerTotal}</div> : <div style={{color: 'green', fontSize: 30}}>$ {cashDrawerTotal}</div>}
         </div>
         <div className='create-ticket-title'>
           <h2>Create a Ticket</h2>
