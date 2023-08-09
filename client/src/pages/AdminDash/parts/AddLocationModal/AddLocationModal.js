@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { AddLocationForm } from './AddLocationForm';
 
 //Style
-import "./AddLocationModal.css"
+import "../../../../styles/Modal.css"
 
 //Hooks
 import useModal from '../../../../hooks/useModal';

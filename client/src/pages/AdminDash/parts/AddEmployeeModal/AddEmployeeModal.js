@@ -1,7 +1,7 @@
 import React from 'react'
 import AddEmployeeForm from './AddEmployeeForm'
 //Style
-import "../AddLocationModal/AddLocationModal.css"
+import "../../../../styles/Modal.css"
 //Hooks
 import useModal from '../../../../hooks/useModal'
 const AddEmployeeModal = () => {

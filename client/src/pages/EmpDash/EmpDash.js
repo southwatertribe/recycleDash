@@ -23,7 +23,7 @@ export const EmpDash = () => {
 
   const dropdownOptions = [
     { label: 'Create Ticket', value: 'createTicket' },
-    { label: 'Look at Cash Drawer', value: 'lookCashDrawer' },
+    { label: 'Make a Transaction', value: 'makeTransaction' },
   ];
 
   

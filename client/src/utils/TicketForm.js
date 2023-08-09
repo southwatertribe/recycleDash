@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-
+//styles
 import grid from '../styles/Grids.module.css';
 import container from '../styles/Layouts.module.css';
+import "../styles/Modal.css"
+//Axios
 import axios from './axios';
+//Modal
+import useModal from '../hooks/useModal';
 //TODO OPTIMIZE FETCHING TOTALS
 //TODO IMPROVE THE CASHDRAWER RENDER, SO YOU CAN USE IT ELSE WHERE
 //To use the ticket form you need the location, a maker, and the location mats. 
@@ -13,7 +17,12 @@ const TicketForm = ({ location, maker, location_mats }) => {
   const [cashDrawerID, setCashDrawerID] = useState('');
   const [cashDrawerTotal, setCashDrawerTotal] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState([]);
+  const [submittedTicket, setSubmittedTicket] = useState(null);
 
+
+  //Modal
+  const [modal, toggleModal] = useModal();
+  //Axios
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(()=>{
@@ -28,7 +37,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
     
   }, [])
 
-
+  //ASYNC Calls
   //Generate Shipping report function
   const genShippingReport = async(material)=>{
 
@@ -41,6 +50,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
     }
 
   }
+  //Fetch darawer id
   const fetchCashDrawer = async() => {
 
     //TODO: Optimize to not constantly pull this data in a better way
@@ -59,9 +69,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
         console.log(error)      
       }      
     
-  }
-
-  
+  }  
+  //Fetch Drawer Total
   const fetchCashDrawerTotal = async()=>{        
     try {
       const response = await axios.get(
@@ -75,7 +84,22 @@ const TicketForm = ({ location, maker, location_mats }) => {
       console.log(error)
     }
   }
+  const ticketCDTransaction = async (total, cash_drawer) => {
+    const payload = {
+      "transaction_type": 'ticket',
+      "amount": total
+    }
+    try {
+      const response = await axios.put(`/location-service/${location}/${cash_drawer}/cash_drawer_transactions`, payload);
+      console.log(response)
+    } catch (error) {
+      console.log(error)      
+    }
+  }
 
+
+  //Form functions
+  //Hnadle Input Change
   const handleInputChange = (event, index) => {
     const { name, value } = event.target;
     setTicketDetails((prevDetails) => {
@@ -96,21 +120,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
       return newDetails;
     });
   };
-
-  const ticketCDTransaction = async (total, cash_drawer) => {
-    const payload = {
-      "transaction_type": 'ticket',
-      "amount": total
-    }
-    try {
-      const response = await axios.put(`/location-service/${location}/${cash_drawer}/cash_drawer_transactions`, payload);
-      console.log(response)
-    } catch (error) {
-      console.log(error)      
-    }
-  }
-
-  const handleSubmit = async (event) => {
+  //HandleModal
+  const handleModal = async (event) => {
     event.preventDefault();
     const ticket = {
       location,
@@ -118,24 +129,35 @@ const TicketForm = ({ location, maker, location_mats }) => {
       customer,
       ticketDetails,
     };
-    console.log(ticket)
-    // Reset State Variables
+
+    setSubmittedTicket(ticket);
+
+    toggleModal();
+
+  }
+  //Submit Ticket
+  const handleSubmit = async (event) => {
+
+    //Reset State Variables
     setCustomer('');
     setTicketDetails([]);
     setSelectedMaterials([]);
 
     try {
       //Creating ticket
-      const response = await axios.post(`/ticket-service/${location}/new_ticket/`, ticket);
+      const response = await axios.post(`/ticket-service/${location}/new_ticket/`, submittedTicket);
       //Retrieving Total of ticketparsing to Float
       const total = parseFloat(JSON.stringify(response.data.total.total)).toFixed(2);
       //Creating a cash drawer Transaction
       await ticketCDTransaction(total, cashDrawerID)
       //Getting and setting new total
       await fetchCashDrawerTotal()
+
     } catch (error) {
       console.error(error);
     }
+
+    toggleModal()
   };
 
   const handleMaterialChange = (event, index) => {
@@ -190,15 +212,13 @@ const TicketForm = ({ location, maker, location_mats }) => {
     }
   };
 
-
-
   return (
     <div>
-      <form onSubmit={handleSubmit} >
+      <form onSubmit={handleModal}>
       <div style={{ display: 'flex', justifyContent: 'center'}}>
         <div style={{marginRight: '200px'}}>
           <h2>Cash</h2>
-          {`$ ${cashDrawerTotal}` < 0 ? <div style={{color: 'red'}}>{cashDrawerTotal}</div> : <div style={{color: 'green', fontSize: 30}}>$ {cashDrawerTotal}</div>}
+          {cashDrawerTotal < 0 ? <div style={{color: 'red', fontSize: 30}}>-${Math.abs(cashDrawerTotal)}</div> : <div style={{color: 'green', fontSize: 30}}>$ {cashDrawerTotal}</div>}
         </div>
         <div className='create-ticket-title'>
           <h2>Create a Ticket</h2>
@@ -296,8 +316,22 @@ const TicketForm = ({ location, maker, location_mats }) => {
     </form>
       <button onClick={()=>genShippingReport("Glass")}>
       Report</button>
+
+      {modal && <div className='modal'>
+            <div  className='overlay'>
+                <div className='modal-content'>
+                    <h3>Location Details</h3>
+                    <p>{submittedTicket.ticketDetails[0].material}</p>
+                    <button  onClick={handleSubmit}>
+                       Submit
+                    </button>
+                    <button onClick={toggleModal}>
+                       Go Back
+                    </button>
+                </div>
+            </div>
+        </div>}
     </div>
-    
   );
 };
 

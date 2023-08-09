@@ -1,5 +1,8 @@
 import React from 'react';
+
+//Parts
 import TicketForm from './TicketForm'
+import TransactionForm  from './TransactionForm';
 
 //State/Redux
 import useAuth from '../hooks/useAuth';
@@ -37,8 +40,8 @@ export const ContentDisplay = ({ selectedOption }) => {
     switch (selectedOption) {
       case 'createTicket':
         return <TicketForm maker={auth.f_name} location={auth.curr_location} location_mats={locationMats}/>
-      case 'Cash Drawer':
-        return <div>Add a transaction</div>;
+      case 'makeTransaction':
+        return <TransactionForm/>;
       default:
         return <div>Please select an option</div>;
     }
