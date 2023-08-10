@@ -57,7 +57,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
 
       try {
         const response = await axios.get(
-          `/location-service/${location}/cash-drawer/`,
+          `/location-service/${location}/cash-drawer`,
           {
             headers: {'Content-Type': 'application/json'},
           }

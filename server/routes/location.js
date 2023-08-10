@@ -123,11 +123,15 @@ router.put("/:rc_number/:location_mat/change_price", async function(req,res) {
 })
 
 //Get cash drawer ID
-router.get("/:location_id/cash-drawer/", async function(req, res) {
-    const location_id = req.params.location_id
-    const sqlst = `SELECT cash_drawer_id FROM cash_drawers WHERE location='${location_id}'`
+router.get("/:rc_number/cash-drawer", async function(req, res) {
+    const rc_number = req.params.rc_number
+
+    const sqlst = `SELECT cash_drawer_id FROM cash_drawers WHERE location='${rc_number}';`
     const [cash_drawer] = await pool.query(sqlst)
     
+    
+    console.log("WE HIT THE ID FOR CASH DRAWER")
+    console.log(cash_drawer[0].cash_drawer_id)
     res.json({
         "status": 200,
         "cash_drawer_id": cash_drawer[0].cash_drawer_id
@@ -149,19 +153,21 @@ router.get("/:location_id/cash_drawer/total", async function(req,res){
 //Add cash drawer transaction
 router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function(req,res) {
 
-    //Location should change to rc number
-    const location_id = req.params.location_id
+
+
     //Transaction type
     const transaction_type = req.body.transaction_type
     //Cash Drawer
     const cash_drawer = req.params.cash_drawer
     //Amount
     const amount = req.body.amount
+    //Description
+    const desccription = req.body.description
     //Transaction_id
     const trasnsaction_id = crypto.randomUUID()
 
     
-    const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer,transaction_type,amount) VALUES('${trasnsaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}');`
+    const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer, transaction_type, amount, description) VALUES('${trasnsaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}', '${desccription}');`
     await pool.query(sqlst)
     
 

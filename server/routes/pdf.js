@@ -73,6 +73,11 @@ router.post('/generate-ticket/web-view', async function(req, res){
     doc.fontSize(12).text('Signature:', 50, signatureY);
     doc.moveTo(120, signatureY + 10).lineTo(250, signatureY + 10).stroke();
 
+    //Add License
+    const driverLicenseY = separatingLineY + 120; // Adjust the value to position the line lower
+    doc.fontSize(12).text('License #:', 50, driverLicenseY);
+    doc.moveTo(120, driverLicenseY + 10).lineTo(250, driverLicenseY + 10).stroke();
+
 
 
     //Finalize document
