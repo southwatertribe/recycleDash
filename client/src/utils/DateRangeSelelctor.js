@@ -11,6 +11,7 @@ const DateRangeSelector = ({ onTicketsQuery, location_id }) => {
   };
 
   const handleToDateChange = (date) => {
+    
     setToDate(date);
   };
 

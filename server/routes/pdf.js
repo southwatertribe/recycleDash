@@ -85,5 +85,10 @@ router.post('/generate-ticket/web-view', async function(req, res){
 
 })
 
+//Generate snapshot pdf
+router.post('/generate-snapshot/:rc_number', async function(req,res){
+    
+})
+
 
 module.exports = router

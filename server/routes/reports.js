@@ -199,7 +199,7 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
 
 })
 
-//Generate daily summary
+
 
 
 module.exports = router

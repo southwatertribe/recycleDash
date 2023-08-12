@@ -53,17 +53,16 @@ router.get('/employees/:business_id', async function(req,res){
 })
 
 
-//Update employee location
-router.patch('/update/emp-location/:user_id', async function(req,res) {
+// //Update employee location
+// router.patch('/update/emp-location/:user_id', async function(req,res) {
 
-})
+// })
 
 
 //Admin edit location material price
 router.patch('/update/location_mats/:location_mat_id', async function(req, res){
     const location_mats_id = req.query.location_mats_id;
-    const new_price = req.query.new_price
-    
+    const new_price = req.body.new_price
     const sqlst = `UPDATE locationmats SET price = ${new_price} WHERE location_mats_id='${location_mats_id}'`;
     const [priceChange] = await pool.query(sqlst)
     res.json(priceChange)

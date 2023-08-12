@@ -22,8 +22,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
 
   //Modal
   const [modal, toggleModal] = useModal();
-  //Axios
-  const axiosPrivate = useAxiosPrivate();
+ 
 
   useEffect(()=>{
     
@@ -240,6 +239,12 @@ const TicketForm = ({ location, maker, location_mats }) => {
             />
           </div>
         </div>
+        <div style={{marginLeft: '200px'}}>
+              <h2>Shipping Report</h2>
+              <button onClick={()=>genShippingReport("Glass")}>
+                Report
+              </button>
+        </div>
       </div>
 
      <div className={container.pageContainer}>
@@ -305,6 +310,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
                 onChange={(e) => handleInputChange(e, index)}
               />
             </div>
+            
           </div>
         ))}
 
@@ -314,8 +320,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
      </div>
      
     </form>
-      <button onClick={()=>genShippingReport("Glass")}>
-      Report</button>
+      
 
       {modal && <div className='modal'>
             <div  className='overlay'>

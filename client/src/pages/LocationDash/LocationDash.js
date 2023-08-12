@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useLocation, Link } from 'react-router-dom'
 //Api
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
-
 import axios from '../../utils/axios'
+
 import Modal from 'react-modal';
 
 //Style 
@@ -11,7 +11,8 @@ import "../../styles/DashContent.css"
 
 //Parts
 import LocationMatCard from './LocationMatCard'
-import DateRangeSelector from '../../utils/DateRangeSelelctor'
+import { GenericDropdown, ContentDisplay } from '../../utils/DropDownPackAdmin';
+
 const LocationDash = () => {
   let { location_id } = useParams();
   const axiosPrivate = useAxiosPrivate();
@@ -20,6 +21,19 @@ const LocationDash = () => {
   const location = useLocation();
 
   const [tickets, setTickets] = useState([]);
+
+
+  const [selectedOption, setSelectedOption] = useState('');
+
+  const handleOptionSelect = (option) => {
+    console.log(option)
+    setSelectedOption(option);
+  };
+
+  const dropdownOptions = [
+    { label: 'Ticket Search', value: 'ticketSearch' },
+    { label: 'View Details', value: 'viewDetails' },
+  ];
 
   const fetchLocationMats = async () => { //Payload is business_id
     try {
@@ -42,29 +56,6 @@ const LocationDash = () => {
     }
   }
 
-  const handleTicketsQuery = async (fromDate, toDate, location_id) => {
-    // Perform the query to retrieve tickets based on the date range
-    // Update the `tickets` state with the retrieved tickets
-    // Replace the below sample data with your actual logic
-    try {
-      const response = await axiosPrivate.get(
-        `/ticket-service/${location_id}/get-tickets`,
-        {
-          headers: {'Content-Type': 'application/json'},
-          params: {
-            start: fromDate,
-            end: toDate
-          }
-        }
-      )
-      console.log(response.data.tickets)
-      setTickets(response.data.tickets);
-    } catch (error) {
-      
-    }
-    
-  };
-
 
   const fetchCashDrawerTotal = async() => {
     try {
@@ -82,82 +73,6 @@ const LocationDash = () => {
     }
   }
 
-  const fetchTicketDetails = async (ticket_id) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3001/ticket-service/${ticket_id}/details`
-      )      
-      return response.data
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  
-  const TicketList = ({ tickets }) => {
-    const [selectedTicket, setSelectedTicket] = useState(null);
-    // const [modalIsOpen, setModalIsOpen] = useState(false);
-  
-    const handleTicketSelect = async (ticket) => {
-            
-      setSelectedTicket(ticket);
-      //Get details of selected ticket
-      const details = await fetchTicketDetails(ticket.ticket_id)
-      ticket["details"] = details
-      handleGeneratePDF(ticket);
-      // setModalIsOpen(true);
-
-    };
-  
-    const handleGeneratePDF = async (ticket) => {
-      console.log("Generated")
-      try {
-        const response = await axios.post(
-          'http://localhost:3001/pdf-service/generate-ticket/web-view',
-          { ticket },
-          { responseType: 'blob' }
-        );
-        const blob = new Blob([response.data], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        window.open(url);
-      } catch (error) {
-        console.error('Error generating PDF:', error);
-      }
-    };
-  
-    return (
-      <div>
-        {tickets.map((ticket) => (
-          <div
-            key={ticket.ticket_id}
-            onClick={() => handleTicketSelect(ticket)}
-            onTouchStart={(e) => {
-              e.target.style.background = '#555';
-            }}
-            onTouchEnd={(e) => {
-              e.target.style.background = '#333';
-            }}
-            style={{
-              background: '#333',
-              color: '#fff',
-              padding: '10px',
-              marginBottom: '10px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              transition: 'background 0.3s',
-            }}
-          >
-            <h3>Ticket Number: {ticket.sequence_num}</h3>
-            <p>Date: {ticket.timestamp}</p>
-            <p>Ticket Total: ${ticket.total}</p>
-          </div>
-        ))}
-  
-       
-      </div>
-    );
-  };
-  
-
   useEffect(()=> {
     fetchCashDrawerTotal()
     fetchLocationMats()
@@ -169,20 +84,9 @@ const LocationDash = () => {
         {location.state.location_name} Id: {location.state.location_id}
       </h1>
       <div className='dash-content'>
-        {/* <div className='location-dash-row1'>
-          <div className='card'>
-            Card
-          </div>
-          <div className='card'>
-            Card
-          </div>
-          <div className='card'>
-            Card
-          </div>
-        </div> */}
-        <h1>Select a Ticket</h1>
-        <DateRangeSelector onTicketsQuery={handleTicketsQuery} location_id={location.state.location_id}/>
-        <TicketList tickets={tickets}/>
+        <h1>Select a Ticket</h1>       
+        <GenericDropdown options={dropdownOptions} onOptionSelect={handleOptionSelect} />
+        <ContentDisplay selectedOption={selectedOption} location={location.state.location_id}/>
           {/* <div className='location-dash-card'>
             <h1 className='location-dash-card-title'>Cash Drawer Balance</h1>
             <p> ${total} </p>
