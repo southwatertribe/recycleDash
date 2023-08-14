@@ -112,6 +112,7 @@ const TicketSearch = ({location}) => {
   };
   return (
     <div>
+        <h1>Search Tickets</h1>
         <DateRangeSelector onTicketsQuery={handleTicketsQuery} location_id={location}/>
         <TicketList tickets={tickets}/>
     </div>

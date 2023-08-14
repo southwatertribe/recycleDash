@@ -9,6 +9,7 @@ import useLocationMats from '../hooks/useLocationId';
 
 //Parts
 import TicketSearch from './TicketSearch';
+import LocationInfo from '../pages/LocationDash/LocationInfo';
 
 
 
@@ -34,7 +35,7 @@ export const GenericDropdown = ({ options, onOptionSelect }) => {
 
 export const ContentDisplay = ({ selectedOption, location }) => {
   const {auth} = useAuth()
-  const { locationMats} = useLocationMats(auth.curr_location);
+  // const { locationMats} = useLocationMats(auth.curr_location);
 
   
   const getContent = () => {
@@ -43,7 +44,7 @@ export const ContentDisplay = ({ selectedOption, location }) => {
       case 'ticketSearch':
         return <TicketSearch location={location}/>
       case 'viewDetails':
-        return <div>View Details</div>
+        return <LocationInfo location={location}/>
       default:
         return <div>Please select an option</div>;
     }

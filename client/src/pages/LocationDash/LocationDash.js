@@ -35,56 +35,55 @@ const LocationDash = () => {
     { label: 'View Details', value: 'viewDetails' },
   ];
 
-  const fetchLocationMats = async () => { //Payload is business_id
-    try {
-      const response = await axiosPrivate.get(
-        `/location-service/${location_id}/location_mats/`,          
-        {
-          headers: {'Content-Type': 'application/json'},
-          params: {
-            location_id: location_id
-          }
-        }
-      )
-      console.log("Location Mats")
-      getLocationMats(response.data)
-      console.log(JSON.stringify(response.data))
+  // const fetchLocationMats = async () => { //Payload is business_id
+  //   try {
+  //     const response = await axiosPrivate.get(
+  //       `/location-service/${location_id}/location_mats/`,          
+  //       {
+  //         headers: {'Content-Type': 'application/json'},
+  //         params: {
+  //           location_id: location_id
+  //         }
+  //       }
+  //     )
+  //     console.log("Location Mats")
+  //     getLocationMats(response.data)
+  //     console.log(JSON.stringify(response.data))
       
-    } catch (error) {
-      console.log("Admin Dash Error: ")
-      console.log(error)
-    }
-  }
+  //   } catch (error) {
+  //     console.log("Admin Dash Error: ")
+  //     console.log(error)
+  //   }
+  // }
 
 
-  const fetchCashDrawerTotal = async() => {
-    try {
-      const response = await axiosPrivate.get(
-        `/location-service/${location_id}/cash_drawer/total`,
-        {
-          headers: {'Content-Type': 'application/json'},
-        }
-      )
-      console.log(`cash: ${JSON.stringify(response.data)}`)
-      getCashDrawerTotal(response.data.total)
+  // const fetchCashDrawerTotal = async() => {
+  //   try {
+  //     const response = await axiosPrivate.get(
+  //       `/location-service/${location_id}/cash_drawer/total`,
+  //       {
+  //         headers: {'Content-Type': 'application/json'},
+  //       }
+  //     )
+  //     console.log(`cash: ${JSON.stringify(response.data)}`)
+  //     getCashDrawerTotal(response.data.total)
 
-    } catch (error) {
-      console.log(error)      
-    }
-  }
+  //   } catch (error) {
+  //     console.log(error)      
+  //   }
+  // }
 
-  useEffect(()=> {
-    fetchCashDrawerTotal()
-    fetchLocationMats()
-  }, [])
+  // useEffect(()=> {
+  //   fetchCashDrawerTotal()
+  //   fetchLocationMats()
+  // }, [])
 
   return (
     <div>
       <h1 style={{color:"white"}}>
         {location.state.location_name} Id: {location.state.location_id}
       </h1>
-      <div className='dash-content'>
-        <h1>Select a Ticket</h1>       
+      <div className='dash-content'>       
         <GenericDropdown options={dropdownOptions} onOptionSelect={handleOptionSelect} />
         <ContentDisplay selectedOption={selectedOption} location={location.state.location_id}/>
           {/* <div className='location-dash-card'>

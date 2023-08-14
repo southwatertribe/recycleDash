@@ -129,7 +129,22 @@ const TicketForm = ({ location, maker, location_mats }) => {
       ticketDetails,
     };
 
+
     setSubmittedTicket(ticket);
+
+    //Checker for pounds
+    for (let index = 0; index < ticket.ticketDetails.length; index++) {
+      if (ticketDetails[index].amount >= 100) {
+        if (ticketDetails[index].materialName.includes("Glass") || ticketDetails[index].amount >= 1000) {
+          alert("Cannot Take In More Than 1000lbs Of Glass!")
+          return;
+        }
+        alert("Cannot Take In More Than 100lbs Of Any Material Other Than Glass!")
+        return;
+      }
+    }
+
+    console.log(submittedTicket)
 
     toggleModal();
 
@@ -156,6 +171,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
       console.error(error);
     }
 
+    console.log(submittedTicket)
     toggleModal()
   };
 
@@ -217,7 +233,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
       <div style={{ display: 'flex', justifyContent: 'center'}}>
         <div style={{marginRight: '200px'}}>
           <h2>Cash</h2>
-          {cashDrawerTotal < 0 ? <div style={{color: 'red', fontSize: 30}}>-${Math.abs(cashDrawerTotal)}</div> : <div style={{color: 'green', fontSize: 30}}>$ {cashDrawerTotal}</div>}
+          {cashDrawerTotal < 0 ? <div style={{color: 'red', fontSize: 20}}>-${Math.abs(cashDrawerTotal)}</div> : <div style={{color: 'green', fontSize: 20}}>$ {cashDrawerTotal}</div>}
         </div>
         <div className='create-ticket-title'>
           <h2>Create a Ticket</h2>
@@ -325,8 +341,14 @@ const TicketForm = ({ location, maker, location_mats }) => {
       {modal && <div className='modal'>
             <div  className='overlay'>
                 <div className='modal-content'>
-                    <h3>Location Details</h3>
+                <h3>Ticket Details</h3>
                     <p>{submittedTicket.ticketDetails[0].material}</p>
+
+                    {
+                      submittedTicket.total >= 100 ? 
+                                              <p>Take driver's license</p> :
+                                                                          <></>
+                    }
                     <button  onClick={handleSubmit}>
                        Submit
                     </button>
