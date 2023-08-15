@@ -58,7 +58,7 @@ const TicketSearch = ({location}) => {
       setSelectedTicket(ticket);
       //Get details of selected ticket
       const details = await fetchTicketDetails(ticket.ticket_id)
-      ticket["details"] = details
+      ticket["ticketDetails"] = details
       handleGeneratePDF(ticket);
       // setModalIsOpen(true);
 

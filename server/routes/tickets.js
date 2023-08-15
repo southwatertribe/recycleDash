@@ -13,11 +13,9 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
         //Logic
         //Create the TicketID
         const tickID = crypto.randomUUID()
-        // // //Create the trasnaction id
-        const transaction_id = crypto.randomUUID()
         // // //List of all materials in this ticket
         const payload = req.body
-        console.log(payload)
+        
         // // //Mother Ticket details
         const customer = payload.customer
         const location = req.params.location_rc_number
@@ -50,8 +48,7 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
         for (let index = 0; index < entries; index++) {
 
             const currentDet = payload.ticketDetails[index]
-            const take_in_option = currentDet.intakeType //Single or weight
-            console.log(`TAKE IN: ${take_in_option}`)
+            const take_in_option = currentDet.take_in_option //Single or weight
             const material = currentDet.material //Location material 
             //Will be int or float depending on take in
             //Amount will be stored despite tke in, price will only be stored calculated off weight
@@ -62,7 +59,7 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
             //This is recieved from front end based on selected location mat
             //We have prce per unit saved in database, but this will be for ease of update, keep it at 0.05 currently 
             const mat_price = parseFloat(currentDet.mat_price)//Must parse float for calclations
-            const mat_name = currentDet.materialName
+            const mat_name = currentDet.material_name
             const is_scrap = currentDet.is_scrap
             //Adjust amount if tke in is by unit
             //Then calculate price 
@@ -74,7 +71,6 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
                 if (is_scrap === 0) {
                     //This usually doesnt happen so we are going to use a arbitrary mat price
                     adj_weight = (amount * 0.05) / 1.25;
-                    console.log(amount)
                     price = 0;
                 } else {
                     adj_weight = (amount * 0.05) / mat_price;
@@ -98,10 +94,10 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
 
         //Commit transaction
         await pool.commit()
-        console.log(req.body)
         const obj = {
             'status': 200,
-            'total': {total}
+            'total': {total},
+            "ticket_id": tickID
         }
         //TODO: Return an object
         res.json(obj) 
@@ -112,16 +108,34 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
     
 })
 
+//Get ticket based on ticket_id
+router.get("/:ticket_id/get_ticket", async function(req,res){
+
+    try {
+        const ticket_id = req.params.ticket_id
+
+        const sqlst = `SELECT * FROM tickets WHERE ticket_id='${ticket_id}'`
+    
+        const [ticket]= await pool.query(sqlst)
+    
+        res.json({
+            status: 200,
+            ticket: ticket
+        })
+        
+    } catch (error) {
+        console.error(error)
+    }
+})
 
 //get multiple tickets based on location and time
 router.get("/:location_rc_number/get-tickets/", async function(req, res){
 
     //Get location rc number
     const location = req.params.location_rc_number
-    console.log(location)
+    
     //Get from
     const start = req.query.start
-    console.log(`START: ${start}`)
     //Get To
     const end = req.query.end
 
@@ -134,22 +148,41 @@ router.get("/:location_rc_number/get-tickets/", async function(req, res){
 
     const [tickets] = await pool.query(sqlst)
 
-    console.log(tickets)
     res.json(
         {tickets}
     )
 })
 
 //Get all ticket details from ticket id
-router.get("/:ticket_id/details", async function(req,res){
-    const ticket_id = req.params.ticket_id
+router.get("/:ticket_id/details", async function(req, res) {
+    try {
+        const ticket_id = req.params.ticket_id.trim();
 
-    const sqslt = `SELECT * FROM ticket_dets WHERE ticket='${ticket_id}';`
-    const [response] = await pool.query(sqslt)
-    
-    res.json(response)
+        const sqslt = "SELECT * FROM ticket_dets WHERE ticket = ?";
+        const [response] = await pool.query(sqslt, [ticket_id]);
 
-})
+        if (response.length === 0) {
+            return res.status(404).json({
+                status: 404,
+                error: "Ticket details not found"
+            });
+        }
+
+        res.json({
+            status: 200,
+            ticket_details: response
+        });
+    } catch (error) {
+        console.error("Error fetching ticket details:", error);
+        res.status(500).json({
+            status: 500,
+            error: "Internal Server Error"
+        });
+    }
+});
+
+
+
 
 //Change Ticket Details
 

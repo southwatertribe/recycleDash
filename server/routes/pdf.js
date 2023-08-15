@@ -7,8 +7,9 @@ const PDFDocument = require('pdfkit')
 router.post('/generate-ticket/web-view', async function(req, res){
     //Ticket content
     const  content = req.body.ticket;
+    console.log(content)
     //Ticket details
-    const details = content.details
+    const details = content.ticketDetails
 
     //Initialize a pdf document
     const doc = new PDFDocument;

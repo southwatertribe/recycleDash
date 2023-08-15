@@ -119,6 +119,31 @@ const TicketForm = ({ location, maker, location_mats }) => {
       return newDetails;
     });
   };
+
+  const fetchTicket = async (ticket_id) => {
+    try {
+      console.log(ticket_id)
+      const response = await axios.get(
+        `http://localhost:3001/ticket-service/${ticket_id}/get_ticket`
+      )      
+      return response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchTicketDetails = async (ticket_id) => {
+    try {
+    const response = await axios.get(
+        `http://localhost:3001/ticket-service/${ticket_id}/details`
+    )      
+    return response.data
+    } catch (error) {
+    console.log(error)
+    }
+}
+
+
   //HandleModal
   const handleModal = async (event) => {
     event.preventDefault();
@@ -129,13 +154,12 @@ const TicketForm = ({ location, maker, location_mats }) => {
       ticketDetails,
     };
 
-
     setSubmittedTicket(ticket);
 
     //Checker for pounds
     for (let index = 0; index < ticket.ticketDetails.length; index++) {
       if (ticketDetails[index].amount >= 100) {
-        if (ticketDetails[index].materialName.includes("Glass") || ticketDetails[index].amount >= 1000) {
+        if (ticketDetails[index].material_name.includes("Glass") || ticketDetails[index].amount >= 1000) {
           alert("Cannot Take In More Than 1000lbs Of Glass!")
           return;
         }
@@ -149,6 +173,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
     toggleModal();
 
   }
+
+
   //Submit Ticket
   const handleSubmit = async (event) => {
 
@@ -162,16 +188,26 @@ const TicketForm = ({ location, maker, location_mats }) => {
       const response = await axios.post(`/ticket-service/${location}/new_ticket/`, submittedTicket);
       //Retrieving Total of ticketparsing to Float
       const total = parseFloat(JSON.stringify(response.data.total.total)).toFixed(2);
+      const ticket_id = response.data.ticket_id
       //Creating a cash drawer Transaction
       await ticketCDTransaction(total, cashDrawerID)
       //Getting and setting new total
       await fetchCashDrawerTotal()
+      //Refetch ticket
+      const main = await fetchTicket(ticket_id)
+      console.log(main.ticket[0])
+      //Fetch details
+      const details = await fetchTicketDetails(ticket_id)
+      console.log(details)
+      //Add Details
+      main.ticket[0]["ticketDetails"] = details.ticket_details
+      //Gen pdf
+      handleGeneratePDF(main.ticket[0]);
 
     } catch (error) {
       console.error(error);
     }
-
-    console.log(submittedTicket)
+    
     toggleModal()
   };
 
@@ -185,6 +221,22 @@ const TicketForm = ({ location, maker, location_mats }) => {
       };
       return newDetails;
     });
+  };
+
+  const handleGeneratePDF = async (ticket) => {
+    console.log("Generated")
+    try {
+      const response = await axios.post(
+        'http://localhost:3001/pdf-service/generate-ticket/web-view',
+        { ticket },
+        { responseType: 'blob' }
+      );
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      window.open(url);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
   };
 
   const handleDeleteDetail = (index, materialId) => {
@@ -214,8 +266,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
       const newDetail = {
         id: ticketDetails.length + 1,
         material: selectedMaterial.location_mats_id,
-        materialName: materialName,
-        intakeType: "SEG WT",
+        material_name: materialName,
+        take_in_option: "SEG WT",
         amount: '',
         mat_price: selectedMaterial.price,
         is_scrap: selectedMaterial.is_scrap
@@ -308,8 +360,8 @@ const TicketForm = ({ location, maker, location_mats }) => {
             <div className={container.formGroup}>
               <label>Intake Type: </label>
               <select
-                name="intakeType"
-                value={detail.intakeType}
+                name="take_in_option"
+                value={detail.take_in_option}
                 onChange={(e) => handleInputChange(e, index)}
               >
                 
@@ -341,18 +393,19 @@ const TicketForm = ({ location, maker, location_mats }) => {
       {modal && <div className='modal'>
             <div  className='overlay'>
                 <div className='modal-content'>
-                <h3>Ticket Details</h3>
-                    <p>{submittedTicket.ticketDetails[0].material}</p>
-
-                    {
-                      submittedTicket.total >= 100 ? 
-                                              <p>Take driver's license</p> :
-                                                                          <></>
-                    }
-                    <button  onClick={handleSubmit}>
+                <h3>Ticket Details Look Good?</h3>
+                {submittedTicket.ticketDetails.map((detail, index) => (
+          <div key={index} className='ticket-detail'>
+            <p><strong>Material:</strong> {detail.material_name}</p>
+            <p><strong>Intake Type:</strong> {detail.take_in_option}</p>
+            <p><strong>Amount:</strong> {detail.amount}</p>
+            {/* Add other detail properties here */}
+          </div>
+        ))}
+                    <button  onClick={handleSubmit} className='submit-button'>
                        Submit
                     </button>
-                    <button onClick={toggleModal}>
+                    <button onClick={toggleModal} className='go-back-button'>
                        Go Back
                     </button>
                 </div>
