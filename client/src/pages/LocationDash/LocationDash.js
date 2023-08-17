@@ -7,6 +7,7 @@ import axios from '../../utils/axios'
 import Modal from 'react-modal';
 
 //Style 
+import useAuth from '../../hooks/useAuth';
 import "../../styles/DashContent.css"
 
 //Parts
@@ -19,7 +20,7 @@ const LocationDash = () => {
   const location = useLocation();
 
   const [tickets, setTickets] = useState([]);
-
+  const auth = useAuth()
 
   const [selectedOption, setSelectedOption] = useState('');
 

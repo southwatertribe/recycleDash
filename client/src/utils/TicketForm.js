@@ -324,7 +324,10 @@ const TicketForm = ({ location, maker, location_mats }) => {
                 className={`${grid.materialGridItem} ${selectedMaterials.includes(material.location_mats_id) ? grid.disabled : ''}`}
                 onClick={() => handleMaterialClick(material.location_mats_id, material.material_name)}
               >
-                {material.material_name}
+                <div>
+                <p>{material.material_name}</p>
+                <p>${material.price}</p>
+                </div>
               </div>
             ))}
         </div >

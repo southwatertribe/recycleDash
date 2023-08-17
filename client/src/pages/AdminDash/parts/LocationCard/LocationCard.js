@@ -20,6 +20,9 @@ export default function LocationCard({props}){
         <div className="location-card" onClick={handleClick}> 
             <div className="card-content">
                 <h3>{props.location_name}</h3>
+                <button>
+                    Snapshot
+                </button>
             </div>
         </div>
     ) 
