@@ -117,9 +117,28 @@ router.get("/:rc_number/location_mats/", async function(req,res) {
 })
 
 //Edit location mat price
-router.put("/:rc_number/:location_mat/change_price", async function(req,res) {
-    const rc_number = req.params.rc_number
-    const location_mat = req.params.location_mat
+router.put("/:location_mat/change_price", async function(req,res) {
+
+    try {
+        const location_mat = req.params.location_mat
+        const new_price = req.body.new_price
+        console.log(location_mat)
+        console.log(new_price)
+    
+        
+        const sqlst = `UPDATE locationmats SET price = '${new_price}' WHERE location_mats_id ='${location_mat}';`
+    
+        const [response] = await pool.query(sqlst)
+    
+        console.log(response)
+    
+        res.json({
+            "status": 200,
+            "new_price": new_price
+        }) 
+    } catch (error) {
+        console.log(error)        
+    }
 })
 
 //Get cash drawer ID
