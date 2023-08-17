@@ -1,22 +1,20 @@
-import React from 'react'
+import React from 'react';
+import "../../styles/locationdash.css";
 
-//Style
-import "./locationdash.css"
 const LocationMatCard = (props) => {
     const handleClick = async () => {
-        console.log("CLICKED" + props.material_name)
-    }
-  return (
-    <div className='location-mat-card'>
-        <p>{props.location_mats_id}</p>
-        <div style={{display:'flex',flexDirection:'row'}}>
-            <h3>{props.material_name}</h3>
-            <p>{props.price}</p>
-            <button onClick={handleClick}>Change Price</button>
-        </div>
-       
-    </div>
-  )
-}
+        console.log("CLICKED " + props.material_name);
+    };
 
-export default LocationMatCard
+    return (
+        <div className='location-mat-card'>
+            <h3>{props.material_name}</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p>${props.price}</p>
+                <button onClick={handleClick}>Change Price</button>
+            </div>
+        </div>
+    );
+};
+
+export default LocationMatCard;

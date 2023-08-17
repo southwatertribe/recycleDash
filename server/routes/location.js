@@ -108,7 +108,7 @@ router.put('/:business_id/locations/:rc_number', async function (req,res, next) 
 router.get("/:rc_number/location_mats/", async function(req,res) {
     const rc_number = req.params.rc_number
     console.log(rc_number)
-    const sqlst = `SELECT * FROM locationmats WHERE location='${rc_number}';`
+    const sqlst = `SELECT * FROM locationmats WHERE location='${rc_number}' ORDER BY material_id ASC;`
 
     const [location] = await pool.query(sqlst)
 

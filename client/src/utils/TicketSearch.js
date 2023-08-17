@@ -3,6 +3,9 @@ import {React, useState} from 'react'
 //Parts
 import DateRangeSelector from './DateRangeSelelctor'
 
+//Styles
+import "../styles/locationdash.css"
+
 //Api
 import axios from './axios';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
@@ -58,7 +61,8 @@ const TicketSearch = ({location}) => {
       setSelectedTicket(ticket);
       //Get details of selected ticket
       const details = await fetchTicketDetails(ticket.ticket_id)
-      ticket["ticketDetails"] = details
+      //add details to ticket object
+      ticket["ticketDetails"] = details.ticket_details
       handleGeneratePDF(ticket);
       // setModalIsOpen(true);
 
@@ -86,24 +90,25 @@ const TicketSearch = ({location}) => {
           <div
             key={ticket.ticket_id}
             onClick={() => handleTicketSelect(ticket)}
-            onTouchStart={(e) => {
-              e.target.style.background = '#555';
-            }}
-            onTouchEnd={(e) => {
-              e.target.style.background = '#333';
-            }}
-            style={{
-              background: '#333',
-              color: '#fff',
-              padding: '10px',
-              marginBottom: '10px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              transition: 'background 0.3s',
-            }}
+            // onTouchStart={(e) => {
+            //   e.target.style.background = '#555';
+            // }}
+            // onTouchEnd={(e) => {
+            //   e.target.style.background = '#333';
+            // }}
+            // style={{
+            //   background: '#333',
+            //   color: '#fff',
+            //   padding: '10px',
+            //   marginBottom: '10px',
+            //   borderRadius: '5px',
+            //   cursor: 'pointer',
+            //   transition: 'background 0.3s',
+            // }}
+            className='location-mat-card'
           >
             <h3>Ticket Number: {ticket.sequence_num}</h3>
-            <p>Date: {ticket.timestamp}</p>
+            <p>Date: {ticket.timestamp.substring(0, 10)}</p>
             <p>Ticket Total: ${ticket.total}</p>
           </div>
         ))}

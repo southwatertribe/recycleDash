@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
+// import useAxiosPrivate from '../hooks/useAxiosPrivate';
 //styles
 import grid from '../styles/Grids.module.css';
 import container from '../styles/Layouts.module.css';
@@ -34,14 +34,14 @@ const TicketForm = ({ location, maker, location_mats }) => {
       console.log("Updated Cash Drawer Total:", cashDrawerTotal);
     })
     
-  }, [])
+  })
 
   //ASYNC Calls
   //Generate Shipping report function
   const genShippingReport = async(material)=>{
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `report-service/${location}/${material}/generate_shipping_report`
       )      
     } catch (error) {
