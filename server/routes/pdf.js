@@ -32,7 +32,7 @@ router.post('/generate-ticket/web-view', async function(req, res){
 
     // Add Date and Customer
     doc.fontSize(12).text('Date:', 50, 110);
-    doc.fontSize(12).text(content['timestamp'], 120, 110);
+    doc.fontSize(12).text(content['timestamp'].substring(0, 10), 120, 110);
     doc.fontSize(12).text('Customer:', 50, 130);
     doc.fontSize(12).text(content['customer'], 120, 130);
     
@@ -87,8 +87,12 @@ router.post('/generate-ticket/web-view', async function(req, res){
 })
 
 //Generate snapshot pdf
-router.post('/generate-snapshot/:rc_number', async function(req,res){
+router.post('/:rc_number/generate-snapshot', async function(req,res){
     
+    const rc_number = req.params.rc_number
+
+    
+        
 })
 
 

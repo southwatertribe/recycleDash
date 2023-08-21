@@ -18,6 +18,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
   const [cashDrawerTotal, setCashDrawerTotal] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [submittedTicket, setSubmittedTicket] = useState(null);
+  const [latestTicket, setLatestTicket] = useState('')
 
 
   //Modal
@@ -37,18 +38,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
   })
 
   //ASYNC Calls
-  //Generate Shipping report function
-  const genShippingReport = async(material)=>{
 
-    try {
-      await axios.post(
-        `report-service/${location}/${material}/generate_shipping_report`
-      )      
-    } catch (error) {
-      console.log(error)      
-    }
-
-  }
   //Fetch darawer id
   const fetchCashDrawer = async() => {
 
@@ -308,10 +298,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
           </div>
         </div>
         <div style={{marginLeft: '200px'}}>
-              <h2>Shipping Report</h2>
-              <button onClick={()=>genShippingReport("Glass")}>
-                Report
-              </button>
+          <h2>Latest Ticket Number</h2>
         </div>
       </div>
 

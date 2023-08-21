@@ -1,5 +1,5 @@
 import React from 'react'
-import useAxiosPrivate from '../../hooks/useAxiosPrivate'
+
 //style
 import "./EmpDash.css"
 import "../../styles/DashContent.css"
@@ -13,7 +13,7 @@ import {GenericDropdown, ContentDisplay} from '../../utils/DropDownPack'
 
 export const EmpDash = () => {
   const {auth} = useAuth()
-  const axiosPrivate = useAxiosPrivate();
+
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleOptionSelect = (option) => {
@@ -24,6 +24,7 @@ export const EmpDash = () => {
   const dropdownOptions = [
     { label: 'Create Ticket', value: 'createTicket' },
     { label: 'Make a Transaction', value: 'makeTransaction' },
+    { label: 'Shipping Report', value: 'shippingReport' }
   ];
 
   

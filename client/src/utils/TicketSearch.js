@@ -90,21 +90,6 @@ const TicketSearch = ({location}) => {
           <div
             key={ticket.ticket_id}
             onClick={() => handleTicketSelect(ticket)}
-            // onTouchStart={(e) => {
-            //   e.target.style.background = '#555';
-            // }}
-            // onTouchEnd={(e) => {
-            //   e.target.style.background = '#333';
-            // }}
-            // style={{
-            //   background: '#333',
-            //   color: '#fff',
-            //   padding: '10px',
-            //   marginBottom: '10px',
-            //   borderRadius: '5px',
-            //   cursor: 'pointer',
-            //   transition: 'background 0.3s',
-            // }}
             className='location-mat-card'
           >
             <h3>Ticket Number: {ticket.sequence_num}</h3>

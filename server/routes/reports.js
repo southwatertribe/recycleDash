@@ -32,22 +32,22 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
 
     await pool.query(sqlst)
 
+    //TODO Can remove this query by the receiving query above
     sqlst =`SELECT sequence 
     FROM curr_shipping_report_sequence
     WHERE location = '${location_rc}'`
 
     const seq_response = await pool.query(sqlst)
     const sequence = seq_response[0][0].sequence
+    console.log(sequence)
     
     //Check for the latest shipping report with material and location
-    sqlst = `SELECT timestamp FROM shipping_reports WHERE location_rc = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
+    sqlst = `SELECT timestamp FROM shipping_reports WHERE location = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
 
     //Store latest date
     const [latest] = await pool.query(sqlst)
-
-    console.log()
-
-
+    
+    console.log(`LATET DATE: ${latest}`)
     
 
     if (latest.length === 0) {
@@ -107,7 +107,7 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
         }
         
         //Add Shipping Report
-        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location_rc, sequence_num)
+        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location, sequence_num)
         VALUES('${id}', '${refund_val}', '${scrap}', '${seg_wt}', '${red_wt}', '${material}', '${location_rc}', '${sequence}');`
         await pool.query(sqlst)
 
@@ -126,8 +126,18 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
     } else {
         //Find all shipping reports after latest with the right material and location
         //Find all tickets in a given location from last shipping report time
-        let sqlst = `SELECT ticket_id FROM tickets WHERE location='${location_rc} AND TIMESTAMP > '${JSON.stringify(latest[0].timestamp)}''`
+        console.log("Been TICKETS")
+        
+
+        const mysqlTimestamp = moment(latest[0].timestamp).format("YYYY-MM-DD HH:mm:ss");
+        const unix = new Date()
+
+        console.log(unix)
+        let sqlst = `SELECT ticket_id FROM tickets WHERE location="${location_rc}" AND timestamp > ${JSON.stringify(latest[0].timestamp)};`
+
         const [ticket_ids] = await pool.query(sqlst)
+
+        console.log(ticket_ids)
 
         //Initialize list of ticket details
         let ticket_details = []
@@ -176,7 +186,7 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
         }
 
         //Add Shipping Report
-        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location_rc, sequence_num)
+        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location, sequence_num)
         VALUES('${id}', '${refund_val}', '${scrap}', '${seg_wt}', '${red_wt}', '${material}', '${location_rc}', '${sequence}');`
         await pool.query(sqlst)
 
@@ -194,10 +204,9 @@ router.post("/:location_rc/:material/generate_shipping_report", async function(r
 
     }
 
-    
-
-
 })
+
+//
 
 
 

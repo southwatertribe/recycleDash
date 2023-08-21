@@ -1,10 +1,10 @@
 import {React, useState, useEffect} from 'react'
-import useAuth from '../../../../hooks/useAuth';
+import useAuth from '../../../hooks/useAuth';
 
 //Parts
-import TransactionForm from '../../../../utils/TransactionForm';
+import TransactionForm from '../../../utils/TransactionForm';
 
-import axios from '../../../../utils/axios';
+import axios from '../../../utils/axios';
 
 
 const TransactionPage = () => {

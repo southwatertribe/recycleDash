@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 //Parts
 import TicketForm from './TicketForm'
-import TransactionPage from '../pages/EmpDash/Parts/TransactionPage/TransactionPage';
+import TransactionPage from '../pages/EmpDash/Parts/TransactionPage';
+import ShippingReportPage from '../pages/EmpDash/Parts/ShippingReportPage';
 
 //State/Redux
 import useAuth from '../hooks/useAuth';
@@ -10,9 +11,7 @@ import useAuth from '../hooks/useAuth';
 //Hook
 import useLocationMats from '../hooks/useLocationId';
 
-//Axios
-import axios from 'axios';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
+
 
 export const GenericDropdown = ({ options, onOptionSelect }) => {
 
@@ -45,7 +44,9 @@ export const ContentDisplay = ({ selectedOption }) => {
       case 'createTicket':
         return <TicketForm maker={auth.f_name} location={auth.curr_location} location_mats={locationMats}/>
       case 'makeTransaction':
-        return <TransactionPage />
+        return <TransactionPage location={auth.curr_location}/>
+      case 'shippingReport':
+        return <ShippingReportPage location={auth.curr_location}/>
       default:
         return <div>Please select an option</div>;
     }
