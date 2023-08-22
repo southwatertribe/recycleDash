@@ -15,9 +15,10 @@ const ShippingReportPage = ({ location }) => {
   // Generate Shipping report function
   const genShippingReport = async (material) => {
     try {
-      await axios.post(
-        `report-service/${location}/${material}/generate_shipping_report`
+      const response = await axios.post(
+        `/report-service/${location}/${material}/generate_shipping_report/`, {ticketNumber}
       );
+      console.log(response)
     } catch (error) {
       console.log(error);
     }
@@ -29,11 +30,9 @@ const ShippingReportPage = ({ location }) => {
   };
 
   const handleReportButtonClick = () => {
-    if (selectedMaterial && ticketNumber !== '') {
-      // genShippingReport(selectedMaterial);
-    }else(
-      alert("Select a valid Ticket")
-    )
+    if (selectedMaterial !== '') {
+      genShippingReport(selectedMaterial);
+    }
   };
 
   return (

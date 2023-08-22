@@ -10,203 +10,123 @@ const { timeStamp, time } = require("console")
 // router.get()
 
 
-//Generate shipping report this is to be put into the database
-router.post("/:location_rc/:material/generate_shipping_report", async function(req,res){
+// //Generate shipping report this is to be put into the database
+//TODO, Make a function for this with start and end 
 
-    //Get material and location from params
-    const material = req.params.material
-    const location_rc = req.params.location_rc
+async function genShippingReport(res, material, location, starting_ticket, ending_ticket) {
     //Shipping Report ID
     const id = crypto.randomUUID()
-    console.log(material)
+    //Get all ticket dets 
+    sqlst = `SELECT td.*
+    FROM ticket_dets td
+    JOIN tickets t ON td.ticket = t.ticket_id
+    WHERE t.location = '${location}'
+      AND t.sequence_num >= '${starting_ticket}' 
+      AND t.sequence_num <= '${ending_ticket}' 
+      AND td.material_name LIKE '%${material}%'           
+    ORDER BY t.sequence_num;`
 
-    //Get date (Should be NOW)
-    const date = new Date()
+    const [retrieved_dets] = await pool.query(sqlst)
+    console.log(retrieved_dets)
 
-    await pool.beginTransaction();
+    //If there are no dets return the function
+    if (!retrieved_dets.length) {
+        res.json({
+            "status": 201,
+            "message": "No ticket details to retrieve",
+        })
+    }
 
-    //Update and get current sequence
-    let sqlst = `UPDATE curr_shipping_report_sequence 
-    SET sequence = sequence + 1
-    WHERE location = '${location_rc}';`
+    //Establihs Shipping Report Weights
+    let scrap = 0
+    let seg_weight = 0
+    let redemption_weight = 0
+    let refund_val = 0
+    let total_weight = 0
 
+    //Loop through retreived dets and 
+    for (let index = 0; index < retrieved_dets.length; index++) {
+        const current_detail = retrieved_dets[index];
+        if (current_detail.is_scrap === 1) {
+            seg_weight += parseFloat(current_detail.adj_weight)
+            refund_val += parseFloat(current_detail.price)
+
+        } else {
+            scrap += parseFloat(current_detail.adj_weight)               
+        }
+    }
+
+    redemption_weight += parseFloat(seg_weight)
+    total_weight = parseFloat(seg_weight + scrap)
+
+    //Update sequence
+    sqlst = `UPDATE curr_shipping_report_sequence
+        SET sequence = sequence + 1
+        WHERE location = '${location}';`
+    await pool.query(sqlst)
+    
+    //Get new Sequence
+    sqlst = `SELECT sequence 
+    FROM curr_shipping_report_sequence WHERE location='${location}'`
+
+    const [sequence] = await pool.query(sqlst)
+
+    const sequence_num = sequence[0].sequence
+    
+
+    //Sqlst to insert shipping_report
+    sqlst = `INSERT INTO 
+        shipping_reports(id, location, total_weight, scrap, seg_weight, redemption_weight, refund_value, material, sequence_num, latest_ticket)
+        VALUES('${id}', '${location}', '${total_weight}', '${scrap}', '${seg_weight}', '${redemption_weight}', '${refund_val}', '${material}', '${sequence_num}', '${ending_ticket}');`
     await pool.query(sqlst)
 
-    //TODO Can remove this query by the receiving query above
-    sqlst =`SELECT sequence 
-    FROM curr_shipping_report_sequence
-    WHERE location = '${location_rc}'`
+    res.json({
+        "status": 200,
+        "shipping_report_num": sequence_num,
+    })
 
-    const seq_response = await pool.query(sqlst)
-    const sequence = seq_response[0][0].sequence
-    console.log(sequence)
+}
+
+
+router.post("/:location_rc/:material/generate_shipping_report/", async function(req, res) {
     
-    //Check for the latest shipping report with material and location
-    sqlst = `SELECT timestamp FROM shipping_reports WHERE location = '${location_rc}' AND material = '${material}' ORDER BY timestamp DESC LIMIT 1;`
+    const material = req.params.material
+    const location = req.params.location_rc
 
-    //Store latest date
-    const [latest] = await pool.query(sqlst)
+    //Get all tickets from starting to ending to add to shipping report
+    const ending_ticket = req.body.ticketNumber    
+    //First get the latest shipping report and check the latest ticket number
+    let sqlst = `SELECT sr.*
+    FROM shipping_reports sr
+    JOIN curr_shipping_report_sequence cs ON sr.location = cs.location
+    WHERE sr.material = '${material}'
+    AND sr.location = '${location}'
+    AND sr.sequence_num = cs.sequence
+    ORDER BY sr.id DESC
+    LIMIT 1;
+    `
+
+    //This is the latest shipping report
+    const [latest_report] = await pool.query(sqlst)
+
+    //First check if it contains anything
+    if (!latest_report.length) {
+        //Starting ticket will be 1 which must be the latest ticket in entry
+        const starting_ticket = 1
+        console.log(`Starting Ticket if there was NONE previous report: ${starting_ticket}`)
+
+        genShippingReport(res, material, location, starting_ticket, ending_ticket)
     
-    console.log(`LATET DATE: ${latest}`)
-    
-
-    if (latest.length === 0) {
-         
-        //Find all tickets in a given location
-        let sqlst = `SELECT ticket_id FROM tickets WHERE location='${location_rc}'`
-        const [ticket_ids] = await pool.query(sqlst)
-
-        //Initialize list of ticket details
-        let ticket_details = []
-        
-        //Find all ticket details
-        for (let index = 0; index < ticket_ids.length; index++) {
-            let curr_ticket_id = ticket_ids[index].ticket_id
-            let sqlst = `SELECT * FROM ticket_dets WHERE ticket='${curr_ticket_id}' AND material_name LIKE '${material}%'`
-            let [curr_load] = await pool.query(sqlst)
-
-            //Track if there is a load of details
-            if (curr_load.length != 0) {
-                //Loop through and add dets to all details
-                for (let index = 0; index < curr_load.length; index++) {
-                    const det = curr_load[index];
-                    //Push to ticket detail list to generate with
-                    ticket_details.push(det)
-                }              
-
-            }            
-        }
-
-        console.log(ticket_details)
-
-        //Initiaize then calculate the weights
-        let seg_wt = 0
-        let scrap = 0
-        let total_wt = 0
-        let red_wt = 0
-        let refund_val = 0
-
-
-        
-        for (let index = 0; index < ticket_details.length; index++) {
-            
-            //Calculate scrap or red weight
-            if (ticket_details[index].is_scap === 0) {
-                scrap += parseFloat(ticket_details[index].adj_weight)
-            } else {
-                seg_wt += parseFloat(ticket_details[index].adj_weight )
-            }
-
-            //Add price
-            refund_val += parseFloat(ticket_details[index].price)
-            //Total weight is 
-            total_wt = parseFloat(scrap) + parseFloat(seg_wt)
-            //Red_wt
-            red_wt =  parseFloat(seg_wt)
-            
-        }
-        
-        //Add Shipping Report
-        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location, sequence_num)
-        VALUES('${id}', '${refund_val}', '${scrap}', '${seg_wt}', '${red_wt}', '${material}', '${location_rc}', '${sequence}');`
-        await pool.query(sqlst)
-
-        //Create return object 
-        const shipping_details = {
-            seg_wt: seg_wt,
-            scrap: scrap,
-            total_wt: total_wt,
-            red_wt: red_wt,
-            refund_val: refund_val,
-        }
-
-        await pool.commit()
-        
-        console.log(shipping_details)
     } else {
-        //Find all shipping reports after latest with the right material and location
-        //Find all tickets in a given location from last shipping report time
-        console.log("Been TICKETS")
+        //Starting ticket is in the payload
+        const starting_ticket = latest_report[0].latest_ticket
+        console.log(`Starting Ticket if there was previous report: ${starting_ticket}`)
+
+        genShippingReport(res, material, location, starting_ticket, ending_tickets)
         
-
-        const mysqlTimestamp = moment(latest[0].timestamp).format("YYYY-MM-DD HH:mm:ss");
-        const unix = new Date()
-
-        console.log(unix)
-        let sqlst = `SELECT ticket_id FROM tickets WHERE location="${location_rc}" AND timestamp > ${JSON.stringify(latest[0].timestamp)};`
-
-        const [ticket_ids] = await pool.query(sqlst)
-
-        console.log(ticket_ids)
-
-        //Initialize list of ticket details
-        let ticket_details = []
-        
-        //Find all ticket details
-        for (let index = 0; index < ticket_ids.length; index++) {
-            let curr_ticket_id = ticket_ids[index].ticket_id
-            let sqlst = `SELECT * FROM ticket_dets WHERE ticket='${curr_ticket_id}' AND material_name LIKE '${material}%'`
-            let [curr_load] = await pool.query(sqlst)
-
-            //Track if there is a load of details
-            if (curr_load.length != 0) {
-                //Loop through and add dets to all details
-                for (let index = 0; index < curr_load.length; index++) {
-                    const det = curr_load[index];
-                    //Push to ticket detail list to generate with
-                    ticket_details.push(det)
-                }              
-
-            }            
-        }
-
-        //Initiaize then calculate the weights
-        let seg_wt = 0
-        let scrap = 0
-        let total_wt = 0
-        let red_wt = 0
-        let refund_val = 0
-
-        for (let index = 0; index < ticket_details.length; index++) {
-            
-            //Calculate scrap or red weight
-            if (ticket_details[index].is_scap === 0) {
-                scrap += parseFloat(ticket_details[index].adj_weight)
-            } else {
-                seg_wt += parseFloat(ticket_details[index].adj_weight )
-            }
-
-            //Add price
-            refund_val += parseFloat(ticket_details[index].price)
-            //Total weight is 
-            total_wt = parseFloat(scrap) + parseFloat(seg_wt)
-            //Red_wt
-            red_wt =  parseFloat(seg_wt)
-            
-        }
-
-        //Add Shipping Report
-        sqlst = `INSERT INTO shipping_reports(id, refund_value, scrap, seg_weight, redemption_weight, material, location, sequence_num)
-        VALUES('${id}', '${refund_val}', '${scrap}', '${seg_wt}', '${red_wt}', '${material}', '${location_rc}', '${sequence}');`
-        await pool.query(sqlst)
-
-        //Create return object 
-        const shipping_details = {
-            seg_wt: seg_wt,
-            scrap: scrap,
-            total_wt: total_wt,
-            red_wt: red_wt,
-            refund_val: refund_val,
-        }
-        
-        await pool.commit()
-        console.log(shipping_details)
-
     }
 
 })
-
-//
 
 
 
