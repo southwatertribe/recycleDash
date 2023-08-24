@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 
+//Style
+import dropdown from '../styles/Dropdown.module.css'
+
 //State/Redux
 import useAuth from '../hooks/useAuth';
 
@@ -10,6 +13,8 @@ import useLocationMats from '../hooks/useLocationId';
 //Parts
 import TicketSearch from './TicketSearch';
 import LocationInfo from '../pages/LocationDash/LocationInfo';
+import ShippingReportPage from '../pages/EmpDash/Parts/ShippingReportPage';
+import TransactionPage from './TransactionPage';
 
 
 
@@ -22,10 +27,12 @@ export const GenericDropdown = ({ options, onOptionSelect }) => {
   };
 
   return (
-    <select onChange={handleChange}>
+    <select onChange={handleChange}
+      className={dropdown.selectWrapper}
+    >
       <option value="">Select an option</option>
       {options.map((option) => (
-        <option key={option.value} value={option.value}>
+        <option key={option.value} value={option.value} className={dropdown.selectDropdown}>
           {option.label}
         </option>
       ))}
@@ -45,6 +52,10 @@ export const ContentDisplay = ({ selectedOption, location }) => {
         return <TicketSearch location={location}/>
       case 'viewDetails':
         return <LocationInfo location={location}/>
+      case 'shippingReport':
+        return <ShippingReportPage location={location}/>
+      case 'transactionForm':
+        return <TransactionPage location={location}/>
       default:
         return <div>Please select an option</div>;
     }

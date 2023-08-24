@@ -1,0 +1,26 @@
+/* TransactionForm.module.css */
+
+.selectWrapper {
+    padding: 10px;           
+    font-size: 16px;         
+    border-radius: 8px;       
+    border: 1px solid #ccc;  
+    background-color: white;  
+    width: 100%;             
+    max-width: 300px;         
+    cursor: pointer;         
+  }
+  
+  .selectDropdown {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: white;
+    width: 100%;
+    max-width: 300px;
+    cursor: pointer;
+  }
+
+
+  

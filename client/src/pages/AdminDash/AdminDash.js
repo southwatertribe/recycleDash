@@ -20,7 +20,7 @@ export const AdminDash = () => {
   const {auth} = useAuth();   
 
   return (
-    <div className='wrapper'>
+    <div className='dash-content'>
       <div className='welcome'>
         <h1>Welcome {auth.email}</h1>
       </div>

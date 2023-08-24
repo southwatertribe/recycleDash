@@ -13,7 +13,7 @@ import axios from './axios';
 
 const TransactionForm = ({cash_drawer_id, location}) => {
 
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm();   
+    const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm();   
   
     const [cashDrawerTotal, setCashDrawerTotal] = useState('');
 
@@ -46,16 +46,16 @@ const TransactionForm = ({cash_drawer_id, location}) => {
     }
   }
 
-  const onSubmit = async (data) => {
-        // Perform transaction logic here using data.expenseDeposit, data.amount, and data.description
-        // Update totalAmount based on transaction type and amount
-        // Reset the form fields
-        await CDTransaction(data)
-        setValue('transaction_type', 'expense');
-        setValue('amount', '');
-        setValue('description', '');
-        await fetchCashDrawerTotal()
-    };
+  // const onSubmit = async (data) => {
+  //       // Perform transaction logic here using data.expenseDeposit, data.amount, and data.description
+  //       // Update totalAmount based on transaction type and amount
+  //       // Reset the form fields
+  //       await CDTransaction(data)
+  //       setValue('transaction_type', 'expense');
+  //       setValue('amount', '');
+  //       setValue('description', '');
+  //       await fetchCashDrawerTotal()
+  //   };
 
     
   useEffect(()=>{
@@ -66,45 +66,113 @@ const TransactionForm = ({cash_drawer_id, location}) => {
   }, [])
 
 
-  return (        
-    <div style={{ display: 'flex', justifyContent: 'center'}}>
-      <div style={{marginRight: '200px'}}>
+  const onSubmit = async (data) => {
+    await CDTransaction(data);
+    setValue('amount', '');
+    setValue('description', '');
+    await fetchCashDrawerTotal();
+  };
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ marginRight: '200px' }}>
         <h2>Cash</h2>
-        {cashDrawerTotal < 0 ? <div style={{color: 'red', fontSize: 30}}>-${Math.abs(cashDrawerTotal)}</div> : <div style={{color: 'green', fontSize: 30}}>$ {cashDrawerTotal}</div>}
+        {cashDrawerTotal < 0 ? (
+          <div style={{ color: 'red', fontSize: 30 }}>
+            -${Math.abs(cashDrawerTotal)}
+          </div>
+        ) : (
+          <div style={{ color: 'green', fontSize: 30 }}>
+            $ {cashDrawerTotal}
+          </div>
+        )}
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-          <label>
-            Transaction Type:
-            <select {...register('transaction_type')} defaultValue="expense">
-                <option value="expense">Expense</option>
-                <option value="deposit">Deposit</option>
-            </select>
-          </label>
-          <br />
-          <label>
-            Amount:
-            <input
-                type="number"
-                {...register('amount', {
-                required: true,
-                pattern: {
-                  value: /^[0-9]+(\.[0-9]{1,2})?$/,
-                  message: 'Please enter a valid amount with up to two decimal places',
-                },
-                })}
-            />
-            
-          </label>
-          <br />
-          <label>
-            Description:
-            <input type="text" {...register('description')} />
-          </label>
-          <br />
-          <button type="submit">Submit Transaction</button>
-    </form>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{
+          
+          padding: '30px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <div style={{ display: 'flex', marginBottom: '10px' }}>
+          <button
+            type="button"
+            onClick={() => setValue('transaction_type', 'expense')}
+            style={{
+              flex: 1,
+              marginRight: '5px',
+              backgroundColor:
+                watch('transaction_type') === 'expense' ? '#007bff' : '#ccc',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Expense
+          </button>
+          <button
+            type="button"
+            onClick={() => setValue('transaction_type', 'deposit')}
+            style={{
+              flex: 1,
+              marginLeft: '5px',
+              backgroundColor:
+                watch('transaction_type') === 'deposit' ? '#007bff' : '#ccc',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Deposit
+          </button>
+        </div>
+        <label style={{ marginBottom: '10px' }}>
+          Amount:
+          <input
+            type="number"
+            {...register('amount', {
+              required: true,
+              pattern: {
+                value: /^[0-9]+(\.[0-9]{1,2})?$/,
+                message:
+                  'Please enter a valid amount with up to two decimal places',
+              },
+            })}
+            style={{ marginLeft: '10px' }}
+          />
+        </label>
+        <br />
+        <label style={{ marginBottom: '10px' }}>
+          Description:
+          <input
+            type="text"
+            {...register('description')}
+            style={{ marginLeft: '10px' }}
+          />
+        </label>
+        <br />
+        <button
+          type="submit"
+          style={{
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            padding: '10px 20px',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          Submit Transaction
+        </button>
+      </form>
     </div>
-  )
+  );
 }
 
 export default TransactionForm

@@ -1,8 +1,11 @@
 import React from 'react';
 
+//Style
+import dropdown from '../styles/Dropdown.module.css'
+
 //Parts
 import TicketForm from './TicketForm'
-import TransactionPage from '../pages/EmpDash/Parts/TransactionPage';
+import TransactionPage from './TransactionPage';
 import ShippingReportPage from '../pages/EmpDash/Parts/ShippingReportPage';
 
 //State/Redux
@@ -22,10 +25,12 @@ export const GenericDropdown = ({ options, onOptionSelect }) => {
   };
 
   return (
-    <select onChange={handleChange}>
+    <select onChange={handleChange}
+      className={dropdown.selectWrapper}
+    >
       <option value="">Select an option</option>
       {options.map((option) => (
-        <option key={option.value} value={option.value}>
+        <option key={option.value} value={option.value} className={dropdown.selectDropdown}>
           {option.label}
         </option>
       ))}

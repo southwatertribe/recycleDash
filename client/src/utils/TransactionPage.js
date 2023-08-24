@@ -1,15 +1,15 @@
 import {React, useState, useEffect} from 'react'
-import useAuth from '../../../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 //Parts
-import TransactionForm from '../../../utils/TransactionForm';
+import TransactionForm from './TransactionForm'
 
-import axios from '../../../utils/axios';
+import axios from './axios';
 
 
-const TransactionPage = () => {
+const TransactionPage = ({location}) => {
 
-  const {auth} = useAuth()
+  
   const [cashDrawerID, setCashDrawerID] = useState('');
  
 
@@ -19,7 +19,7 @@ const TransactionPage = () => {
     //TODO: Optimize to not constantly pull this data in a better way
       try {
         const response = await axios.get(
-          `/location-service/${auth.curr_location}/cash-drawer`,
+          `/location-service/${location}/cash-drawer`,
           {
             headers: {'Content-Type': 'application/json'},
           }
@@ -48,7 +48,7 @@ const TransactionPage = () => {
   return (
     
     <div>
-      <TransactionForm cash_drawer_id={cashDrawerID} location={auth.curr_location}/>
+      <TransactionForm cash_drawer_id={cashDrawerID} location={location}/>
     </div>
     
   )

@@ -1,26 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useLocation, Link } from 'react-router-dom'
-//Api
-import useAxiosPrivate from '../../hooks/useAxiosPrivate'
-import axios from '../../utils/axios'
-
-import Modal from 'react-modal';
+import React, { useState } from 'react'
+import { useLocation} from 'react-router-dom'
 
 //Style 
-import useAuth from '../../hooks/useAuth';
 import "../../styles/DashContent.css"
 
 //Parts
-import LocationMatCard from './LocationMatCard'
 import { GenericDropdown, ContentDisplay } from '../../utils/DropDownPackAdmin';
 
 const LocationDash = () => {
 
-  const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
-
-  const [tickets, setTickets] = useState([]);
-  const auth = useAuth()
 
   const [selectedOption, setSelectedOption] = useState('');
 
@@ -32,31 +21,18 @@ const LocationDash = () => {
   const dropdownOptions = [
     { label: 'Ticket Search', value: 'ticketSearch' },
     { label: 'View Details', value: 'viewDetails' },
+    { label: 'Shipping Reports', value: 'shippingReport' },
+    { label: 'Transaction Form', value: 'transactionForm'}
   ];
 
   return (
     <div>
       <h1 style={{color:"white"}}>
-        {location.state.location_name} Id: {location.state.location_id}
+        {location.state.location_name} RC: {location.state.location_id}
       </h1>
       <div className='dash-content'>       
         <GenericDropdown options={dropdownOptions} onOptionSelect={handleOptionSelect} />
         <ContentDisplay selectedOption={selectedOption} location={location.state.location_id}/>
-          {/* <div className='location-dash-card'>
-            <h1 className='location-dash-card-title'>Cash Drawer Balance</h1>
-            <p> ${total} </p>
-          </div> */}
-        
-        {/* <h1>Location Materials</h1>
-        <>
-          {
-            locationMats?
-              <div>
-                {locationMats.map((locationMat, i)=><LocationMatCard key={i} {...{...locationMat}}/>)}  
-              </div>
-              : <p>Materials failed to load</p>
-          }
-        </> */}
       </div>
     </div>
   )

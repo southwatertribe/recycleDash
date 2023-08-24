@@ -325,7 +325,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
             ))}
             {location_mats.length > 8 && (
               <option 
-                value="other" className={grid.materialGridItem}
+                value="other"
                 onClick={()=>toggleOtherSelected()}
               >
                 Other
