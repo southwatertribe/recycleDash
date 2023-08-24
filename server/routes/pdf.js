@@ -2,9 +2,10 @@ const express = require("express");
 const doc = require("pdfkit");
 const router = express.Router()
 const PDFDocument = require('pdfkit')
+const pool = require('../db/dbconnection')
 
 //generate a ticket for the web to view
-router.post('/generate-ticket/web-view', async function(req, res){
+router.post('/generate-ticket/web-view/', async function(req, res){
     //Ticket content
     const  content = req.body.ticket;
     console.log(req.body)
@@ -79,21 +80,47 @@ router.post('/generate-ticket/web-view', async function(req, res){
     doc.fontSize(12).text('License #:', 50, driverLicenseY);
     doc.moveTo(120, driverLicenseY + 10).lineTo(250, driverLicenseY + 10).stroke();
 
-
-
     //Finalize document
     doc.end();
 
 })
 
-//Generate snapshot pdf
-router.post('/:rc_number/generate-snapshot', async function(req,res){
-    
-    const rc_number = req.params.rc_number
+router.post('/:shipping_report_id/generate_shipping_report/web_view/', async function(req, res){
 
-    
-        
+
+    console.log("reached")
+    //Shipping report ID
+    const id = req.params.shipping_report_id
+
+    const sqlst = `SELECT * FROM shipping_reports WHERE id='${id}';`
+
+    const [shipping_report] = await pool.query(sqlst)
+
+    console.log(shipping_report[0].location)
+
+    //Initialize a pdf document
+    const doc = new PDFDocument;
+     
+    // Set response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=generated.pdf');
+    //Begine pipe to stream
+    doc.pipe(res)
+
+    // Set the font style
+    doc.font('Helvetica');
+
+    //Write Content
+    // Add Location RC Number
+    doc.fontSize(12).text(`Location RC Number: ${shipping_report[0].location}`, 50, 50);
+
+    // Add Ticket Number
+    doc.fontSize(14).text(`Ticket # ${shipping_report[0].sequence_num}`, 300, 50, { align: 'right' });
+
+    doc.end()
 })
+
+
 
 
 module.exports = router

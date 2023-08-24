@@ -31,10 +31,11 @@ async function genShippingReport(res, material, location, starting_ticket, endin
 
     //If there are no dets return the function
     if (!retrieved_dets.length) {
-        res.json({
+        return {
             "status": 201,
             "message": "No ticket details to retrieve",
-        })
+            "id": null
+        }
     }
 
     //Establihs Shipping Report Weights
@@ -80,17 +81,19 @@ async function genShippingReport(res, material, location, starting_ticket, endin
         VALUES('${id}', '${location}', '${total_weight}', '${scrap}', '${seg_weight}', '${redemption_weight}', '${refund_val}', '${material}', '${sequence_num}', '${ending_ticket}');`
     await pool.query(sqlst)
 
-    res.json({
+    return {
         "status": 200,
         "shipping_report_num": sequence_num,
-    })
+        "id": id
+    }
 
 }
 
 
 router.post("/:location_rc/:material/generate_shipping_report/", async function(req, res) {
     
-    const material = req.params.material
+    const encodedMaterial = req.params.material
+    const material = decodeURIComponent(encodedMaterial);
     const location = req.params.location_rc
 
     //Get all tickets from starting to ending to add to shipping report
@@ -109,20 +112,26 @@ router.post("/:location_rc/:material/generate_shipping_report/", async function(
     //This is the latest shipping report
     const [latest_report] = await pool.query(sqlst)
 
+
+    console.log(latest_report)
+
     //First check if it contains anything
     if (!latest_report.length) {
         //Starting ticket will be 1 which must be the latest ticket in entry
         const starting_ticket = 1
         console.log(`Starting Ticket if there was NONE previous report: ${starting_ticket}`)
 
-        genShippingReport(res, material, location, starting_ticket, ending_ticket)
+        const obj = await genShippingReport(res, material, location, starting_ticket, ending_ticket)
+
+
+        res.json(obj)
     
     } else {
         //Starting ticket is in the payload
-        const starting_ticket = latest_report[0].latest_ticket
+        const starting_ticket = latest_report[0].latest_ticket + 1
         console.log(`Starting Ticket if there was previous report: ${starting_ticket}`)
-
-        genShippingReport(res, material, location, starting_ticket, ending_tickets)
+        const obj = await genShippingReport(res, material, location, starting_ticket, ending_ticket)
+        res.json(obj)
         
     }
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 //Styles
-import container from '../../../styles/Layouts.module.css'
 import grid from '../../../styles/Grids.module.css'
 
 //Axios
@@ -15,12 +14,28 @@ const ShippingReportPage = ({ location }) => {
   // Generate Shipping report function
   const genShippingReport = async (material) => {
     try {
+      const encodedMaterial = encodeURIComponent(material);
       const response = await axios.post(
-        `/report-service/${location}/${material}/generate_shipping_report/`, {ticketNumber}
+        `/report-service/${location}/${encodedMaterial}/generate_shipping_report/`, {ticketNumber}
       );
-      console.log(response)
+      return response.data.id
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleGenerateShippingPDF = async (shipping_report_id) => {
+    console.log("Generated")
+    try {
+      const response = await axios.post(
+        `/pdf-service/${shipping_report_id}/generate_shipping_report/web_view/`,
+        { responseType: 'blob' }
+      );
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      window.open(url);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
     }
   };
 
@@ -29,9 +44,14 @@ const ShippingReportPage = ({ location }) => {
     setTicketNumberEnabled(true);
   };
 
-  const handleReportButtonClick = () => {
+  const handleReportButtonClick = async () => {
     if (selectedMaterial !== '') {
-      genShippingReport(selectedMaterial);
+      const sr_id = await genShippingReport(selectedMaterial);
+      if (sr_id != null) {
+        handleGenerateShippingPDF(sr_id)        
+      }else{
+        alert(`There isnt any tickets with ${selectedMaterial} in it!`)
+      }
     }
   };
 

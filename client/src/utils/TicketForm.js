@@ -18,7 +18,13 @@ const TicketForm = ({ location, maker, location_mats }) => {
   const [cashDrawerTotal, setCashDrawerTotal] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [submittedTicket, setSubmittedTicket] = useState(null);
-  const [latestTicket, setLatestTicket] = useState('')
+  const [latestTicket, setLatestTicket] = useState('');
+  const [otherSelected, setOtherSelected] = useState(false);
+
+  // Function to toggle the otherSelected state
+  const toggleOtherSelected = () => {
+    setOtherSelected((prevState) => !prevState);
+  };
 
 
   //Modal
@@ -217,7 +223,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
     console.log("Generated")
     try {
       const response = await axios.post(
-        'http://localhost:3001/pdf-service/generate-ticket/web-view',
+        '/pdf-service/generate-ticket/web-view/',
         { ticket },
         { responseType: 'blob' }
       );
@@ -305,7 +311,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
      <div className={container.pageContainer}>
       <div className={container.materialsContainer}>
         <div className={grid.materialGrid}>
-            {location_mats.map((material) => (
+            {location_mats.slice(0,8).map((material) => (
               <div
                 key={material.location_mats_id}
                 className={`${grid.materialGridItem} ${selectedMaterials.includes(material.location_mats_id) ? grid.disabled : ''}`}
@@ -317,6 +323,32 @@ const TicketForm = ({ location, maker, location_mats }) => {
                 </div>
               </div>
             ))}
+            {location_mats.length > 8 && (
+              <option 
+                value="other" className={grid.materialGridItem}
+                onClick={()=>toggleOtherSelected()}
+              >
+                Other
+              </option>
+            )}
+
+        {otherSelected && (
+          <div className={grid.materialGridItem}>
+            <label>Other Material: </label>
+            <select
+              name="other_material"
+              // value={selectedOtherMaterial}
+              // onChange={(e) => handleOtherMaterialChange(e)}
+            >
+              <option value="">Select Material</option>
+              {location_mats.slice(8).map(material => (
+                <option key={material.location_mats_id} value={material.location_mats_id}>
+                  {material.material_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         </div >
       </div>
 
