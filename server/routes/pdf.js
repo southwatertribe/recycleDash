@@ -4,6 +4,11 @@ const router = express.Router()
 const PDFDocument = require('pdfkit')
 const pool = require('../db/dbconnection')
 
+const fs = require('fs');
+const path = require('path');
+
+
+//TODO Maybe just fetch ticket by id and get everything but this may be redudndat
 //generate a ticket for the web to view
 router.post('/generate-ticket/web-view/', async function(req, res){
     //Ticket content
@@ -11,6 +16,12 @@ router.post('/generate-ticket/web-view/', async function(req, res){
     console.log(req.body)
     //Ticket details
     const details = content.ticketDetails
+
+    // Fetch company name
+    const query = `SELECT * FROM locations WHERE location_rc_number = ?`;
+    const [location] = await pool.query(query, content['location']);
+
+    console.log(location)
 
     //Initialize a pdf document
     const doc = new PDFDocument;
@@ -25,8 +36,11 @@ router.post('/generate-ticket/web-view/', async function(req, res){
     doc.font('Helvetica');
 
     //Write Content
+    //Location Name
+    doc.fontSize(12).text(`${location[0].company}`, 50, 50);
     // Add Location RC Number
-    doc.fontSize(12).text(`Location RC Number: ${content['location']}`, 50, 50);
+    doc.fontSize(12).text(`Location RC Number: ${content['location']}`, 50, 80);
+    
 
     // Add Ticket Number
     doc.fontSize(14).text(`Ticket # ${content['sequence_num']}`, 300, 50, { align: 'right' });
@@ -85,40 +99,42 @@ router.post('/generate-ticket/web-view/', async function(req, res){
 
 })
 
-router.post('/:shipping_report_id/generate_shipping_report/web_view/', async function(req, res){
+router.post('/:shipping_report_id/generate_shipping_report/web_view/', async (req, res) => {
+    try {
+        const { shipping_report_id } = req.params;
+
+        // Fetch shipping report data from the database
+        const query = `SELECT * FROM shipping_reports WHERE id = ?`;
+        const [shipping_report] = await pool.query(query, [shipping_report_id]);
+
+        if (!shipping_report || shipping_report.length === 0) {
+            return res.status(404).send('Shipping report not found');
+        }
+
+        const doc = new PDFDocument();
+
+        // Set response headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename=shipping_report_${shipping_report_id}.pdf`);
+        
+        // Pipe the PDF document to the response
+        doc.pipe(res);
+
+        // Populate PDF content based on shipping_report data
+        doc.font('Helvetica');
+        doc.fontSize(12).text(`Location RC Number: ${shipping_report[0].id}`, 50, 50);
+        doc.fontSize(14).text(`Ticket # ${shipping_report[0].sequence_num}`, 300, 50, { align: 'right' });
+        // ... Add more content based on your requirements ...
+
+        // End and finalize the PDF document
+        doc.end();
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        res.status(500).send('Error generating PDF');
+    }
+});
 
 
-    console.log("reached")
-    //Shipping report ID
-    const id = req.params.shipping_report_id
-
-    const sqlst = `SELECT * FROM shipping_reports WHERE id='${id}';`
-
-    const [shipping_report] = await pool.query(sqlst)
-
-    console.log(shipping_report[0].location)
-
-    //Initialize a pdf document
-    const doc = new PDFDocument;
-     
-    // Set response headers
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=generated.pdf');
-    //Begine pipe to stream
-    doc.pipe(res)
-
-    // Set the font style
-    doc.font('Helvetica');
-
-    //Write Content
-    // Add Location RC Number
-    doc.fontSize(12).text(`Location RC Number: ${shipping_report[0].location}`, 50, 50);
-
-    // Add Ticket Number
-    doc.fontSize(14).text(`Ticket # ${shipping_report[0].sequence_num}`, 300, 50, { align: 'right' });
-
-    doc.end()
-})
 
 
 

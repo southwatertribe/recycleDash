@@ -123,7 +123,7 @@ router.post("/:location_rc/:material/generate_shipping_report/", async function(
 
         const obj = await genShippingReport(res, material, location, starting_ticket, ending_ticket)
 
-
+        console.log(obj)
         res.json(obj)
     
     } else {

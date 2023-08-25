@@ -38,6 +38,7 @@ router.put('/:business_id/locations/:rc_number', async function (req,res, next) 
     const city = details.city
     const state = details.state
     const zipcode = details.zipcode
+    const company_name = details.company_name
     
     //Cash Drawer Info
     const cash_drawer_id = crypto.randomUUID()
@@ -53,7 +54,7 @@ router.put('/:business_id/locations/:rc_number', async function (req,res, next) 
     //Begin trasnsaction to add admin
     await pool.beginTransaction()
     //Insert location
-    sqlst = `INSERT INTO locations(location_rc_number, location_name, business_id) VALUES('${location_rc_number}','${location_name}','${business_id}')`
+    sqlst = `INSERT INTO locations(location_rc_number, location_name, business_id, company) VALUES('${location_rc_number}','${location_name}','${business_id}', '${company_name}')`
     pool.query(sqlst)
     //Insert into location_address
     sqlst = `INSERT INTO location_addresses(address_id, address_line_1, address_line_2, city, state, zipcode, pert_location) VALUES('${address_id}', '${address_line_1}', '${address_line_2}', '${city}', '${state}', '${zipcode}', '${location_rc_number}')` 

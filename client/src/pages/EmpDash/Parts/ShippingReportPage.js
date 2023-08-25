@@ -25,19 +25,23 @@ const ShippingReportPage = ({ location }) => {
   };
 
   const handleGenerateShippingPDF = async (shipping_report_id) => {
-    console.log("Generated")
+    console.log("Generated");
     try {
-      const response = await axios.post(
-        `/pdf-service/${shipping_report_id}/generate_shipping_report/web_view/`,
-        { responseType: 'blob' }
-      );
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      window.open(url);
+        const response = await axios.post(
+            `/pdf-service/${shipping_report_id}/generate_shipping_report/web_view/`,
+            { responseType: 'blob' }
+        );
+        
+        console.log(response.data); // Log the response data to check if it's valid
+        
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        window.open(url);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+        console.error('Error generating PDF:', error);
     }
-  };
+};
+
 
   const handleMaterialClick = (material) => {
     setSelectedMaterial(material);

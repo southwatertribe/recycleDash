@@ -78,6 +78,13 @@ export const AddLocationForm = (props) => {
     //Fields
     const fields = [
       {
+        label: 'Company Name',
+        name: 'company_name',
+        component: 'input',
+        type: 'text',
+        validation: {required: true}
+      },
+      {
         label: 'Location Name',
         name: 'location_name',
         component: 'input',

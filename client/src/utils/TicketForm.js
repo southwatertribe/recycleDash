@@ -327,13 +327,14 @@ const TicketForm = ({ location, maker, location_mats }) => {
               <option 
                 value="other"
                 onClick={()=>toggleOtherSelected()}
+                className={grid.materialGridItem}
               >
                 Other
               </option>
             )}
 
         {otherSelected && (
-          <div className={grid.materialGridItem}>
+          <div >
             <label>Other Material: </label>
             <select
               name="other_material"
