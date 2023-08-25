@@ -77,8 +77,8 @@ async function genShippingReport(res, material, location, starting_ticket, endin
 
     //Sqlst to insert shipping_report
     sqlst = `INSERT INTO 
-        shipping_reports(id, location, total_weight, scrap, seg_weight, redemption_weight, refund_value, material, sequence_num, latest_ticket)
-        VALUES('${id}', '${location}', '${total_weight}', '${scrap}', '${seg_weight}', '${redemption_weight}', '${refund_val}', '${material}', '${sequence_num}', '${ending_ticket}');`
+        shipping_reports(id, location, total_weight, scrap, seg_weight, redemption_weight, refund_value, material, sequence_num, starting_ticket, latest_ticket)
+        VALUES('${id}', '${location}', '${total_weight}', '${scrap}', '${seg_weight}', '${redemption_weight}', '${refund_val}', '${material}', '${sequence_num}', '${starting_ticket}', '${ending_ticket}');`
     await pool.query(sqlst)
 
     return {

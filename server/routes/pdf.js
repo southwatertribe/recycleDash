@@ -28,7 +28,7 @@ router.post('/generate-ticket/web-view/', async function(req, res){
      
     // Set response headers
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=generated.pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=ticket${content['sequence_num']}.pdf`);
     //Begine pipe to stream
     doc.pipe(res)
 
@@ -115,7 +115,7 @@ router.post('/:shipping_report_id/generate_shipping_report/web_view/', async (re
 
         // Set response headers
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `inline; filename=shipping_report_${shipping_report_id}.pdf`);
+        res.setHeader('Content-Disposition', `attachment; filename=shipping_report_${shipping_report_id}.pdf`);
         
         // Pipe the PDF document to the response
         doc.pipe(res);
