@@ -27,7 +27,7 @@ const TicketSearch = ({location}) => {
         }
     }
 
-    const handleTicketsQuery = async (fromDate, toDate, location_id) => {
+    const handleTicketsQueryDate = async (fromDate, toDate, location_id) => {
     // Perform the query to retrieve tickets based on the date range
     // Update the `tickets` state with the retrieved tickets
     // Replace the below sample data with your actual logic
@@ -51,11 +51,22 @@ const TicketSearch = ({location}) => {
     
   };
 
+  const handleTicketsQuerySequence = async (sequence_num, location_id)=> {
+    try {
+      const response = await axiosPrivate.get(`/ticket-service/${location_id}/${sequence_num}/get_ticket`)
+      
+      setTickets(response.data.ticket)
+    } catch (error) {
+      
+    }
+
+  }
+
   
   const TicketList = ({ tickets }) => {
     const [selectedTicket, setSelectedTicket] = useState(null);
     // const [modalIsOpen, setModalIsOpen] = useState(false);
-  
+    
     const handleTicketSelect = async (ticket) => {
             
       setSelectedTicket(ticket);
@@ -85,7 +96,9 @@ const TicketSearch = ({location}) => {
     };
   
     return (
-      <div>
+      !tickets.length ? 
+      <div><p>There Are No Tickets</p></div> :
+        <div>
         {tickets.map((ticket) => (
           <div
             key={ticket.ticket_id}
@@ -103,7 +116,7 @@ const TicketSearch = ({location}) => {
   return (
     <div>
         <h1>Search Tickets</h1>
-        <DateRangeSelector onTicketsQuery={handleTicketsQuery} location_id={location}/>
+        <DateRangeSelector onTicketsQuery={handleTicketsQueryDate} location_id={location}/>
         <TicketList tickets={tickets}/>
     </div>
   )
