@@ -121,7 +121,10 @@ const TicketForm = ({ location, maker, location_mats }) => {
       console.log(ticket_id)
       const response = await axios.get(
         `http://localhost:3001/ticket-service/${ticket_id}/get_ticket`
+
       )      
+
+      console.log(response)
       return response.data
     } catch (error) {
       console.log(error)
@@ -191,10 +194,11 @@ const TicketForm = ({ location, maker, location_mats }) => {
       await fetchCashDrawerTotal()
       //Refetch ticket
       const main = await fetchTicket(ticket_id)
-      console.log(main.ticket[0])
+      console.log(main)
       //Fetch details
       const details = await fetchTicketDetails(ticket_id)
       console.log(details)
+      console.log(main.ticket)
       //Add Details
       main.ticket[0]["ticketDetails"] = details.ticket_details
       //Gen pdf

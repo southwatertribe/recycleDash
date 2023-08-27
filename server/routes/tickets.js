@@ -4,7 +4,8 @@ const crypto = require('crypto')
 const pool = require('../db/dbconnection')
 
 
-//Create a ticket, should also create a cash drawer transaction, checks to consider are the weight limits and types of in takes
+//TODO OPRIMIZE AND ERROR HANDLE
+//Create a ticket, should also create a cash dra__wer transaction, checks to consider are the weight limits and types of in takes
 //Returns ticket total in an object and this is turned into a cash drawer transsaction
 router.post("/:location_rc_number/new_ticket", async function(req,res) {
 
@@ -108,13 +109,35 @@ router.post("/:location_rc_number/new_ticket", async function(req,res) {
     
 })
 
-//Get ticket based on ticket_id
 router.get("/:ticket_id/get_ticket", async function(req,res){
-
     try {
         const ticket_id = req.params.ticket_id
+        
+        const sqlst = `SELECT * FROM tickets WHERE ticket_id = '${ticket_id}';`
 
-        const sqlst = `SELECT * FROM tickets WHERE ticket_id='${ticket_id}'`
+        const [ticket]= await pool.query(sqlst)
+
+
+        console.log(ticket)
+    
+        res.json({
+            status: 200,
+            ticket: ticket
+        })
+    } catch (error) {
+        console.log(error)        
+    }
+})
+
+//Get ticket based on ticket num and location
+router.get("/:location_rc/:sequence_num/get_sticket", async function(req,res){
+
+    try {
+        const location_rc = req.params.location_rc
+
+        const sequence_num = req.params.sequence_num
+
+        const sqlst = `SELECT * FROM tickets WHERE location='${location_rc}' AND sequence_num=${sequence_num}`
     
         const [ticket]= await pool.query(sqlst)
     
@@ -167,6 +190,8 @@ router.get("/:ticket_id/details", async function(req, res) {
                 error: "Ticket details not found"
             });
         }
+
+        console.log(response)
 
         res.json({
             status: 200,
