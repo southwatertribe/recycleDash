@@ -42,8 +42,6 @@ const TicketSearch = ({location}) => {
           }
         }
       )
-      console.log(location_id)
-      console.log(response.data.tickets)
       setTickets(response.data.tickets);
     } catch (error) {
       

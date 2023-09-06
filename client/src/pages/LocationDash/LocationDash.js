@@ -22,7 +22,8 @@ const LocationDash = () => {
     { label: 'Ticket Search', value: 'ticketSearch' },
     { label: 'View Details', value: 'viewDetails' },
     { label: 'Shipping Reports', value: 'shippingReport' },
-    { label: 'Transaction Form', value: 'transactionForm'}
+    { label: 'Transaction Form', value: 'transactionForm'},
+    { label: 'Daily Reports', value: 'daily'}
   ];
 
   return (
@@ -39,11 +40,3 @@ const LocationDash = () => {
 }
 
 export default LocationDash
-
-
-
-{/* <LocationMatCard key={i} props={{material_name: locationMat.material_name}}/> */}
-
-
-
-

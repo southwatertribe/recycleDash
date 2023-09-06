@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 
 //Style
 import dropdown from '../styles/Dropdown.module.css'
 
-//State/Redux
-import useAuth from '../hooks/useAuth';
 
-//Hook
-import useLocationMats from '../hooks/useLocationId';
 
 //Parts
 import TicketSearch from './TicketSearch';
@@ -41,8 +37,7 @@ export const GenericDropdown = ({ options, onOptionSelect }) => {
 };
 
 export const ContentDisplay = ({ selectedOption, location }) => {
-  const {auth} = useAuth()
-  // const { locationMats} = useLocationMats(auth.curr_location);
+
 
   
   const getContent = () => {
@@ -56,6 +51,8 @@ export const ContentDisplay = ({ selectedOption, location }) => {
         return <ShippingReportPage location={location}/>
       case 'transactionForm':
         return <TransactionPage location={location}/>
+      case 'dailyReports':
+        return <p>Daily Summaries</p>
       default:
         return <div>Please select an option</div>;
     }
