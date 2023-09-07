@@ -58,6 +58,7 @@ const startServer = async () => {
         console.log(`Spun up on ${process.env.PORT}`);
         console.log(`running in ${process.env.NODE_ENV} mode`);
         console.log("Let's get recycling ♻️")
+        console.log(process.env.STAGEDBPASS)
     });
 
 
@@ -80,3 +81,14 @@ const startServer = async () => {
 }
 
 startServer()
+
+
+
+
+// {
+//     origin: 'http://localhost:3000',
+//     // preflightContinue: true,
+//     // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     credentials: true,
+//   //   allowedHeaders:  ['Content-Type', 'Authorization']
+//   }
