@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "set NODE_ENV=development&& set PORT=3001&& nodemon server.js",
-    "prod": "set NODE_ENV=production&& set PORT=8080&& nodemon server.js",
-    "stage": "set NODE_ENV=development&& set PORT=3005&& nodemon server.js"
+    "prod": "set NODE_ENV=production&& set PORT=8080&& node server.js",
+    "stage": "set NODE_ENV=staging&& set PORT=3005&& nodemon server.js"
   },
   "keywords": [],
   "author": "",
