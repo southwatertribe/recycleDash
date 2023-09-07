@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { useForm, useFormState } from 'react-hook-form';
-
-//Auth
-import useAuth from '../hooks/useAuth';
-
+import { useForm} from 'react-hook-form';
 
 //axios
 import axios from './axios';
@@ -13,7 +9,7 @@ import axios from './axios';
 
 const TransactionForm = ({cash_drawer_id, location}) => {
 
-    const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm();   
+    const { register, handleSubmit, setValue, watch } = useForm();   
   
     const [cashDrawerTotal, setCashDrawerTotal] = useState('');
 

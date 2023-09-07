@@ -1,5 +1,4 @@
 import {React, useState, useEffect} from 'react'
-import useAuth from '../hooks/useAuth';
 
 //Parts
 import TransactionForm from './TransactionForm'
