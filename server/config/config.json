@@ -1,0 +1,24 @@
+
+{
+  "development": {
+    "username": "root",
+    "password": "",
+    "database": "recycleDash",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "",
+    "database": "recycleDash_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "",
+    "database": "recycleDash_prod",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
