@@ -2,7 +2,6 @@ require('dotenv').config();
 const mysql = require('mysql2')
 
 
-
     const pool = mysql.createConnection({
         host: process.env.STAGEDBHOST,
         user: process.env.STAGEDBUSER,
@@ -12,15 +11,6 @@ const mysql = require('mysql2')
         
     }).promise();
     
-
-
-    // connection.connect(function (err) {
-    //     if (err) {
-    //       console.error("Database connection  failed: " + err.stack);
-    //       return;
-    //     }
-    //     console.log("Connected to database.");
-    //   });
 
 
 module.exports = pool
