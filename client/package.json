@@ -24,9 +24,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "stage": "env-cmd -f .env.stage react-scripts start",
+    "start": "env-cmd -f .env.development react-scripts start",
     "build": "react-scripts build",
+    "stage-netlify": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
