@@ -130,7 +130,7 @@ router.get("/:ticket_id/get_ticket", async function(req,res){
 })
 
 //Get ticket based on ticket num and location
-router.get("/:location_rc/:sequence_num/get_sticket", async function(req,res){
+router.get("/:location_rc/:sequence_num/get_ticket", async function(req,res){
 
     try {
         const location_rc = req.params.location_rc

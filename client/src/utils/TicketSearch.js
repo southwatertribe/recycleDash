@@ -2,6 +2,7 @@ import {React, useState} from 'react'
 
 //Parts
 import DateRangeSelector from './DateRangeSelelctor'
+import SequenceSelector from './SequenceSelector';
 
 //Styles
 import "../styles/locationdash.css"
@@ -12,7 +13,14 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const TicketSearch = ({location}) => {
 
-    const [tickets, setTickets] = useState([]);
+    const [tickets, setTickets] = useState([])
+
+
+    const [queryOption, setQueryOption] = useState("date")
+    const handleRadioChange = (event) => {
+      setTickets([])
+      setQueryOption(event.target.value)
+    }
 
     const axiosPrivate = useAxiosPrivate();
     
@@ -47,7 +55,7 @@ const TicketSearch = ({location}) => {
       
     }
     
-  };
+  }
 
   const handleTicketsQuerySequence = async (sequence_num, location_id)=> {
     try {
@@ -63,7 +71,6 @@ const TicketSearch = ({location}) => {
   
   const TicketList = ({ tickets }) => {
     const [selectedTicket, setSelectedTicket] = useState(null);
-    // const [modalIsOpen, setModalIsOpen] = useState(false);
     
     const handleTicketSelect = async (ticket) => {
             
@@ -111,11 +118,49 @@ const TicketSearch = ({location}) => {
       </div>
     );
   };
+
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+
+      <div className="radio-group">
+        <h1>Search Method</h1>
+        <input
+          type="radio"
+          name="date_range"
+          value="date"
+          id="date"
+          defaultChecked
+          checked={queryOption === 'date'}
+          onChange={handleRadioChange}
+        />
+        <label htmlFor="date">Date Range</label>
+        <input
+          type="radio"
+          name="date_range"
+          value="sequence"
+          id="sequence"
+          checked={queryOption === 'sequence'}
+          onChange={handleRadioChange}
+        />
+        <label htmlFor="sequence">Sequence</label>
+      </div>
+
+
+      <div>
         <h1>Search Tickets</h1>
-        <DateRangeSelector onTicketsQuery={handleTicketsQueryDate} location_id={location}/>
+        {queryOption === 'date' ? (
+          // Render the Date Range Selector component when 'Date Range' is selected
+          <DateRangeSelector onTicketsQuery={handleTicketsQueryDate} location_id={location} />
+        ) : (
+          // Render the Sequence Selector component when 'Sequence' is selected
+          // <SequenceSelector onTicketsQuery={handleTicketsQuerySequence} location_id={location} />
+          <SequenceSelector onTicketsQuery={handleTicketsQuerySequence} location_id={location}/>
+        )}
+       
         <TicketList tickets={tickets}/>
+      </div>
+
+
     </div>
   )
 }
