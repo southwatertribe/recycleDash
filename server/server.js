@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-
+const pool = require('./db/dbconnection');
+var bodyParser = require('body-parser')
 
 //Routers
 const register = require('./routes/accounts')
@@ -11,7 +12,7 @@ const auth = require('./routes/auth');
 const tickets = require('./routes/tickets');
 const locationService = require('./routes/location');
 const refresh = require('./routes/refresh');
-// const credentials = require('./middleware/credentials');
+const credentials = require('./middleware/credentials');
 const pdfService = require('./routes/pdf')
 const { verifyJWT } = require('./middleware/verifyJWT');
 const reports = require('./routes/reports')
@@ -32,7 +33,13 @@ const startServer = async () => {
     
     //Use middleware
     server.use(
-        cors()
+        cors({
+          origin: 'http://localhost:3000',
+          // preflightContinue: true,
+          // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+          credentials: true,
+        //   allowedHeaders:  ['Content-Type', 'Authorization']
+        })
     );
     server.use(express.json())
     server.use(cookieParser()) 
@@ -58,7 +65,6 @@ const startServer = async () => {
         console.log(`Spun up on ${process.env.PORT}`);
         console.log(`running in ${process.env.NODE_ENV} mode`);
         console.log("Let's get recycling ♻️")
-
     });
 
 
@@ -81,14 +87,3 @@ const startServer = async () => {
 }
 
 startServer()
-
-
-
-
-// {
-//     origin: 'http://localhost:3000',
-//     // preflightContinue: true,
-//     // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-//     credentials: true,
-//   //   allowedHeaders:  ['Content-Type', 'Authorization']
-//   }
