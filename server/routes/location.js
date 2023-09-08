@@ -27,7 +27,7 @@ router.get("/:business_id/locations/", async function(req, res) {
 //Add a location, should only be allowed for admins
 //Admin creates new location query post RC Number
 router.put('/:business_id/locations/:rc_number', async function (req,res, next) {
-    console.log("Add location hit")
+    console.log("Add location hit 💖💖💖💖💖💖")
     //All details
     const details = req.body
     console.log(`Info is: ${details}`)
