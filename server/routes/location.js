@@ -174,7 +174,7 @@ router.get("/:location_id/cash_drawer/total", async function(req,res){
 router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function(req,res) {
 
 
-
+    console.log("HIT CASH DRAWER TRANSACTION 💖💖💖💖")
     //Transaction type
     const transaction_type = req.body.transaction_type
     //Cash Drawer
