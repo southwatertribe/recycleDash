@@ -60,6 +60,7 @@ const startServer = async () => {
         console.log(`Spun up on ${process.env.PORT}`);
         console.log(`running in ${process.env.NODE_ENV} mode`);
         console.log("Let's get recycling ♻️")
+        console.log(process.env.AT_SECRET)
     });
 
 
