@@ -55,7 +55,7 @@ router.post("/admin-auth", async function(req,res) {
             pool.query(RFToken)
         
 
-            res.cookie('jwt', refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000,  sameSite: 'none'})
+            res.cookie('jwt', refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000,  sameSite: 'none', domain: 'https://elaborate-piroshki-e49c3e.netlify.app'})
             res.json({
                 "user_id": user_id,
                 "role": role, //This will determine which dash to render
@@ -135,7 +135,7 @@ router.post("/emp-auth", async function(req,res) {
         pool.query(RFToken)
        
 
-        res.cookie('jwt', refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000,  sameSite: 'none'})
+        res.cookie('jwt', refreshToken, {httpOnly: false, maxAge: 24 * 60 * 60 * 1000,  sameSite: 'none', domain: 'https://elaborate-piroshki-e49c3e.netlify.app'})
         res.json({
             "user_id": user_id,
             "role": role, //This will determine which dash to render
