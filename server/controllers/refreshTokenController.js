@@ -10,9 +10,7 @@ const handlRefreshToken = async (req,res) => {
     console.log(cookies.jwt) //Debug log
     const refresh_token = cookies.jwt //Store refresh token
     
-    const sqlst = `SELECT * FROM admins WHERE refresh_token = "${refresh_token}"
-              UNION
-              SELECT * FROM employees WHERE refresh_token = "${refresh_token}";`;
+    const sqlst = `SELECT * FROM admins WHERE refresh_token="${refresh_token}" UNION SELECT * FROM employees WHERE refresh_token = "${refresh_token}";`;              
     const [getAuth] = await pool.query(sqlst); //Get user based on reresh token 
     
     console.log("Line 14")
