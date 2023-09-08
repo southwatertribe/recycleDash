@@ -34,7 +34,7 @@ const startServer = async () => {
     //Use middleware
     server.use(
         cors({
-          origin: 'http://localhost:3000',
+          origin: 'https://elaborate-piroshki-e49c3e.netlify.app',
           // preflightContinue: true,
           // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
           credentials: true,
