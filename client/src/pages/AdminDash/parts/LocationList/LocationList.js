@@ -8,6 +8,7 @@ import { setrLocations } from "../../../../redux/locations";
 //Requests
 // import {useQuery} from "react-query";
 import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+import axios from '../../../../utils/axios';
 import useAuth from '../../../../hooks/useAuth';
 
 //Api Functions 
@@ -30,7 +31,7 @@ const LocationList = () => {
         
         if (rlocations.currData.length===undefined) {
           try {
-            const response = await axiosPrivate.get(
+            const response = await axios.get(
               `/location-service/${auth.business_id}/locations/`,          
               {
                 headers: {'Content-Type': 'application/json'},
