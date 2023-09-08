@@ -6,7 +6,7 @@ const mysql = require('mysql2')
         user: process.env.DEVDBUSER,
         password: process.env.DEVDBPASS,
         database: process.env.DEVDBNAME,
-        port: 25060,
+        port: 3306,
         multipleStatements: true,  
             
     }).promise();
