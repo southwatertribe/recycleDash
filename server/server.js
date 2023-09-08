@@ -31,9 +31,9 @@ const startServer = async () => {
         //   'https://elaborate-piroshki-e49c3e.netlify.app/'
           // preflightContinue: true,
           // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-          credentials: true,
+          credentials: 'include',
           allowedHeaders:  ['Content-Type', 'Authorization'],
-        exposedHeaders: ["Set-Cookie"]
+          exposedHeaders: ["Set-Cookie"]
         })
     );
     server.use(express.json())
