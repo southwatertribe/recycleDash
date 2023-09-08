@@ -32,8 +32,8 @@ const startServer = async () => {
           // preflightContinue: true,
           // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
           credentials: true,
-        //   allowedHeaders:  ['Content-Type', 'Authorization']
-            exposedHeaders: ["Set-Cookie"]
+          allowedHeaders:  ['Content-Type', 'Authorization'],
+        exposedHeaders: ["Set-Cookie"]
         })
     );
     server.use(express.json())
