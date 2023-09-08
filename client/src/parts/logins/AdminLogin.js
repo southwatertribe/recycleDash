@@ -36,7 +36,7 @@ const AdminLogin = () => {
         JSON.stringify({ email: email, password: password }),
         {
           headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
+          withCredentials: 'include'
         }
       );
 
