@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-// import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 //styles
 import grid from '../styles/Grids.module.css';
 import container from '../styles/Layouts.module.css';
@@ -120,7 +120,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
     try {
       console.log(ticket_id)
       const response = await axios.get(
-        `http://localhost:3001/ticket-service/${ticket_id}/get_ticket`
+        `/ticket-service/${ticket_id}/get_ticket`
 
       )      
 
@@ -134,7 +134,7 @@ const TicketForm = ({ location, maker, location_mats }) => {
   const fetchTicketDetails = async (ticket_id) => {
     try {
     const response = await axios.get(
-        `http://localhost:3001/ticket-service/${ticket_id}/details`
+        `/ticket-service/${ticket_id}/details`
     )      
     return response.data
     } catch (error) {
