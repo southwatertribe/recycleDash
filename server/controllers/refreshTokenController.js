@@ -7,6 +7,7 @@ const handlRefreshToken = async (req,res) => {
     console.log("COOKIE CHECK TOKEN CONTROLLER") //check cookies
     if (!cookies.jwt) res.status(401) //401 With no cookie/JWT
     console.log("Refresh controller line: 7")
+    console.log(cookies)
     console.log(cookies.jwt) //Debug log
     const refresh_token = cookies.jwt //Store refresh token
     
