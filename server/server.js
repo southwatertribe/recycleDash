@@ -21,20 +21,12 @@ const reports = require('./routes/reports')
 
 const startServer = async () => {
 
-    // //THIS IF FOR DEV ONLY
-    // sequelize.sync({ force: true }).then(() => {
-
-        
-    
-    // }).catch((err) => {
-      
-    // });
     const server = express()
     
     //Use middleware
     server.use(
         cors({
-          origin: 'http://localhost:3000', 
+          origin: 'https://elaborate-piroshki-e49c3e.netlify.app/', 
         //   'https://elaborate-piroshki-e49c3e.netlify.app/'
           // preflightContinue: true,
           // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
