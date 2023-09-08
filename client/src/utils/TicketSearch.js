@@ -27,7 +27,7 @@ const TicketSearch = ({location}) => {
     const fetchTicketDetails = async (ticket_id) => {
         try {
         const response = await axios.get(
-            `http://localhost:3001/ticket-service/${ticket_id}/details`
+            `/ticket-service/${ticket_id}/details`
         )      
         return response.data
         } catch (error) {
