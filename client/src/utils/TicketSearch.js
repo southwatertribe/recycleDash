@@ -88,7 +88,7 @@ const TicketSearch = ({location}) => {
       console.log("Generated")
       try {
         const response = await axios.post(
-          'http://localhost:3001/pdf-service/generate-ticket/web-view',
+          '/pdf-service/generate-ticket/web-view',
           { ticket },
           { responseType: 'blob' }
         );
