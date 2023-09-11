@@ -25,8 +25,9 @@
   },
   "scripts": {
     "start": "env-cmd -f .env.development react-scripts start",
+    "stage": "env-cmd -f .env.stage react-scripts start",
     "build": "react-scripts build",
-    "stage-netlify": "env-cmd -f .env.stage react-scripts start",
+    "stage-netlify": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
