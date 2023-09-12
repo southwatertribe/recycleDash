@@ -83,14 +83,17 @@ router.post('/generate-ticket/web-view/', async function(req, res){
     // Add total
     doc.fontSize(12).text('Total:', 350, separatingLineY + 20, { width: columnWidth, align: 'right' });
     doc.fontSize(12).text(content['total'], 500, separatingLineY + 20, { width: columnWidth, align: 'center' });
-
-    // Add signature
-    const signatureY = separatingLineY + 80; // Adjust the value to position the line lower
+    // Adjust the position of the signature line
+    const signatureY = separatingLineY + 60; // Adjust the value to position the line lower
     doc.fontSize(12).text('Signature:', 50, signatureY);
     doc.moveTo(120, signatureY + 10).lineTo(250, signatureY + 10).stroke();
 
-    //Add License
-    const driverLicenseY = separatingLineY + 120; // Adjust the value to position the line lower
+    // Place the customer name right above the signature line
+    doc.fontSize(12).text('Customer:', 50, signatureY - 20);
+    doc.fontSize(12).text(content['customer'], 120, signatureY - 20);
+
+    // Adjust the position of the License section
+    const driverLicenseY = signatureY + 40; // Adjust the value to position the line lower
     doc.fontSize(12).text('License #:', 50, driverLicenseY);
     doc.moveTo(120, driverLicenseY + 10).lineTo(250, driverLicenseY + 10).stroke();
 
