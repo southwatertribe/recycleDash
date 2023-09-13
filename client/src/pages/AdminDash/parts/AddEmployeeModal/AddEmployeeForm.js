@@ -3,7 +3,8 @@ import React from 'react'
 import {useForm} from 'react-hook-form'
 import { GenericForm } from '../../../../utils/GenericForm'
 //API
-import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+// import useAxiosPrivate from '../../../../hooks/useAxiosPrivate'
+import axios from '../../../../utils/axios'
 //Auth
 import useAuth from '../../../../hooks/useAuth'
 //State/Redux
@@ -11,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setremployees } from '../../../../redux/employees'
 
 const AddEmployeeForm = (props) => {
-  const axiosPrivate = useAxiosPrivate();
+  // const axiosPrivate = useAxiosPrivate();
   
   const {auth} = useAuth();
   //Redux
@@ -73,7 +74,7 @@ const AddEmployeeForm = (props) => {
 
   const fetchEmployees = async () => {
     
-      await axiosPrivate.get(
+      await axios.get(
         `/admin/employees/${auth.business_id}`,
         {
           headers: {'Content-Type': 'application/json'},
@@ -91,7 +92,7 @@ const AddEmployeeForm = (props) => {
 
   const addEmployee = async(payload) => {
     payload["business"] = auth.business_id
-    await axiosPrivate.post(
+    await axios.post(
       `/admin/employees/${auth.business_id}`,
       JSON.stringify(payload),
       {
