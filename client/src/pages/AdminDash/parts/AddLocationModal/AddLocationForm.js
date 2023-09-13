@@ -4,6 +4,7 @@ import {useForm} from 'react-hook-form'
 import { GenericForm } from '../../../../utils/GenericForm';
 //API
 // import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+import axios from '../../../../utils/axios';
 //Auth
 import useAuth from '../../../../hooks/useAuth';
 
