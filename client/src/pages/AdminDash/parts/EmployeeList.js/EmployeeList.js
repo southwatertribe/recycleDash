@@ -7,7 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setremployees } from '../../../../redux/employees';
 //Requests
 import {useQuery} from "react-query";
-import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+// import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+import axios from '../../../../utils/axios';
 import useAuth from '../../../../hooks/useAuth';
 import EmpCard from '../EmployeeCard/EmpCard';
 
@@ -17,7 +18,7 @@ import EmpCard from '../EmployeeCard/EmpCard';
 const EmployeeList = () => {
 //Will use this in conjuction with redux
     
-    const axiosPrivate = useAxiosPrivate();
+    // const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     //Redux
     
@@ -28,7 +29,7 @@ const EmployeeList = () => {
     //If state empty get locations <-> and if refresh trigger clocked call again
     const fetchEmployees = async () => { 
   
-        await axiosPrivate.get(
+        await axios.get(
           `/admin/employees/:${auth.business_id}`,          
           {
             headers: {'Content-Type': 'application/json'},

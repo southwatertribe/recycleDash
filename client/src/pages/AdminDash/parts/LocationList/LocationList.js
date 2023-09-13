@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setrLocations } from "../../../../redux/locations";
 //Requests
 // import {useQuery} from "react-query";
-import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+// import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
 import axios from '../../../../utils/axios';
 import useAuth from '../../../../hooks/useAuth';
 
@@ -19,7 +19,7 @@ import useAuth from '../../../../hooks/useAuth';
 const LocationList = () => {
 //Will use this in conjuction with redux
     
-    const axiosPrivate = useAxiosPrivate();
+    // const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
     //Redux
     const rlocations = useSelector((state)=> state.rlocations)
