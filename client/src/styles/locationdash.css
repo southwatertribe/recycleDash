@@ -70,3 +70,20 @@
     background-color: #0056b3;
   }
   
+
+  /* Add this to your locationdash.css or a relevant CSS file */
+@media (max-width: 768px) { /* Adjust this value based on when you start seeing issues */
+  .location-mat-card h3 {
+      font-size: 14px; /* Adjust as needed */
+  }
+
+  .location-mat-card button {
+      padding: 5px 10px; /* Adjust as needed */
+      font-size: 12px; /* Adjust as needed */
+  }
+
+  .location-mat-card input[type="number"] {
+      width: 50%; /* Adjust as needed */
+      font-size: 12px; /* Adjust as needed */
+  }
+}
