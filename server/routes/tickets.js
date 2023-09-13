@@ -207,6 +207,38 @@ router.get("/:ticket_id/details", async function(req, res) {
 });
 
 
+//Void ticket
+router.patch("/:ticket_id/void", async function(req,res) {
+    try {
+        const ticket_id = req.params.ticket_id
+        // //Start transaction
+        await pool.beginTransaction();
+        //First check if ticket is voided or not
+        sqlst = `SELECT void FROM tickets WHERE ticket_id=${ticket_id}`
+        const [is_void] = pool.query(sqlst)
+
+        if (is_void === 0) { 
+            //Change to void which will be 1
+            sqlst = `UPDATE tickets SET void = 1 WHERE ticket_id = ${ticket_id}`
+            pool.query(sqlst)
+
+            //Void
+            res.json({
+                status: 200,
+                result: "void"
+            })
+        } else {
+            //Return stale
+            res.json({
+                status: 200,
+                result: "stale"
+            })
+        }
+        
+    } catch (error) {
+        
+    }
+})
 
 
 //Change Ticket Details
