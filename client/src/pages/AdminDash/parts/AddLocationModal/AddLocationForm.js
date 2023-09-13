@@ -3,7 +3,7 @@ import React from 'react'
 import {useForm} from 'react-hook-form'
 import { GenericForm } from '../../../../utils/GenericForm';
 //API
-import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+// import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
 //Auth
 import useAuth from '../../../../hooks/useAuth';
 
@@ -13,7 +13,7 @@ import { setrLocations } from '../../../../redux/locations';
 
 
 export const AddLocationForm = (props) => {
-    const axiosPrivate = useAxiosPrivate();
+    // const axiosPrivate = useAxiosPrivate();
     const {auth} = useAuth();
 
     const stateOptions = [
@@ -139,7 +139,7 @@ export const AddLocationForm = (props) => {
     //Request function
     //If state empty get locations <-> and if refresh trigger clocked call again
     const fetchLocations = async () => { //Payload is business_id        
-      const response = await axiosPrivate.get(
+      const response = await axios.get(
         `/location-service/${auth.business_id}/locations/`,          
         {
           headers: {'Content-Type': 'application/json'},
@@ -159,7 +159,7 @@ export const AddLocationForm = (props) => {
         payload["business_id"] = auth.business_id
         let rc_number = payload["location_rc_number"]
         
-        const response = await axiosPrivate.put(
+        const response = await axios.put(
             `/location-service/${auth.business_id}/locations/${rc_number}`, 
             JSON.stringify(payload),         
             {
