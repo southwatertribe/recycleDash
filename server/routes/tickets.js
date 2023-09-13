@@ -219,8 +219,9 @@ router.patch("/:ticket_id/void", async function(req,res) {
 
         if (is_void === 0) { 
             //Change to void which will be 1
-            sqlst = `UPDATE tickets SET void = 1 WHERE ticket_id = ${ticket_id}`
+            sqlst = `UPDATE tickets SET void = 1, total = 0, WHERE ticket_id = ${ticket_id}`
             pool.query(sqlst)
+
 
             //Void
             res.json({
