@@ -24,7 +24,7 @@ const useLocationMats = (locationId) => {
       console.log('Admin Dash Error: ');
       console.log(error);
     }
-  }, [axiosPrivate, locationId]);
+  }, [axios, locationId]);
 
   useEffect(() => {
     fetchLocationMats();
