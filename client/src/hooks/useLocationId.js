@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
-import useAxiosPrivate from './useAxiosPrivate';
+import axios from '../utils/axios';
+// import useAxiosPrivate from './useAxiosPrivate';
 
 const useLocationMats = (locationId) => {
-  const axiosPrivate = useAxiosPrivate();
+  // const axiosPrivate = useAxiosPrivate();
   const [locationMats, setLocationMats] = useState();
 
   const fetchLocationMats = useCallback(async () => {
     try {
-      const response = await axiosPrivate.get(
+      const response = await axios.get(
         `/location-service/${locationId}/location_mats/`,
         {
           headers: { 'Content-Type': 'application/json' },
