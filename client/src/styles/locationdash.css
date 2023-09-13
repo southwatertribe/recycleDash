@@ -7,8 +7,8 @@
 .location-mats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Two columns with equal width */
-    gap: 16px; /* Spacing between cards */
-    margin-top: 20px; /* Add some top margin for separation */
+    gap: 10px; /* Spacing between cards */
+    margin-top: 10px; /* Add some top margin for separation */
   }
 
   
@@ -69,21 +69,25 @@
   .location-mat-card button:hover {
     background-color: #0056b3;
   }
+
+  .location-mat-card input[type="number"] {
+    width: 20%; 
+    font-size: 12px; 
+}
   
 
-  /* Add this to your locationdash.css or a relevant CSS file */
-@media (max-width: 768px) { /* Adjust this value based on when you start seeing issues */
+/* @media (max-width: 1100px) { 
   .location-mat-card h3 {
-      font-size: 14px; /* Adjust as needed */
+      font-size: 14px; 
   }
 
   .location-mat-card button {
-      padding: 5px 10px; /* Adjust as needed */
-      font-size: 12px; /* Adjust as needed */
+      padding: 5px 10px; 
+      font-size: 12px; 
   }
 
   .location-mat-card input[type="number"] {
-      width: 50%; /* Adjust as needed */
-      font-size: 12px; /* Adjust as needed */
+      width: 20%; 
+      font-size: 12px; 
   }
-}
+} */
