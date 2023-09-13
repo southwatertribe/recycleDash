@@ -9,7 +9,7 @@ import "../styles/locationdash.css"
 
 //Api
 import axios from './axios';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
+// import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const TicketSearch = ({location}) => {
 
@@ -22,7 +22,7 @@ const TicketSearch = ({location}) => {
       setQueryOption(event.target.value)
     }
 
-    const axiosPrivate = useAxiosPrivate();
+    // const axiosPrivate = useAxiosPrivate();
     
     const fetchTicketDetails = async (ticket_id) => {
         try {
@@ -40,7 +40,7 @@ const TicketSearch = ({location}) => {
     // Update the `tickets` state with the retrieved tickets
     // Replace the below sample data with your actual logic
     try {
-      const response = await axiosPrivate.get(
+      const response = await axios.get(
         `/ticket-service/${location_id}/get-tickets`,
         {
           headers: {'Content-Type': 'application/json'},
@@ -59,7 +59,7 @@ const TicketSearch = ({location}) => {
 
   const handleTicketsQuerySequence = async (sequence_num, location_id)=> {
     try {
-      const response = await axiosPrivate.get(`/ticket-service/${location_id}/${sequence_num}/get_ticket`)
+      const response = await axios.get(`/ticket-service/${location_id}/${sequence_num}/get_ticket`)
       
       setTickets(response.data.ticket)
     } catch (error) {
