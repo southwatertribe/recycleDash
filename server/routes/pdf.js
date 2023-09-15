@@ -48,8 +48,7 @@ router.post('/generate-ticket/web-view/', async function(req, res){
     // Add Date and Customer
     doc.fontSize(12).text('Date:', 50, 110);
     doc.fontSize(12).text(content['timestamp'].substring(0, 10), 120, 110);
-    doc.fontSize(12).text('Customer:', 50, 130);
-    doc.fontSize(12).text(content['customer'], 120, 130);
+
     
     // Add table headers
     const tableHeaders = ['Material', 'Amount', 'Take in Type', 'Total Price'];
