@@ -2,6 +2,9 @@
 import { useNavigate, Link } from "react-router-dom"
 //Style
 import "./LocationCard.css"
+import axios from "../../../../utils/axios";
+
+
 export default function LocationCard({props}){
     const navigate = useNavigate();
     const location_id = props.location_rc_number
@@ -16,11 +19,22 @@ export default function LocationCard({props}){
             }
         })
     }
+
+    const handleSnapshotClick = async() => {
+        try {
+            const response = await axios.get(
+                `/report-service/${location_id}/snapshot`
+            )
+        } catch (error) {
+            console.log(error)            
+        }
+    }
+
     return (
         <div className="location-card" onClick={handleClick}> 
             <div className="card-content">
                 <h3>{props.location_name}</h3>
-                <button>
+                <button onClick={handleSnapshotClick}>
                     Snapshot
                 </button>
             </div>

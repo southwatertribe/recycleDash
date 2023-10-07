@@ -137,6 +137,42 @@ router.post("/:location_rc/:material/generate_shipping_report/", async function(
 
 })
 
+router.get("/:location_rc/snapshot/", async function (req, res) {
+    try {
+        const location_rc = req.params.location_rc;
+
+        await pool.beginTransaction();
+        
+        // All tickets from today
+        // Query
+        let sql = `
+            SELECT
+                t.*,
+                td.*
+            FROM
+                tickets t
+            LEFT JOIN
+                ticket_dets td
+            ON
+                t.ticket_id = td.ticket
+            WHERE
+                AND location = '${location_rc}'
+                AND DATE(t.timestamp) = CURDATE();
+        `;
+
+        //Store tdodays tickets
+        const [curr_tickets] = await pool.query(sql);
+        
+        // Non-shipped
+        console.log(curr_tickets);
+
+        res.json(curr_tickets);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 
 
 

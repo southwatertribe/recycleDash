@@ -60,12 +60,10 @@ const TicketSearch = ({location}) => {
   const handleTicketsQuerySequence = async (sequence_num, location_id)=> {
     try {
       const response = await axios.get(`/ticket-service/${location_id}/${sequence_num}/get_ticket`)
-      
       setTickets(response.data.ticket)
     } catch (error) {
-      
+      console.log(error)
     }
-
   }
 
   
