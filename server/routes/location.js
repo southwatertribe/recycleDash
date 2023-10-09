@@ -27,7 +27,6 @@ router.get("/:business_id/locations/", async function(req, res) {
 //Add a location, should only be allowed for admins
 //Admin creates new location query post RC Number
 router.put('/:business_id/locations/:rc_number', async function (req,res, next) {
-    console.log("Add location hit 💖💖💖💖💖💖")
     //All details
     const details = req.body
     console.log(`Info is: ${details}`)
@@ -172,22 +171,21 @@ router.get("/:location_id/cash_drawer/total", async function(req,res){
 
 //Add cash drawer transaction
 router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function(req,res) {
-
-
-    console.log("HIT CASH DRAWER TRANSACTION 💖💖💖💖")
     //Transaction type
     const transaction_type = req.body.transaction_type
+    console.log(transaction_type)
     //Cash Drawer
     const cash_drawer = req.params.cash_drawer
     //Amount
     const amount = req.body.amount
+    console.log(amount)
     //Description
-    const desccription = req.body.description
+    const description = req.body.description
     //Transaction_id
-    const trasnsaction_id = crypto.randomUUID()
+    const transaction_id = crypto.randomUUID()
 
     
-    const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer, transaction_type, amount, description) VALUES('${trasnsaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}', '${desccription}');`
+    const sqlst = `INSERT INTO cash_drawer_transactions(transaction_id, cash_drawer, transaction_type, amount, description) VALUES('${transaction_id}', '${cash_drawer}', '${transaction_type}', '${amount}', '${description}');`
     await pool.query(sqlst)
     
 
@@ -197,7 +195,7 @@ router.put("/:location_id/:cash_drawer/cash_drawer_transactions", async function
         "details": {
             "amount": amount,
             "type": transaction_type,
-            "id": trasnsaction_id
+            "id": transaction_id
         }
     }
 

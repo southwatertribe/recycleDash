@@ -3,7 +3,7 @@ const router = express.Router()
 const pool = require('../db/dbconnection')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
-const { timeStamp, time } = require("console")
+
 
 
 // This will get a reports info
@@ -13,7 +13,7 @@ const { timeStamp, time } = require("console")
 // //Generate shipping report this is to be put into the database
 //TODO, Make a function for this with start and end 
 
-async function genShippingReport(res, material, location, starting_ticket, ending_ticket) {
+async function genShippingReport(material, location, starting_ticket, ending_ticket) {
     //Shipping Report ID
     const id = crypto.randomUUID()
     //Get all ticket dets 
@@ -89,6 +89,35 @@ async function genShippingReport(res, material, location, starting_ticket, endin
 
 }
 
+async function getAllTicketsToday(location_rc) {
+    try {        
+        // All tickets from today
+        // Query
+        let sql = `
+            SELECT
+                t.void,
+                t.shipped_in,
+                td.*
+            FROM
+                tickets t
+            LEFT JOIN
+                ticket_dets td
+            ON
+                t.ticket_id = td.ticket
+            WHERE
+                location = '${location_rc}'
+                AND DATE(t.timestamp) = CURDATE();`;
+
+        //Store tdodays tickets
+        const [curr_tickets] = await pool.query(sql);
+        
+        // Non-shipped
+        console.log(curr_tickets)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 router.post("/:location_rc/:material/generate_shipping_report/", async function(req, res) {
     
@@ -138,38 +167,12 @@ router.post("/:location_rc/:material/generate_shipping_report/", async function(
 })
 
 router.get("/:location_rc/snapshot/", async function (req, res) {
-    try {
-        const location_rc = req.params.location_rc;
 
-        await pool.beginTransaction();
-        
-        // All tickets from today
-        // Query
-        let sql = `
-            SELECT
-                t.*,
-                td.*
-            FROM
-                tickets t
-            LEFT JOIN
-                ticket_dets td
-            ON
-                t.ticket_id = td.ticket
-            WHERE
-                AND location = '${location_rc}'
-                AND DATE(t.timestamp) = CURDATE();
-        `;
+    const location_rc = req.params.location_rc;
+    const curr_tickets = getAllTicketsToday(location_rc)
 
-        //Store tdodays tickets
-        const [curr_tickets] = await pool.query(sql);
-        
-        // Non-shipped
-        console.log(curr_tickets);
+    res.json(curr_tickets)
 
-        res.json(curr_tickets);
-    } catch (error) {
-        console.log(error);
-    }
 });
 
 
