@@ -90,14 +90,17 @@ async function genShippingReport(material, location, starting_ticket, ending_tic
 }
 
 async function getAllTicketsToday(location_rc) {
-    try {        
-        // All tickets from today
-        // Query
+    try {
+        // Query to get all ticket details for today and count of unique tickets
         let sql = `
             SELECT
                 t.void,
                 t.shipped_in,
-                td.*
+                td.*,
+                (SELECT COUNT(DISTINCT t2.ticket_id)
+                 FROM tickets t2
+                 WHERE t2.location = '${location_rc}'
+                 AND DATE(t2.timestamp) = CURDATE()) AS unique_ticket_count
             FROM
                 tickets t
             LEFT JOIN
@@ -108,15 +111,23 @@ async function getAllTicketsToday(location_rc) {
                 location = '${location_rc}'
                 AND DATE(t.timestamp) = CURDATE();`;
 
-        //Store tdodays tickets
-        const [curr_tickets] = await pool.query(sql);
-        
-        // Non-shipped
-        console.log(curr_tickets)
+        // Store today's tickets and unique ticket count
+        const [result] = await pool.query(sql);
+
+        // Access the unique_ticket_count from the result
+        const uniqueTicketCount = result[0].unique_ticket_count;
+
+        // Remove the unique_ticket_count from the result
+        delete result[0].unique_ticket_count;
+
+        // Log the result and unique ticket count
+        console.log('Ticket Details:', result);
+        console.log('Unique Ticket Count:', uniqueTicketCount);
     } catch (error) {
         console.log(error);
     }
 }
+
 
 
 router.post("/:location_rc/:material/generate_shipping_report/", async function(req, res) {
