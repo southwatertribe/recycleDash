@@ -115,14 +115,15 @@ async function getAllTicketsToday(location_rc) {
         const [result] = await pool.query(sql);
 
         // Access the unique_ticket_count from the result
-        const uniqueTicketCount = result[0].unique_ticket_count;
+        const ticket_count = result[0].unique_ticket_count;
 
         // Remove the unique_ticket_count from the result
         delete result[0].unique_ticket_count;
 
-        // Log the result and unique ticket count
-        console.log('Ticket Details:', result);
-        console.log('Unique Ticket Count:', uniqueTicketCount);
+        return {
+            todays_tickets: ticket_count,
+            ticket_details: result
+        }
     } catch (error) {
         console.log(error);
     }
@@ -180,9 +181,11 @@ router.post("/:location_rc/:material/generate_shipping_report/", async function(
 router.get("/:location_rc/snapshot/", async function (req, res) {
 
     const location_rc = req.params.location_rc;
-    const curr_tickets = getAllTicketsToday(location_rc)
+    const ticket_obj = await getAllTicketsToday(location_rc)
+    
+    console.log(ticket_obj)
 
-    res.json(curr_tickets)
+    res.json(ticket_obj)
 
 });
 
