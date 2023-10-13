@@ -115,19 +115,22 @@ async function getAllTicketsToday(location_rc) {
         const [result] = await pool.query(sql);
 
         // Access the unique_ticket_count from the result
-        const ticket_count = result[0].unique_ticket_count;
+        const uniqueTicketCount = result[0].unique_ticket_count;
 
-        // Remove the unique_ticket_count from the result
-        delete result[0].unique_ticket_count;
+        // Remove the unique_ticket_count field from each ticket detail
+        result.forEach((ticketDetail) => {
+            delete ticketDetail.unique_ticket_count;
+        });
 
         return {
-            todays_tickets: ticket_count,
+            todays_tickets: uniqueTicketCount,
             ticket_details: result
         }
     } catch (error) {
         console.log(error);
     }
 }
+
 
 
 
