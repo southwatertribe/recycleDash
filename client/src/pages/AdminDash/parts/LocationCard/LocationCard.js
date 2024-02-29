@@ -4,11 +4,14 @@ import { useNavigate, Link } from "react-router-dom"
 import "./LocationCard.css"
 import axios from "../../../../utils/axios";
 import useModal from "../../../../hooks/useModal";
+import { useState } from "react";
 
 
 export default function LocationCard({props}){
     const navigate = useNavigate();
     const location_id = props.location_rc_number
+    const [snapshot, setSnapShot] = useState({})
+
     const [modal, toggleModal] = useModal()
 
 
@@ -28,6 +31,8 @@ export default function LocationCard({props}){
             const response = await axios.get(
                 `/report-service/${location_id}/snapshot`
             )
+            console.log(response)
+            setSnapShot(response.data)
             toggleModal()
         } catch (error) {
             console.log(error)            
@@ -51,7 +56,9 @@ export default function LocationCard({props}){
             {modal && <div className='modal'>
             <div  className='overlay'>
                 <div className='modal-content'>
-                    <h3>Location Details</h3>
+                    <h3>Daily Snapshot</h3>
+                    <p>{snapshot.todays_tickets}</p>
+                    <p>{snapshot.ticket_details}</p>
                     <button className='close-modal' onClick={handleModalClose}>
                         CLOSE
                     </button>

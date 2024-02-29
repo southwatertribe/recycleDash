@@ -1,1 +1,0 @@
-After updated client requirements, there was a large database structure change.

@@ -426,7 +426,6 @@ const TicketForm = ({ location, maker, location_mats }) => {
             <p><strong>Material:</strong> {detail.material_name}</p>
             <p><strong>Intake Type:</strong> {detail.take_in_option}</p>
             <p><strong>Amount:</strong> {detail.amount}</p>
-            {/* Add other detail properties here */}
           </div>
         ))}
                     <button  onClick={handleSubmit} className='submit-button'>

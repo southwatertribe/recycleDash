@@ -114,6 +114,15 @@ async function getAllTicketsToday(location_rc) {
         // Store today's tickets and unique ticket count
         const [result] = await pool.query(sql);
 
+        //if no tickets
+        if (result.length == 0) {
+            return {
+                todays_tickets: 0,
+                ticket_details: null
+            }            
+        }
+        
+
         // Access the unique_ticket_count from the result
         const uniqueTicketCount = result[0].unique_ticket_count;
 
@@ -185,10 +194,16 @@ router.get("/:location_rc/snapshot/", async function (req, res) {
 
     const location_rc = req.params.location_rc;
     const ticket_obj = await getAllTicketsToday(location_rc)
-    
-    console.log(ticket_obj)
 
-    res.json(ticket_obj)
+    if (ticket_obj.ticket_details === null) {
+        return res.json(ticket_obj)        
+    }
+
+    return_object.todays_tickets = ticket_obj.todays_tickets
+    
+
+    
+    res.json(return_object)
 
 });
 
